@@ -1,3 +1,17 @@
+/* PAGE LAYOUT — REQUIRED FOR FOOTER AT BOTTOM */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
 /* GLOBAL BASE */
 body {
     font-family: Arial, sans-serif;
