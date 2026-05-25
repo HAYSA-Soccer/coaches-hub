@@ -150,3 +150,38 @@ footer {
     transform: translateY(-3px);
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
+
+/* LIST PAGE CARDS */
+.list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.list-card {
+    background: white;
+    border: 2px solid #003366;
+    border-left: 6px solid #ff7f32; /* orange accent */
+    padding: 16px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #003366;
+    font-weight: bold;
+    display: block;
+    transition: 0.2s ease;
+}
+
+.list-card:hover {
+    background: #f4f7fb;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.list-card span {
+    display: block;
+    margin-top: 6px;
+    font-weight: normal;
+    color: #444;
+    font-size: 0.9em;
+}
