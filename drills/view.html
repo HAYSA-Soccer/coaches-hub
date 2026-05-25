@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drill Viewer</title>
+
+  <link rel="stylesheet" href="/coaches-hub/assets/css/style.css" />
+
+  <style>
+    .drill-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .drill-container h1 {
+      margin-bottom: 10px;
+    }
+    .drill-meta {
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #0077cc;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+
+  <!-- Markdown parser -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+
+  <div class="drill-container">
+    <a class="back-link" href="/coaches-hub/drills/">← Back to Drills</a>
+
+    <h1 id="drill-title"></h1>
+    <div id="drill-meta" class="drill-meta"></div>
+
+    <div id="drill-content"></div>
+  </div>
+
+  <script>
+    // Get slug from URL
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get("slug");
+
+    if (!slug) {
+      document.getElementById("drill-title").innerText = "Drill Not Found";
+      document.getElementById("drill-content").innerText = "Missing ?slug= parameter.";
+      throw new Error("Missing slug");
+    }
+
+    // Load drills.json
+    fetch("/coaches-hub/drills/drills.json")
+      .then(res => res.json())
+      .then(data => {
+        const drill = data.drills.find(d => d.slug === slug);
+
+        if (!drill) {
+          document.getElementById("drill-title").innerText = "Drill Not Found";
+          document.getElementById("drill-content").innerText = "No drill matches this slug.";
+          return;
+        }
+
+        // Set title + meta
+        document.getElementById("drill-title").innerText = drill.title;
+        document.getElementById("drill-meta").innerText =
+          `${drill.category.toUpperCase()} • ${drill.ageGroups.join(", ")}`;
+
+        // Load markdown file
+        fetch(drill.path)
+          .then(res => res.text())
+          .then(md => {
+            const html = marked.parse(md);
+            document.getElementById("drill-content").innerHTML = html;
+          });
+      });
+  </script>
+
+</body>
+</html>
