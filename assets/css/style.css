@@ -70,6 +70,12 @@ nav ul li {
     margin: 0;
 }
 
+nav a.active {
+    color: #ff7f32;
+    font-weight: bold;
+}
+
+
 nav ul li a {
     display: block;
     padding: 15px 20px;
