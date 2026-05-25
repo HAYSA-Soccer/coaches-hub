@@ -3,16 +3,55 @@
 <head>
     <title>Coaching Guides | HAYSA Coaches Hub</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .guides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .guide-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            border-top: 6px solid var(--accent, #4CAF50);
+        }
+
+        .guide-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .guide-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+        }
+
+        .guide-card p {
+            margin: 0;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .page-header {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
+
 <body>
 
 <header>
     <h1>HAYSA Coaches Hub</h1>
 </header>
 
-<nav class="navbar">
-    <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
-    <ul class="nav-links">
+<nav>
+    <ul>
         <li><a href="/coaches-hub/index.html">Home</a></li>
         <li><a href="/coaches-hub/drills/index.html">Drill Library</a></li>
         <li><a href="/coaches-hub/practice-plans/index.html">Practice Plans</a></li>
@@ -25,22 +64,47 @@
 
 <section class="page-header">
     <h1>Coaching Guides</h1>
-    <p>Helpful resources for coaches at every level.</p>
+    <p>Clear, practical resources for coaches at every level.</p>
 </section>
 
-<section class="list-grid">
-    <a class="list-card" href="coaching-philosophy.html">Coaching Philosophy<span>Our approach to player development</span></a>
-    <a class="list-card" href="safety.html">Safety Guidelines<span>Hydration, weather, equipment, and field safety</span></a>
-    <a class="list-card" href="equipment.html">Equipment Checklist<span>What coaches and players should bring</span></a>
-    <a class="list-card" href="field-diagrams.html">Field Diagrams<span>Layouts for U8 through full-size fields</span></a>
-    <a class="list-card" href="concussion.html">Concussion Protocol<span>Signs, steps, and return-to-play rules</span></a>
+<section class="guides-grid">
+
+    <a class="guide-card" style="--accent:#4CAF50" href="coaching-philosophy.html">
+        <h3>Coaching Philosophy</h3>
+        <p>Our approach to player development and positive coaching.</p>
+    </a>
+
+    <a class="guide-card" style="--accent:#2196F3" href="safety.html">
+        <h3>Safety Guidelines</h3>
+        <p>Hydration, weather, equipment checks, and emergency steps.</p>
+    </a>
+
+    <a class="guide-card" style="--accent:#FF9800" href="equipment.html">
+        <h3>Equipment Checklist</h3>
+        <p>Everything coaches and players need for training and games.</p>
+    </a>
+
+    <a class="guide-card" style="--accent:#9C27B0" href="field-diagrams.html">
+        <h3>Field Diagrams</h3>
+        <p>Layouts for U8 through full-size fields.</p>
+    </a>
+
+    <a class="guide-card" style="--accent:#E91E63" href="concussion.html">
+        <h3>Concussion Protocol</h3>
+        <p>Signs, steps, and return-to-play rules.</p>
+    </a>
+
+    <a class="guide-card" style="--accent:#795548" href="sportsmanship.html">
+        <h3>Sportsmanship & Culture</h3>
+        <p>Building a positive environment for players and families.</p>
+    </a>
+
 </section>
 
 </main>
 
 <footer class="site-footer">
     <div class="footer-content">
-
         <div class="footer-section">
             <h3>HAYSA Coaches Hub</h3>
             <p>Resources for Holbrook Avon Youth Soccer coaches.</p>
@@ -59,7 +123,7 @@
 
         <div class="footer-section">
             <h4>Contact</h4>
-            <p>Email: <a href="mailto:coachcoordinator.haysa@gmailcom">coachcoordinator.haysa@gmail.com</a></p>
+            <p>Email: <a href="mailto:coachcoordinator.haysa@gmail.com">coachcoordinator.haysa@gmail.com</a></p>
             <p>Website: <a href="https://www.haysa.org" target="_blank">www.haysa.org</a></p>
         </div>
     </div>
