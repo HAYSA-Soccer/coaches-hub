@@ -142,7 +142,8 @@
             document.getElementById("drill-meta").innerText =
                 `${drill.category.toUpperCase()} • ${drill.ageGroups.join(", ")}`;
 
-            fetch(drill.path)
+            fetch("/coaches-hub" + drill.path)
+
                 .then(res => res.text())
                 .then(md => {
                     let html = marked.parse(md);
