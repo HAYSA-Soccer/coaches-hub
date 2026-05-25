@@ -4,25 +4,13 @@
     <meta charset="UTF-8">
     <title>Drill Viewer | HAYSA Coaches Hub</title>
     <link rel="stylesheet" href="/coaches-hub/assets/css/style.css">
-
-    <!-- Markdown parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
-        .drill-wrapper {
+        .drill-content-wrapper {
             max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-        }
-
-        .drill-header h1 {
-            margin-bottom: 5px;
-        }
-
-        .drill-meta {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 20px;
+            margin: 0 auto;
+            padding: 20px 0 60px 0;
         }
 
         .markdown-body h2 {
@@ -74,18 +62,18 @@
 </nav>
 
 <main>
-    <div class="drill-wrapper">
 
+    <!-- REQUIRED FOR YOUR CSS TO WORK -->
+    <section class="page-header">
+        <h1 id="drill-title">Loading...</h1>
+        <p id="drill-meta"></p>
+    </section>
+
+    <div class="drill-content-wrapper">
         <a class="back-link" href="/coaches-hub/drills/index.html">← Back to Drills</a>
-
-        <div class="drill-header">
-            <h1 id="drill-title"></h1>
-            <div id="drill-meta" class="drill-meta"></div>
-        </div>
-
         <div id="drill-content" class="markdown-body"></div>
-
     </div>
+
 </main>
 
 <footer class="site-footer">
@@ -121,29 +109,16 @@
     const params = new URLSearchParams(window.location.search);
     const slug = params.get("slug");
 
-    if (!slug) {
-        document.getElementById("drill-title").innerText = "Drill Not Found";
-        document.getElementById("drill-content").innerText = "Missing ?slug= parameter.";
-        throw new Error("Missing slug");
-    }
-
     fetch("/coaches-hub/drills/drills.json")
         .then(res => res.json())
         .then(data => {
             const drill = data.drills.find(d => d.slug === slug);
-
-            if (!drill) {
-                document.getElementById("drill-title").innerText = "Drill Not Found";
-                document.getElementById("drill-content").innerText = "No drill matches this slug.";
-                return;
-            }
 
             document.getElementById("drill-title").innerText = drill.title;
             document.getElementById("drill-meta").innerText =
                 `${drill.category.toUpperCase()} • ${drill.ageGroups.join(", ")}`;
 
             fetch("/coaches-hub" + drill.path)
-
                 .then(res => res.text())
                 .then(md => {
                     let html = marked.parse(md);
