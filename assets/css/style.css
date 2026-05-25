@@ -31,28 +31,30 @@ header p {
 
 /* Section header block */
 .page-header {
-    margin: 25px 0 20px 0;
-    padding: 12px 0 10px 0;
-    background: #f7f9fc; /* subtle blue-tinted background */
-    border-bottom: 4px solid #003366; /* strong Holbrook navy */
-    border-top: 3px solid #ff7f32; /* Avon orange accent */
+    margin: 28px 0 22px 0;
+    padding: 14px 0 12px 0;
+    background: #f4f7fb; /* subtle blue tint */
+    border-top: 4px solid #ff7f32; /* Avon orange */
+    border-bottom: 5px solid #003366; /* Holbrook navy */
 }
 
 /* Section title */
 .page-header h1 {
     margin: 0;
-    font-size: 28px;
+    font-size: 30px;
     color: #003366;
 }
 
 /* Section subtitle */
 .page-header p {
-    margin: 4px 0 0;
+    margin: 6px 0 0;
     color: #444;
     font-size: 0.95em;
 }
 
-
+nav a:hover {
+    color: #ff7f32;
+}
 
 
 nav ul {
