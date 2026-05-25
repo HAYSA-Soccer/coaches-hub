@@ -52,11 +52,12 @@ header p {
     font-size: 0.95em;
 }
 
+/* Hover color for nav links */
 nav a:hover {
     color: #ff7f32;
 }
 
-
+/* NAV BAR */
 nav ul {
     list-style: none;
     padding: 0;
@@ -70,12 +71,6 @@ nav ul li {
     margin: 0;
 }
 
-nav a.active {
-    color: #ff7f32;
-    font-weight: bold;
-}
-
-
 nav ul li a {
     display: block;
     padding: 15px 20px;
@@ -85,6 +80,12 @@ nav ul li a {
 
 nav ul li a:hover {
     background: #003f7f;
+}
+
+/* ACTIVE NAV ITEM — must come AFTER the above rules */
+nav ul li a.active {
+    color: #ff7f32;
+    font-weight: bold;
 }
 
 section {
