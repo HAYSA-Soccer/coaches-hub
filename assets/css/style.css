@@ -1,3 +1,4 @@
+/* GLOBAL BASE */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -5,20 +6,17 @@ body {
     background: #f7f7f7;
 }
 
+/* HEADER */
 header {
     background: #003366;
     color: white;
-    padding: 10px 20px;
+    padding: 8px 20px;
     text-align: center;
-}
-
-header {
-    padding: 8px 20px; /* reduces vertical height */
 }
 
 header h1 {
     margin: 0;
-    font-size: 24px; /* smaller, consistent across pages */
+    font-size: 24px;
     line-height: 1.1;
 }
 
@@ -29,35 +27,32 @@ header p {
     line-height: 1.1;
 }
 
-/* Section header block */
+/* SECTION HEADER BLOCK */
 .page-header {
     margin: 28px 0 22px 0;
     padding: 14px 0 12px 0;
-    background: #f4f7fb; /* subtle blue tint */
-    border-top: 4px solid #ff7f32; /* Avon orange */
-    border-bottom: 5px solid #003366; /* Holbrook navy */
+    background: #f4f7fb;
+    border-top: 4px solid #ff7f32;
+    border-bottom: 5px solid #003366;
 }
 
-/* Section title */
 .page-header h1 {
     margin: 0;
     font-size: 30px;
     color: #003366;
 }
 
-/* Section subtitle */
 .page-header p {
     margin: 6px 0 0;
     color: #444;
     font-size: 0.95em;
 }
 
-/* Hover color for nav links */
+/* NAVIGATION */
 nav a:hover {
     color: #ff7f32;
 }
 
-/* NAV BAR */
 nav ul {
     list-style: none;
     padding: 0;
@@ -82,24 +77,15 @@ nav ul li a:hover {
     background: #003f7f;
 }
 
-/* ACTIVE NAV ITEM — must come AFTER the above rules */
 nav ul li a.active {
     color: #ff7f32;
     font-weight: bold;
 }
 
+/* GENERIC SECTION PADDING */
 section {
     padding: 20px;
 }
-
-footer {
-    text-align: center;
-    padding: 20px;
-    background: #003366;
-    color: white;
-    margin-top: 40px;
-}
-
 
 /* HOMEPAGE HERO */
 .hero {
@@ -107,7 +93,7 @@ footer {
     color: white;
     padding: 50px 20px;
     text-align: center;
-    border-bottom: 5px solid #ff7f32; /* Avon orange accent */
+    border-bottom: 5px solid #ff7f32;
 }
 
 .hero h1 {
@@ -131,10 +117,15 @@ footer {
     margin: 0 auto;
 }
 
+/* FORCE 2-COLUMN HOMEPAGE LAYOUT */
+.home-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
 .home-card {
     background: white;
     border: 2px solid #003366;
-    border-top: 4px solid #ff7f32; /* orange accent */
+    border-top: 4px solid #ff7f32;
     padding: 20px;
     text-align: center;
     font-size: 1.2em;
@@ -162,7 +153,7 @@ footer {
 .list-card {
     background: white;
     border: 2px solid #003366;
-    border-left: 6px solid #ff7f32; /* orange accent */
+    border-left: 6px solid #ff7f32;
     padding: 16px 18px;
     border-radius: 6px;
     text-decoration: none;
@@ -186,9 +177,59 @@ footer {
     font-size: 0.9em;
 }
 
-/* Add breathing room above footer */
+/* NEW GLOBAL FOOTER */
 .site-footer {
     margin-top: 60px;
-    padding-top: 25px; /* reduces heavy top padding */
-    background: #002a55; /* slightly softer navy */
+    padding-top: 25px;
+    background: #002a55;
+    color: white;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 30px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.footer-section h3,
+.footer-section h4 {
+    margin: 0 0 10px;
+    color: #ff7f32;
+}
+
+.footer-section p {
+    margin: 6px 0;
+    color: #e0e0e0;
+    font-size: 0.9em;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-section ul li {
+    margin: 6px 0;
+}
+
+.footer-section ul li a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+.footer-section ul li a:hover {
+    color: #ff7f32;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    font-size: 0.85em;
+    color: #cccccc;
 }
