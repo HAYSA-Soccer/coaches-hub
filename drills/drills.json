@@ -9,6 +9,11 @@
       ],
       "tags": [],
       "path": "/drills/warmups/test-drill.md",
+      "description": "Test drill information.",
+      "setup": "Cones are good, test only.",
+      "coachingPoints": "Key teaching points here.",
+      "variations": "",
+      "videoUrl": "www.youtube.com",
       "hidden": false
     }
   ]
