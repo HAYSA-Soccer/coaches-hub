@@ -387,3 +387,20 @@ section {
     position: relative;
     z-index: 10;
 }
+
+/* Fix viewer page header overlap */
+.page-header {
+    padding: 14px 0 12px 0 !important;
+}
+
+.drill-content-wrapper {
+    padding-top: 30px;
+}
+
+.markdown-body h2 {
+    margin-top: 30px;
+}
+
+.markdown-body p {
+    margin: 10px 0 20px 0;
+}
