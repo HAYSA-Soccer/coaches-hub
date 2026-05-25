@@ -3,12 +3,12 @@
     {
       "slug": "test-drill",
       "title": "Test Drill",
-      "category": "uncategorized",
+      "category": "warmups",
       "ageGroups": [
         "Grade 3/4"
       ],
       "tags": [],
-      "path": "/drills/uncategorized/test-drill.md",
+      "path": "/drills/warmups/test-drill.md",
       "hidden": true
     }
   ]
