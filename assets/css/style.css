@@ -29,12 +29,22 @@ header p {
     line-height: 1.1;
 }
 
-header p {
-    margin: 0;
-    font-size: 0.8em;
-    color: #ddd;
-    line-height: 1.1;
+.page-header {
+    margin: 20px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #003366;
 }
+
+.page-header h1 {
+    margin: 0;
+    font-size: 26px;
+}
+
+.page-header p {
+    margin: 4px 0 0;
+    color: #555;
+}
+
 
 
 nav ul {
