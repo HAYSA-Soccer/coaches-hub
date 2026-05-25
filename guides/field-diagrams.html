@@ -4,12 +4,55 @@
     <title>Field Diagrams | HAYSA Coaches Hub</title>
     <link rel="stylesheet" href="../assets/css/style.css">
     <style>
-        .guide-container { max-width: 900px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .guide-header { border-left: 6px solid #9C27B0; padding-left: 15px; margin-bottom: 25px; }
+
+        /* Breadcrumb + Back Link */
+        .breadcrumb {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .breadcrumb a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2196F3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Guide Layout */
+        .guide-container { 
+            max-width: 900px; 
+            margin: 40px auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+        }
+        .guide-header { 
+            border-left: 6px solid #9C27B0; 
+            padding-left: 15px; 
+            margin-bottom: 25px; 
+        }
         .guide-header h1 { margin: 0; font-size: 32px; }
         .guide-header p { margin: 5px 0 0; color: #555; }
         h2 { margin-top: 30px; border-bottom: 2px solid #eee; padding-bottom: 6px; }
-        .diagram { margin: 20px 0; padding: 15px; background: #f7f7f7; border-radius: 8px; }
+        .diagram { 
+            margin: 20px 0; 
+            padding: 15px; 
+            background: #f7f7f7; 
+            border-radius: 8px; 
+        }
     </style>
 </head>
 
@@ -20,34 +63,44 @@
 <nav>…</nav>
 
 <main>
-<div class="guide-container">
 
-    <div class="guide-header">
-        <h1>Field Diagrams</h1>
-        <p>Standard field layouts for all HAYSA age groups.</p>
+    <!-- ⭐ Professional Navigation Block -->
+    <nav class="breadcrumb">
+        <a href="/coaches-hub/index.html">Home</a> › 
+        <a href="/coaches-hub/guides/index.html">Coaching Guides</a> › 
+        Field Diagrams
+    </nav>
+
+    <a href="/coaches-hub/guides/index.html" class="back-link">← Back to Coaching Guides</a>
+
+    <div class="guide-container">
+
+        <div class="guide-header">
+            <h1>Field Diagrams</h1>
+            <p>Standard field layouts for all HAYSA age groups.</p>
+        </div>
+
+        <h2>U6 / U7 Field</h2>
+        <div class="diagram">
+            <p>• Small field<br>• No goalkeepers<br>• Emphasis on fun and movement</p>
+        </div>
+
+        <h2>U8 Field</h2>
+        <div class="diagram">
+            <p>• 4v4 or 5v5<br>• Small goals<br>• No penalty area</p>
+        </div>
+
+        <h2>U10 Field</h2>
+        <div class="diagram">
+            <p>• 7v7<br>• Goal area + penalty area<br>• Build‑out line</p>
+        </div>
+
+        <h2>U12 Field</h2>
+        <div class="diagram">
+            <p>• 9v9<br>• Larger field<br>• Standard penalty area</p>
+        </div>
+
     </div>
-
-    <h2>U6 / U7 Field</h2>
-    <div class="diagram">
-        <p>• Small field<br>• No goalkeepers<br>• Emphasis on fun and movement</p>
-    </div>
-
-    <h2>U8 Field</h2>
-    <div class="diagram">
-        <p>• 4v4 or 5v5<br>• Small goals<br>• No penalty area</p>
-    </div>
-
-    <h2>U10 Field</h2>
-    <div class="diagram">
-        <p>• 7v7<br>• Goal area + penalty area<br>• Build‑out line</p>
-    </div>
-
-    <h2>U12 Field</h2>
-    <div class="diagram">
-        <p>• 9v9<br>• Larger field<br>• Standard penalty area</p>
-    </div>
-
-</div>
 </main>
 
 <footer class="site-footer">…</footer>
