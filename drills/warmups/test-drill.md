@@ -1,12 +1,3 @@
----
-title: "Test Drill"
-category: "Warmups"
-ageGroups: ["Grade 3/4"]
-tags: []
-videoUrl: "www.youtube.com"
-hidden: false
----
-
 # Test Drill
 
 ## Description
