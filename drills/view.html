@@ -123,19 +123,37 @@
             document.getElementById("drill-title").innerText = drill.title;
             document.getElementById("drill-meta").innerText =
                 `${drill.category.toUpperCase()} • ${drill.ageGroups.join(", ")}`;
-
+        
+        // Populate info card
+        document.getElementById("info-category").innerText = drill.category;
+        document.getElementById("info-age").innerText = drill.ageGroups.join(", ");
+        document.getElementById("info-tags").innerText =
+            drill.tags && drill.tags.length ? drill.tags.join(", ") : "None";
+        
+        
+                    
             fetch("/coaches-hub" + drill.path)
                 .then(res => res.text())
                 .then(md => {
                     let html = marked.parse(md);
-
+            
+                    // Add icons to section headers
+                    html = html
+                        .replace("<h2>Description</h2>", '<h2 data-icon="📝">Description</h2>')
+                        .replace("<h2>Setup</h2>", '<h2 data-icon="⚽">Setup</h2>')
+                        .replace("<h2>Coaching Points</h2>", '<h2 data-icon="🎯">Coaching Points</h2>')
+                        .replace("<h2>Variations</h2>", '<h2 data-icon="🔄">Variations</h2>')
+                        .replace("<h2>Video</h2>", '<h2 data-icon="🎥">Video</h2>');
+            
+                    // YouTube auto-embed
                     html = html.replace(
                         /(https?:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_-]+))/g,
                         `<iframe src="https://www.youtube.com/embed/$2" frameborder="0" allowfullscreen></iframe>`
                     );
-
+            
                     document.getElementById("drill-content").innerHTML = html;
                 });
+
         });
 </script>
 
