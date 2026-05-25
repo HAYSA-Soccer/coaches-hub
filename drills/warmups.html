@@ -141,8 +141,10 @@
             card.innerHTML = `
                 <h3>${d.title}</h3>
                 <p><strong>Age Groups:</strong> ${d.ageGroups.join(', ')}</p>
-                <a href="${d.path}">View Drill →</a>
+                <a href="/coaches-hub/drills/view.html?slug=${d.slug}">View Drill →</a>
             `;
+
+
             grid.appendChild(card);
         });
     }
