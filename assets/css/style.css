@@ -12,6 +12,23 @@ header {
     text-align: center;
 }
 
+header {
+    padding: 8px 20px; /* reduces vertical height */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px; /* smaller, consistent across pages */
+    line-height: 1.1;
+}
+
+header p {
+    margin: 0;
+    font-size: 0.75em;
+    color: #e0e0e0;
+    line-height: 1.1;
+}
+
 header p {
     margin: 0;
     font-size: 0.8em;
