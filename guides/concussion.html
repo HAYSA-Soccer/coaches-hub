@@ -4,12 +4,56 @@
     <title>Concussion Protocol | HAYSA Coaches Hub</title>
     <link rel="stylesheet" href="../assets/css/style.css">
     <style>
-        .guide-container { max-width: 900px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .guide-header { border-left: 6px solid #E91E63; padding-left: 15px; margin-bottom: 25px; }
+
+        /* Breadcrumb + Back Link */
+        .breadcrumb {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .breadcrumb a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2196F3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Guide Layout */
+        .guide-container { 
+            max-width: 900px; 
+            margin: 40px auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+        }
+        .guide-header { 
+            border-left: 6px solid #E91E63; 
+            padding-left: 15px; 
+            margin-bottom: 25px; 
+        }
         .guide-header h1 { margin: 0; font-size: 32px; }
         .guide-header p { margin: 5px 0 0; color: #555; }
         h2 { margin-top: 30px; border-bottom: 2px solid #eee; padding-bottom: 6px; }
-        .callout { background: #ffebee; border-left: 4px solid #e53935; padding: 12px 16px; margin: 20px 0; border-radius: 6px; }
+        .callout { 
+            background: #ffebee; 
+            border-left: 4px solid #e53935; 
+            padding: 12px 16px; 
+            margin: 20px 0; 
+            border-radius: 6px; 
+        }
     </style>
 </head>
 
@@ -20,37 +64,47 @@
 <nav>…</nav>
 
 <main>
-<div class="guide-container">
 
-    <div class="guide-header">
-        <h1>Concussion Protocol</h1>
-        <p>Recognize symptoms early and follow proper return‑to‑play steps.</p>
+    <!-- ⭐ Professional Navigation Block -->
+    <nav class="breadcrumb">
+        <a href="/coaches-hub/index.html">Home</a> › 
+        <a href="/coaches-hub/guides/index.html">Coaching Guides</a> › 
+        Concussion Protocol
+    </nav>
+
+    <a href="/coaches-hub/guides/index.html" class="back-link">← Back to Coaching Guides</a>
+
+    <div class="guide-container">
+
+        <div class="guide-header">
+            <h1>Concussion Protocol</h1>
+            <p>Recognize symptoms early and follow proper return‑to‑play steps.</p>
+        </div>
+
+        <h2>Signs of a Concussion</h2>
+        <ul>
+            <li>Dizziness or confusion</li>
+            <li>Headache</li>
+            <li>Nausea</li>
+            <li>Balance issues</li>
+            <li>Memory problems</li>
+        </ul>
+
+        <div class="callout">
+            <strong>Rule #1:</strong> When in doubt, sit them out.
+        </div>
+
+        <h2>Immediate Steps</h2>
+        <ul>
+            <li>Remove the player from activity</li>
+            <li>Notify parents immediately</li>
+            <li>Recommend medical evaluation</li>
+        </ul>
+
+        <h2>Return‑to‑Play</h2>
+        <p>A player must be cleared by a medical professional before returning to soccer activities.</p>
+
     </div>
-
-    <h2>Signs of a Concussion</h2>
-    <ul>
-        <li>Dizziness or confusion</li>
-        <li>Headache</li>
-        <li>Nausea</li>
-        <li>Balance issues</li>
-        <li>Memory problems</li>
-    </ul>
-
-    <div class="callout">
-        <strong>Rule #1:</strong> When in doubt, sit them out.
-    </div>
-
-    <h2>Immediate Steps</h2>
-    <ul>
-        <li>Remove the player from activity</li>
-        <li>Notify parents immediately</li>
-        <li>Recommend medical evaluation</li>
-    </ul>
-
-    <h2>Return‑to‑Play</h2>
-    <p>A player must be cleared by a medical professional before returning to soccer activities.</p>
-
-</div>
 </main>
 
 <footer class="site-footer">…</footer>
