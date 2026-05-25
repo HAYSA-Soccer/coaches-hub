@@ -5,6 +5,19 @@
     <link rel="stylesheet" href="../assets/css/style.css">
     <style>
 
+        .breadcrumb {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .breadcrumb a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
         .back-link {
             display: inline-block;
             margin-bottom: 20px;
@@ -58,7 +71,12 @@
 
 <main>
 
-    <!-- ⭐ Back link goes HERE, inside <main> -->
+    <nav class="breadcrumb">
+        <a href="/coaches-hub/index.html">Home</a> › 
+        <a href="/coaches-hub/guides/index.html">Coaching Guides</a> › 
+        Coaching Philosophy
+    </nav>
+
     <a href="/coaches-hub/guides/index.html" class="back-link">← Back to Coaching Guides</a>
 
     <div class="guide-container">
