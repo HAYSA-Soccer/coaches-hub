@@ -8,9 +8,17 @@ body {
 header {
     background: #003366;
     color: white;
-    padding: 20px;
+    padding: 10px 20px;
     text-align: center;
 }
+
+header p {
+    margin: 0;
+    font-size: 0.8em;
+    color: #ddd;
+    line-height: 1.1;
+}
+
 
 nav ul {
     list-style: none;
