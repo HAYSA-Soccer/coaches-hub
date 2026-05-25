@@ -1,91 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Drill Viewer</title>
+    <meta charset="UTF-8">
+    <title>Drill Viewer | HAYSA Coaches Hub</title>
+    <link rel="stylesheet" href="/coaches-hub/assets/css/style.css">
 
-  <link rel="stylesheet" href="/coaches-hub/assets/css/style.css" />
+    <!-- Markdown parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-  <style>
-    .drill-container {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .drill-container h1 {
-      margin-bottom: 10px;
-    }
-    .drill-meta {
-      color: #666;
-      margin-bottom: 20px;
-    }
-    .back-link {
-      display: inline-block;
-      margin-bottom: 20px;
-      color: #0077cc;
-      text-decoration: none;
-    }
-    .back-link:hover {
-      text-decoration: underline;
-    }
-  </style>
+    <style>
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
 
-  <!-- Markdown parser -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        .drill-header {
+            margin-bottom: 20px;
+        }
+
+        .drill-header h1 {
+            margin-bottom: 5px;
+        }
+
+        .drill-meta {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .markdown-body h2 {
+            margin-top: 30px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .markdown-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #0077cc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        iframe {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+    </style>
 </head>
 
 <body>
 
-  <div class="drill-container">
-    <a class="back-link" href="/coaches-hub/drills/">← Back to Drills</a>
+<header>
+    <h1>HAYSA Coaches Hub</h1>
+</header>
 
-    <h1 id="drill-title"></h1>
-    <div id="drill-meta" class="drill-meta"></div>
+<nav>
+    <ul>
+        <li><a href="/coaches-hub/index.html">Home</a></li>
+        <li><a class="active" href="/coaches-hub/drills/index.html">Drill Library</a></li>
+        <li><a href="/coaches-hub/practice-plans/index.html">Practice Plans</a></li>
+        <li><a href="/coaches-hub/guides/index.html">Coaching Guides</a></li>
+        <li><a href="/coaches-hub/submissions/index.html">Submit a Drill</a></li>
+    </ul>
+</nav>
 
-    <div id="drill-content"></div>
-  </div>
+<main>
+    <a class="back-link" href="/coaches-hub/drills/index.html">← Back to Drills</a>
 
-  <script>
+    <div class="drill-header">
+        <h1 id="drill-title"></h1>
+        <div id="drill-meta" class="drill-meta"></div>
+    </div>
+
+    <div id="drill-content" class="markdown-body"></div>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-content">
+
+        <div class="footer-section">
+            <h3>HAYSA Coaches Hub</h3>
+            <p>Resources for Holbrook Avon Youth Soccer coaches.</p>
+        </div>
+
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="/coaches-hub/index.html">Home</a></li>
+                <li><a href="/coaches-hub/drills/index.html">Drill Library</a></li>
+                <li><a href="/coaches-hub/practice-plans/index.html">Practice Plans</a></li>
+                <li><a href="/coaches-hub/guides/index.html">Coaching Guides</a></li>
+                <li><a href="/coaches-hub/submissions/index.html">Submit a Drill</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h4>Contact</h4>
+            <p>Email: <a href="mailto:coachcoordinator.haysa@gmail.com">coachcoordinator.haysa@gmail.com</a></p>
+            <p>Website: <a href="https://www.haysa.org" target="_blank">www.haysa.org</a></p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">© HAYSA — Holbrook Avon Youth Soccer Association</div>
+</footer>
+
+<script>
     // Get slug from URL
     const params = new URLSearchParams(window.location.search);
     const slug = params.get("slug");
 
     if (!slug) {
-      document.getElementById("drill-title").innerText = "Drill Not Found";
-      document.getElementById("drill-content").innerText = "Missing ?slug= parameter.";
-      throw new Error("Missing slug");
+        document.getElementById("drill-title").innerText = "Drill Not Found";
+        document.getElementById("drill-content").innerText = "Missing ?slug= parameter.";
+        throw new Error("Missing slug");
     }
 
     // Load drills.json
     fetch("/coaches-hub/drills/drills.json")
-      .then(res => res.json())
-      .then(data => {
-        const drill = data.drills.find(d => d.slug === slug);
+        .then(res => res.json())
+        .then(data => {
+            const drill = data.drills.find(d => d.slug === slug);
 
-        if (!drill) {
-          document.getElementById("drill-title").innerText = "Drill Not Found";
-          document.getElementById("drill-content").innerText = "No drill matches this slug.";
-          return;
-        }
+            if (!drill) {
+                document.getElementById("drill-title").innerText = "Drill Not Found";
+                document.getElementById("drill-content").innerText = "No drill matches this slug.";
+                return;
+            }
 
-        // Set title + meta
-        document.getElementById("drill-title").innerText = drill.title;
-        document.getElementById("drill-meta").innerText =
-          `${drill.category.toUpperCase()} • ${drill.ageGroups.join(", ")}`;
+            // Set title + meta
+            document.getElementById("drill-title").innerText = drill.title;
+            document.getElementById("drill-meta").innerText =
+                `${drill.category.toUpperCase()} • ${drill.ageGroups.join(", ")}`;
 
-        // Load markdown file
-        fetch(drill.path)
-          .then(res => res.text())
-          .then(md => {
-            const html = marked.parse(md);
-            document.getElementById("drill-content").innerHTML = html;
-          });
-      });
-  </script>
+            // Load markdown file
+            fetch(drill.path)
+                .then(res => res.text())
+                .then(md => {
+                    let html = marked.parse(md);
+
+                    // Auto-embed YouTube links
+                    html = html.replace(
+                        /(https?:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_-]+))/g,
+                        `<iframe src="https://www.youtube.com/embed/$2" frameborder="0" allowfullscreen></iframe>`
+                    );
+
+                    document.getElementById("drill-content").innerHTML = html;
+                });
+        });
+</script>
 
 </body>
 </html>
