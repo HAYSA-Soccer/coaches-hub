@@ -3,7 +3,9 @@
     {
       "slug": "test-drill",
       "title": "Test Drill",
-      "category": "warmups",
+      "categories": [
+        "warmups"
+      ],
       "ageGroups": [
         "Grade 3/4"
       ],
