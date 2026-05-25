@@ -344,3 +344,28 @@ section {
     margin: 0 auto;
     padding: 20px 0 60px 0;
 }
+
+.markdown-body {
+    padding: 20px 0;
+}
+
+.markdown-body h2 {
+    margin-top: 24px;
+    font-size: 22px;
+    color: #003366;
+}
+
+.markdown-body p {
+    margin: 10px 0 20px 0;
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+    margin: 10px 0 20px 30px;
+}
+
+.markdown-body iframe {
+    margin: 20px 0;
+}
