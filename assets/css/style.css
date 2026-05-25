@@ -156,40 +156,70 @@ section {
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* LIST PAGE CARDS */
+/* REDESIGNED LIST CARDS */
 .list-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    padding: 30px 0;
 }
 
 .list-card {
     background: white;
-    border: 2px solid #003366;
-    border-left: 6px solid #ff7f32;
-    padding: 16px 18px;
-    border-radius: 6px;
+    border-radius: 10px;
+    padding: 22px 20px;
     text-decoration: none;
     color: #003366;
     font-weight: bold;
-    display: block;
-    transition: 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: 0.25s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.list-card:hover {
-    background: #f4f7fb;
-    transform: translateY(-3px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+/* Icon circle */
+.list-card::before {
+    content: "⚽";
+    font-size: 32px;
+    background: #ff7f32;
+    color: white;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
+/* Subtitle */
 .list-card span {
-    display: block;
-    margin-top: 6px;
     font-weight: normal;
     color: #444;
     font-size: 0.9em;
+    line-height: 1.4;
 }
+
+/* Hover effect */
+.list-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    border-color: #ff7f32;
+}
+
+/* Optional: category-specific icons */
+.list-card[data-icon="warmups"]::before { content: "🔥"; }
+.list-card[data-icon="passing"]::before { content: "🎯"; }
+.list-card[data-icon="shooting"]::before { content: "🥅"; }
+.list-card[data-icon="defending"]::before { content: "🛡️"; }
+.list-card[data-icon="small-sided"]::before { content: "👥"; }
+.list-card[data-icon="goalkeeper"]::before { content: "🧤"; }
+.list-card[data-icon="conditioning"]::before { content: "💨"; }
 
 /* NEW GLOBAL FOOTER */
 .site-footer {
@@ -307,4 +337,3 @@ section {
         border-top: 1px solid rgba(255,255,255,0.15);
     }
 }
-
