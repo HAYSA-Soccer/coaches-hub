@@ -1,5 +1,6 @@
 /* PAGE LAYOUT — REQUIRED FOR FOOTER AT BOTTOM */
-html, body {
+html,
+body {
     height: 100%;
 }
 
@@ -68,27 +69,6 @@ section {
     padding: 20px;
 }
 
-/* SECTION HEADER BLOCK */
-.page-header {
-    margin: 28px 0 22px 0;
-    padding: 14px 0 12px 0 !important; /* override global section padding */
-    background: #f4f7fb;
-    border-top: 4px solid #ff7f32;
-    border-bottom: 5px solid #003366;
-}
-
-.page-header h1 {
-    margin: 0;
-    font-size: 30px;
-    color: #003366;
-}
-
-.page-header p {
-    margin: 6px 0 0;
-    color: #444;
-    font-size: 0.95em;
-}
-
 /* HOMEPAGE HERO */
 .hero {
     background: #003366;
@@ -136,7 +116,7 @@ section {
 .home-card:hover {
     background: #f4f7fb;
     transform: translateY(-3px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* LIST CARDS */
@@ -157,8 +137,8 @@ section {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    border: 1px solid rgba(0,0,0,0.08);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
     transition: 0.25s ease;
     position: relative;
     overflow: hidden;
@@ -176,7 +156,7 @@ section {
     align-items: center;
     justify-content: center;
     margin-bottom: 6px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 .list-card span {
@@ -188,7 +168,7 @@ section {
 
 .list-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
     border-color: #ff7f32;
 }
 
@@ -253,7 +233,7 @@ section {
     text-align: center;
     margin-top: 30px;
     padding-top: 15px;
-    border-top: 1px solid rgba(255,255,255,0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
     font-size: 0.85em;
     color: #cccccc;
 }
@@ -265,45 +245,24 @@ section {
     padding: 20px 0 60px 0;
 }
 
-/* MARKDOWN STYLING */
+/* DRILL VIEWER LAYOUT */
 .drill-content-wrapper {
     max-width: 900px;
     margin: 0 auto;
-    padding-top: 30px;
-    position: relative;
-    z-index: 10;
+    padding: 20px 15px 60px 15px;
 }
 
 .markdown-body {
     padding: 20px 0;
-    position: relative;
-    z-index: 10;
 }
 
-.markdown-body h2 {
-    margin-top: 30px;
-    font-size: 22px;
-    color: #003366;
-}
-
-.markdown-body p {
-    margin: 10px 0 20px 0;
-    line-height: 1.6;
-    font-size: 16px;
-}
-
+/* Lists inside markdown */
 .markdown-body ul,
 .markdown-body ol {
     margin: 10px 0 20px 30px;
 }
 
-.markdown-body iframe {
-    margin: 20px 0;
-}
-
-
-
-/* Fix header spacing */
+/* HEADER SPACING FOR DRILL PAGES */
 .page-header {
     padding: 10px 0 20px 0 !important;
     margin-bottom: 10px;
@@ -320,7 +279,7 @@ section {
     margin-top: -5px;
 }
 
-/* Section headers */
+/* Section headers in markdown */
 .markdown-body h2 {
     font-size: 1.4rem;
     margin-top: 30px;
@@ -329,9 +288,16 @@ section {
     color: #333;
 }
 
-/* Improve paragraph readability */
+/* Paragraphs in markdown */
 .markdown-body p {
     font-size: 1.05rem;
     line-height: 1.65;
     margin-bottom: 15px;
+}
+
+/* Icons before section headers */
+.markdown-body h2::before {
+    content: attr(data-icon);
+    margin-right: 8px;
+    color: #0077cc;
 }
