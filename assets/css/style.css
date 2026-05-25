@@ -319,3 +319,19 @@ section {
     color: #666;
     margin-top: -5px;
 }
+
+/* Section headers */
+.markdown-body h2 {
+    font-size: 1.4rem;
+    margin-top: 30px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #e5e5e5;
+    color: #333;
+}
+
+/* Improve paragraph readability */
+.markdown-body p {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    margin-bottom: 15px;
+}
