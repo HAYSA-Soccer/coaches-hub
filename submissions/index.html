@@ -25,11 +25,91 @@
 
 <section class="page-header">
     <h1>Submit a Drill</h1>
-    <p>Share your favorite drills with the HAYSA community.</p>
+    <p>Share your favorite drills with the HAYSA coaching community.</p>
 </section>
 
-<section>
-    <p>Coming soon — drill submission form.</p>
+<section class="form-wrapper">
+
+    <form class="drill-form">
+
+        <h2>Drill Information</h2>
+
+        <label>
+            Drill Name
+            <input type="text" name="drill-name" required>
+        </label>
+
+        <label>
+            Age Group
+            <select name="age-group" required>
+                <option value="">Select age group…</option>
+                <option>Grade 3/4</option>
+                <option>Grade 5/6</option>
+                <option>Grade 7/8</option>
+                <option>High School</option>
+            </select>
+        </label>
+
+        <label>
+            Category
+            <select name="category" required>
+                <option value="">Select category…</option>
+                <option>Warmups</option>
+                <option>Passing & Receiving</option>
+                <option>Shooting & Finishing</option>
+                <option>Defending</option>
+                <option>Small-Sided Games</option>
+                <option>Goalkeeper</option>
+                <option>Conditioning with the Ball</option>
+            </select>
+        </label>
+
+        <label>
+            Short Description
+            <textarea name="description" rows="3" placeholder="One or two sentences…" required></textarea>
+        </label>
+
+        <label>
+            Setup Instructions
+            <textarea name="setup" rows="4" placeholder="Field layout, cones, players, spacing…" required></textarea>
+        </label>
+
+        <label>
+            Coaching Points
+            <textarea name="coaching-points" rows="4" placeholder="Key teaching points…" required></textarea>
+        </label>
+
+        <label>
+            Variations (optional)
+            <textarea name="variations" rows="3" placeholder="Progressions, challenges, or modifications…"></textarea>
+        </label>
+
+        <label>
+            Video Link (optional)
+            <input type="url" name="video">
+        </label>
+
+        <label>
+            Upload Diagram (optional)
+            <input type="file" name="diagram" accept="image/*">
+        </label>
+
+        <h2>Your Information</h2>
+
+        <label>
+            Your Name
+            <input type="text" name="coach-name" required>
+        </label>
+
+        <label>
+            Email
+            <input type="email" name="coach-email" required>
+        </label>
+
+        <button type="submit" class="submit-btn">Submit Drill</button>
+
+    </form>
+
 </section>
 
 </main>
