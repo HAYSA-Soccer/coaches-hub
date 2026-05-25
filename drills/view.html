@@ -9,14 +9,10 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
-        main {
+        .drill-wrapper {
             max-width: 900px;
             margin: 40px auto;
             padding: 20px;
-        }
-
-        .drill-header {
-            margin-bottom: 20px;
         }
 
         .drill-header h1 {
@@ -40,6 +36,13 @@
             margin-bottom: 15px;
         }
 
+        iframe {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
         .back-link {
             display: inline-block;
             margin-bottom: 20px;
@@ -50,13 +53,6 @@
 
         .back-link:hover {
             text-decoration: underline;
-        }
-
-        iframe {
-            width: 100%;
-            height: 400px;
-            margin-top: 20px;
-            border-radius: 8px;
         }
     </style>
 </head>
@@ -78,14 +74,18 @@
 </nav>
 
 <main>
-    <a class="back-link" href="/coaches-hub/drills/index.html">← Back to Drills</a>
+    <div class="drill-wrapper">
 
-    <div class="drill-header">
-        <h1 id="drill-title"></h1>
-        <div id="drill-meta" class="drill-meta"></div>
+        <a class="back-link" href="/coaches-hub/drills/index.html">← Back to Drills</a>
+
+        <div class="drill-header">
+            <h1 id="drill-title"></h1>
+            <div id="drill-meta" class="drill-meta"></div>
+        </div>
+
+        <div id="drill-content" class="markdown-body"></div>
+
     </div>
-
-    <div id="drill-content" class="markdown-body"></div>
 </main>
 
 <footer class="site-footer">
@@ -118,7 +118,6 @@
 </footer>
 
 <script>
-    // Get slug from URL
     const params = new URLSearchParams(window.location.search);
     const slug = params.get("slug");
 
@@ -128,7 +127,6 @@
         throw new Error("Missing slug");
     }
 
-    // Load drills.json
     fetch("/coaches-hub/drills/drills.json")
         .then(res => res.json())
         .then(data => {
@@ -140,18 +138,15 @@
                 return;
             }
 
-            // Set title + meta
             document.getElementById("drill-title").innerText = drill.title;
             document.getElementById("drill-meta").innerText =
                 `${drill.category.toUpperCase()} • ${drill.ageGroups.join(", ")}`;
 
-            // Load markdown file
             fetch(drill.path)
                 .then(res => res.text())
                 .then(md => {
                     let html = marked.parse(md);
 
-                    // Auto-embed YouTube links
                     html = html.replace(
                         /(https?:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_-]+))/g,
                         `<iframe src="https://www.youtube.com/embed/$2" frameborder="0" allowfullscreen></iframe>`
