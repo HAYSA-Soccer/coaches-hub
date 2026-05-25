@@ -99,3 +99,54 @@ footer {
     color: white;
     margin-top: 40px;
 }
+
+
+/* HOMEPAGE HERO */
+.hero {
+    background: #003366;
+    color: white;
+    padding: 50px 20px;
+    text-align: center;
+    border-bottom: 5px solid #ff7f32; /* Avon orange accent */
+}
+
+.hero h1 {
+    margin: 0;
+    font-size: 36px;
+}
+
+.hero p {
+    margin-top: 10px;
+    font-size: 1.1em;
+    color: #e0e0e0;
+}
+
+/* HOMEPAGE GRID */
+.home-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 30px 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.home-card {
+    background: white;
+    border: 2px solid #003366;
+    border-top: 4px solid #ff7f32; /* orange accent */
+    padding: 20px;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #003366;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: 0.2s ease;
+}
+
+.home-card:hover {
+    background: #f4f7fb;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
