@@ -185,3 +185,10 @@ footer {
     color: #444;
     font-size: 0.9em;
 }
+
+/* Add breathing room above footer */
+.site-footer {
+    margin-top: 60px;
+    padding-top: 25px; /* reduces heavy top padding */
+    background: #002a55; /* slightly softer navy */
+}
