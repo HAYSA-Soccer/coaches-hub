@@ -369,3 +369,21 @@ section {
 .markdown-body iframe {
     margin: 20px 0;
 }
+
+
+.page-header {
+    padding: 14px 0 12px 0 !important;
+}
+
+
+.markdown-body {
+    display: block;
+    position: relative;
+    z-index: 10;
+}
+
+
+.drill-content-wrapper {
+    position: relative;
+    z-index: 10;
+}
