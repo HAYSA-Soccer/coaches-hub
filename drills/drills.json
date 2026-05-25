@@ -4,7 +4,9 @@
       "slug": "test-drill",
       "title": "Test Drill",
       "category": "uncategorized",
-      "ageGroups": [],
+      "ageGroups": [
+        "Grade 3/4"
+      ],
       "tags": [],
       "path": "/drills/uncategorized/test-drill.md",
       "hidden": true
