@@ -13,7 +13,7 @@ hidden: true
 Test drill information.
 
 ## Setup
-
+Cones are good, test only.
 
 ## Coaching Points
 
