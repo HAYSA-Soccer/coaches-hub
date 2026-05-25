@@ -1,9 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Defending | HAYSA Coaches Hub</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .card h3 {
+            margin-top: 0;
+        }
+        .filters {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .filters input, .filters select {
+            padding: 8px;
+            font-size: 14px;
+        }
+    </style>
 </head>
+
 <body>
 
 <header>
@@ -13,30 +42,116 @@
 <nav>
     <ul>
         <li><a href="/coaches-hub/index.html">Home</a></li>
-        <li><a href="/coaches-hub/drills/index.html">Drill Library</a></li>
+        <li><a class="active" href="/coaches-hub/drills/index.html">Drill Library</a></li>
         <li><a href="/coaches-hub/practice-plans/index.html">Practice Plans</a></li>
         <li><a href="/coaches-hub/guides/index.html">Coaching Guides</a></li>
         <li><a href="/coaches-hub/submissions/index.html">Submit a Drill</a></li>
     </ul>
 </nav>
 
+<main>
 
-<h1>Defending</h1>
+<section class="page-header">
+    <h1>Defending</h1>
+    <p>Browse all drills in the Defending category.</p>
+</section>
 
-<div class="drill">
-    <h2>Pressure–Cover–Balance</h2>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/VIDEO_ID"></iframe>
-    <p><strong>Age Group:</strong> U10–U14</p>
-    <p><strong>Duration:</strong> 15 minutes</p>
-    <p><strong>Equipment:</strong> Cones, balls</p>
-    <p><strong>Description:</strong> Three defenders work together to pressure the ball and support each other.</p>
-    <p><strong>Coaching Points:</strong></p>
-    <ul>
-        <li>First defender closes space quickly</li>
-        <li>Second defender provides cover</li>
-        <li>Third defender balances the shape</li>
-    </ul>
+<div class="filters">
+    <input id="search" type="text" placeholder="Search drills...">
+    <select id="ageFilter">
+        <option value="">All Age Groups</option>
+    </select>
 </div>
+
+<div id="grid" class="grid"></div>
+
+</main>
+
+<footer class="site-footer">
+    <div class="footer-content">
+
+        <div class="footer-section">
+            <h3>HAYSA Coaches Hub</h3>
+            <p>Resources for Holbrook Avon Youth Soccer coaches.</p>
+        </div>
+
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="/coaches-hub/index.html">Home</a></li>
+                <li><a href="/coaches-hub/drills/index.html">Drill Library</a></li>
+                <li><a href="/coaches-hub/practice-plans/index.html">Practice Plans</a></li>
+                <li><a href="/coaches-hub/guides/index.html">Coaching Guides</a></li>
+                <li><a href="/coaches-hub/submissions/index.html">Submit a Drill</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h4>Contact</h4>
+            <p>Email: <a href="mailto:coachcoordinator.haysa@gmail.com">coachcoordinator.haysa@gmail.com</a></p>
+            <p>Website: <a href="https://www.haysa.org" target="_blank">www.haysa.org</a></p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">© HAYSA — Holbrook Avon Youth Soccer Association</div>
+</footer>
+
+<script>
+    const CATEGORY = "defending";
+
+    let drills = [];
+
+    async function loadDrills() {
+        const res = await fetch('/coaches-hub/drills/drills.json');
+        const data = await res.json();
+        drills = data.drills.filter(d => d.category === CATEGORY && !d.hidden);
+        populateAgeFilter();
+        render();
+    }
+
+    function populateAgeFilter() {
+        const ageSet = new Set();
+        drills.forEach(d => d.ageGroups.forEach(a => ageSet.add(a)));
+
+        const ageFilter = document.getElementById('ageFilter');
+        ageSet.forEach(age => {
+            const opt = document.createElement('option');
+            opt.value = age;
+            opt.textContent = age;
+            ageFilter.appendChild(opt);
+        });
+    }
+
+    function render() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+
+        const search = document.getElementById('search').value.toLowerCase();
+        const age = document.getElementById('ageFilter').value;
+
+        const filtered = drills.filter(d => {
+            const matchesSearch = d.title.toLowerCase().includes(search);
+            const matchesAge = !age || d.ageGroups.includes(age);
+            return matchesSearch && matchesAge;
+        });
+
+        filtered.forEach(d => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <h3>${d.title}</h3>
+                <p><strong>Age Groups:</strong> ${d.ageGroups.join(', ')}</p>
+                <a href="${d.path}">View Drill →</a>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    document.getElementById('search').addEventListener('input', render);
+    document.getElementById('ageFilter').addEventListener('change', render);
+
+    loadDrills();
+</script>
 
 </body>
 </html>
