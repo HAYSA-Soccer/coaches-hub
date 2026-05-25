@@ -300,3 +300,22 @@ section {
 .markdown-body iframe {
     margin: 20px 0;
 }
+
+
+
+/* Fix header spacing */
+.page-header {
+    padding: 10px 0 20px 0 !important;
+    margin-bottom: 10px;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    margin-bottom: 5px;
+}
+
+#drill-meta {
+    font-size: 1rem;
+    color: #666;
+    margin-top: -5px;
+}
