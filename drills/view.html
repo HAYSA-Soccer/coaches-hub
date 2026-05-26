@@ -115,7 +115,7 @@
     const params = new URLSearchParams(window.location.search);
     const slug = params.get("slug");
 
-    fetch("/coaches-hub/drills/drills.json")
+    fetch("/drills/drills.json")
         .then(res => res.json())
         .then(data => {
             const drill = data.drills.find(d => d.slug === slug);
