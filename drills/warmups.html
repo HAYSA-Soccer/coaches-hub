@@ -97,15 +97,19 @@
 </footer>
 
 <script>
-    const CATEGORY = "warmups";
+    const CATEGORY = "warmups"; // <-- change per page
 
     let drills = [];
 
     async function loadDrills() {
         const res = await fetch('/coaches-hub/drills/drills.json');
         const data = await res.json();
+
+        // Multi-category support
         drills = data.drills.filter(d =>
-            d.categories && d.categories.includes(CATEGORY) && !d.hidden
+            d.categories &&
+            d.categories.includes(CATEGORY) &&
+            !d.hidden
         );
 
         populateAgeFilter();
@@ -133,20 +137,35 @@
         const age = document.getElementById('ageFilter').value;
 
         const filtered = drills.filter(d => {
-            const matchesSearch = d.title.toLowerCase().includes(search);
+            const matchesSearch =
+                d.title.toLowerCase().includes(search) ||
+                d.tags.some(t => t.toLowerCase().includes(search));
+
             const matchesAge = !age || d.ageGroups.includes(age);
+
             return matchesSearch && matchesAge;
         });
 
         filtered.forEach(d => {
             const card = document.createElement('div');
             card.className = 'card';
+
             card.innerHTML = `
                 <h3>${d.title}</h3>
-                <p><strong>Age Groups:</strong> ${d.ageGroups.join(', ')}</p>
-                <a href="/coaches-hub/drills/view.html?slug=${d.slug}">View Drill →</a>
-            `;
 
+                <p><strong>Categories:</strong> ${d.categories.join(', ')}</p>
+                <p><strong>Age Groups:</strong> ${d.ageGroups.join(', ')}</p>
+
+                ${
+                    d.tags.length
+                        ? `<p><strong>Tags:</strong> ${d.tags.join(', ')}</p>`
+                        : `<p><strong>Tags:</strong> None</p>`
+                }
+
+                <a href="/coaches-hub/drills/view.html?slug=${d.slug}">
+                    View Drill →
+                </a>
+            `;
 
             grid.appendChild(card);
         });
