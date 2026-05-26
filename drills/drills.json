@@ -1,3 +1,43 @@
 {
-  "drills": []
+  "drills": [
+    {
+      "slug": "test-drill",
+      "title": "Test Drill",
+      "categories": [
+        "warmups"
+      ],
+      "ageGroups": [
+        "Grade 3/4"
+      ],
+      "tags": [],
+      "path": "/drills/warmups/test-drill.md",
+      "description": "Test drill information.",
+      "setup": "Cones are good, test only.",
+      "coachingPoints": "Key teaching points here.",
+      "hidden": false
+    },
+    {
+      "slug": "test2",
+      "title": "Test2",
+      "categories": [
+        "passing-receiving",
+        "defending"
+      ],
+      "ageGroups": [
+        "Grade 5/6"
+      ],
+      "tags": [
+        "1vw1",
+        "dribbling",
+        "transition",
+        "pressure",
+        "fun"
+      ],
+      "path": "/drills/passing-receiving/test2.md",
+      "description": "Test Description",
+      "setup": "Cones are great!",
+      "coachingPoints": "Teach stuff.",
+      "hidden": false
+    }
+  ]
 }
