@@ -38,6 +38,27 @@
       "setup": "Cones are great!",
       "coachingPoints": "Teach stuff.",
       "hidden": false
+    },
+    {
+      "slug": "running-drill",
+      "title": "Running drill",
+      "categories": [
+        "warmups",
+        "goalkeeper"
+      ],
+      "ageGroups": [
+        "Grade 5/6"
+      ],
+      "tags": [
+        "Sprint",
+        "run",
+        "faster"
+      ],
+      "path": "/drills/warmups/running-drill.md",
+      "description": "Race to the cone and back",
+      "setup": "One cone is all you need",
+      "coachingPoints": "Run to cone, then back to start.",
+      "hidden": false
     }
   ]
 }
