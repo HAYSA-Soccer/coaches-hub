@@ -1,4 +1,4 @@
-# Running drill
+# Test Drill 3
 
 ## Description
 Race to the cone and back
