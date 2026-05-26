@@ -1,7 +1,7 @@
 {
   "drills": [
     {
-      "slug": "test-drill",
+      "slug": "test-drill-1",
       "title": "Test Drill 1",
       "categories": [
         "warmups"
@@ -10,14 +10,14 @@
         "Grade 3/4"
       ],
       "tags": [],
-      "path": "/drills/warmups/test-drill.md",
+      "path": "/drills/warmups/test-drill-1.md",
       "description": "Test drill information.",
       "setup": "Cones are good, test only.",
       "coachingPoints": "Key teaching points here.",
       "hidden": false
     },
     {
-      "slug": "test2",
+      "slug": "test-drill-2",
       "title": "Test Drill 2",
       "categories": [
         "passing-receiving",
@@ -33,14 +33,14 @@
         "pressure",
         "fun"
       ],
-      "path": "/drills/passing-receiving/test2.md",
+      "path": "/drills/passing-receiving/test-drill-2.md",
       "description": "Test Description",
       "setup": "Cones are great!",
       "coachingPoints": "Teach stuff.",
       "hidden": false
     },
     {
-      "slug": "running-drill",
+      "slug": "test-drill-3",
       "title": "Test Drill 3",
       "categories": [
         "warmups",
@@ -54,7 +54,7 @@
         "run",
         "faster"
       ],
-      "path": "/drills/warmups/running-drill.md",
+      "path": "/drills/warmups/test-drill-3.md",
       "description": "Race to the cone and back",
       "setup": "One cone is all you need",
       "coachingPoints": "Run to cone, then back to start.",
