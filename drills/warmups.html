@@ -104,7 +104,10 @@
     async function loadDrills() {
         const res = await fetch('/coaches-hub/drills/drills.json');
         const data = await res.json();
-        drills = data.drills.filter(d => d.category === CATEGORY && !d.hidden);
+        drills = data.drills.filter(d =>
+            d.categories && d.categories.includes(CATEGORY) && !d.hidden
+        );
+
         populateAgeFilter();
         render();
     }
