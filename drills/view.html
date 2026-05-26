@@ -122,10 +122,11 @@
 
             document.getElementById("drill-title").innerText = drill.title;
             document.getElementById("drill-meta").innerText =
-                `${drill.category.toUpperCase()} • ${drill.ageGroups.join(", ")}`;
+                `${drill.categories.join(", ").toUpperCase()} • ${drill.ageGroups.join(", ")}`;
+
         
         // Populate info card
-        document.getElementById("info-category").innerText = drill.category;
+        document.getElementById("info-category").innerText = drill.categories.join(", ");
         document.getElementById("info-age").innerText = drill.ageGroups.join(", ");
         document.getElementById("info-tags").innerText =
             drill.tags && drill.tags.length ? drill.tags.join(", ") : "None";
