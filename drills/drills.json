@@ -1,5 +1,5 @@
 {
-  "drills":  [
+  "drills": [
     {
       "slug": "test-drill-1",
       "title": "Test Drill 1",
@@ -44,7 +44,7 @@
       "title": "Test Drill 3",
       "categories": [
         "warmups",
-        "goalkeeper"
+        "small-sided"
       ],
       "ageGroups": [
         "Grade 5/6"
