@@ -12,8 +12,12 @@
       "tags": [],
       "path": "/drills/warmups/test-drill-1.md",
       "description": "Test drill information.",
+      "descriptionLong": "",
       "setup": "Cones are good, test only.",
       "coachingPoints": "Key teaching points here.",
+      "images": [],
+      "videoUrl": null,
+      "notes": "",
       "hidden": false
     },
     {
@@ -35,8 +39,12 @@
       ],
       "path": "/drills/passing-receiving/test-drill-2.md",
       "description": "Test Description",
+      "descriptionLong": "",
       "setup": "Cones are great!",
       "coachingPoints": "Teach stuff.",
+      "images": [],
+      "videoUrl": null,
+      "notes": "",
       "hidden": false
     },
     {
@@ -56,8 +64,12 @@
       ],
       "path": "/drills/warmups/test-drill-3.md",
       "description": "Race to the cone and back",
+      "descriptionLong": "",
       "setup": "One cone is all you need",
       "coachingPoints": "Run to cone, then back to start.",
+      "images": [],
+      "videoUrl": null,
+      "notes": "",
       "hidden": false
     }
   ]
