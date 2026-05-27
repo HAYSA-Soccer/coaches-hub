@@ -97,13 +97,20 @@
 </footer>
 
 <script>
-    const CATEGORY = "small-sided"; // <-- category folder name
+    const CATEGORY = "small-sided"; // <-- change per page
 
     let drills = [];
 
     async function loadDrills() {
-        const res = await fetch('/coaches-hub/drills/drills.json');
+        const res = await fetch('drills.json');
         const data = await res.json();
+
+        // Multi-category support
+        drills = data.drills.filter(d =>
+            d.categories &&
+            d.categories.includes(CATEGORY) &&
+            !d.hidden
+        );
 
         // Multi-category support
         drills = data.drills.filter(d =>
