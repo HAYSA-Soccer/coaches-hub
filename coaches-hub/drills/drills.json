@@ -1,0 +1,76 @@
+{
+  "drills": [
+    {
+      "slug": "test-drill-1",
+      "title": "Test Drill 1",
+      "categories": [
+        "warmups"
+      ],
+      "ageGroups": [
+        "Grade 3/4"
+      ],
+      "tags": [],
+      "path": "/coaches-hub/drills/warmups/test-drill-1.md",
+      "description": "Test drill information.",
+      "descriptionLong": "",
+      "setup": "Cones are good, test only.",
+      "coachingPoints": "Key teaching points here.",
+      "images": [],
+      "videoUrl": null,
+      "notes": "",
+      "hidden": false
+    },
+    {
+      "slug": "test-drill-2",
+      "title": "Test Drill 2",
+      "categories": [
+        "passing-receiving",
+        "defending"
+      ],
+      "ageGroups": [
+        "Grade 5/6"
+      ],
+      "tags": [
+        "1v1",
+        "dribbling",
+        "transition",
+        "pressure",
+        "fun"
+      ],
+      "path": "/coaches-hub/drills/passing-receiving/test-drill-2.md",
+      "description": "Test Description",
+      "descriptionLong": "",
+      "setup": "Cones are great!",
+      "coachingPoints": "Teach stuff.",
+      "images": [],
+      "videoUrl": null,
+      "notes": "",
+      "hidden": false
+    },
+    {
+      "slug": "test-drill-3",
+      "title": "Test Drill 3",
+      "categories": [
+        "warmups",
+        "small-sided"
+      ],
+      "ageGroups": [
+        "Grade 5/6"
+      ],
+      "tags": [
+        "Sprint",
+        "run",
+        "faster"
+      ],
+      "path": "/coaches-hub/drills/warmups/test-drill-3.md",
+      "description": "Race to the cone and back",
+      "descriptionLong": "",
+      "setup": "One cone is all you need",
+      "coachingPoints": "Run to cone, then back to start.",
+      "images": [],
+      "videoUrl": null,
+      "notes": "",
+      "hidden": false
+    }
+  ]
+}
