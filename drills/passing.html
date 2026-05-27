@@ -102,7 +102,7 @@
     let drills = [];
 
     async function loadDrills() {
-        const res = await fetch('drills.json');
+        const res = await fetch('/coaches-hub/drills/drills.json');
         const data = await res.json();
 
         // Multi-category support
