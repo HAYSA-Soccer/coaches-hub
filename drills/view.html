@@ -7,6 +7,22 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
+
+        #image-gallery {
+            margin: 20px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 15px;
+        }
+        
+        #image-gallery img {
+            width: 100%;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        
+                
         .drill-content-wrapper {
             max-width: 900px;
             margin: 0 auto;
@@ -77,6 +93,8 @@
 
     <div class="drill-content-wrapper">
         <a class="back-link" href="/coaches-hub/drills/index.html">← Back to Drills</a>
+        <div id="image-gallery"></div>
+        <div id="video-embed"></div>
         <div id="drill-content" class="markdown-body"></div>
     </div>
 
@@ -112,51 +130,110 @@
 </footer>
 
 <script>
-    const params = new URLSearchParams(window.location.search);
-    const slug = params.get("slug");
+const params = new URLSearchParams(window.location.search);
+const slug = params.get("slug");
 
-    fetch("/drills/drills.json")
-        .then(res => res.json())
-        .then(data => {
-            const drill = data.drills.find(d => d.slug === slug);
+fetch("/coaches-hub/drills/drills.json")
+    .then(res => res.json())
+    .then(data => {
+        const drill = data.drills.find(d => d.slug === slug);
 
-            document.getElementById("drill-title").innerText = drill.title;
-            document.getElementById("drill-meta").innerText =
-                `${drill.categories.join(", ").toUpperCase()} • ${drill.ageGroups.join(", ")}`;
+        document.getElementById("drill-title").innerText = drill.title;
+        document.getElementById("drill-meta").innerText =
+            `${drill.categories.join(", ").toUpperCase()} • ${drill.ageGroups.join(", ")}`;
 
-        
         // Populate info card
         document.getElementById("info-category").innerText = drill.categories.join(", ");
         document.getElementById("info-age").innerText = drill.ageGroups.join(", ");
         document.getElementById("info-tags").innerText =
             drill.tags && drill.tags.length ? drill.tags.join(", ") : "None";
-        
-        
-                    
-            fetch("/coaches-hub" + drill.path)
-                .then(res => res.text())
-                .then(md => {
-                    let html = marked.parse(md);
-            
-                    // Add icons to section headers
-                    html = html
-                        .replace("<h2>Description</h2>", '<h2 data-icon="📝">Description</h2>')
-                        .replace("<h2>Setup</h2>", '<h2 data-icon="⚽">Setup</h2>')
-                        .replace("<h2>Coaching Points</h2>", '<h2 data-icon="🎯">Coaching Points</h2>')
-                        .replace("<h2>Variations</h2>", '<h2 data-icon="🔄">Variations</h2>')
-                        .replace("<h2>Video</h2>", '<h2 data-icon="🎥">Video</h2>');
-            
-                    // YouTube auto-embed
-                    html = html.replace(
-                        /(https?:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_-]+))/g,
-                        `<iframe src="https://www.youtube.com/embed/$2" frameborder="0" allowfullscreen></iframe>`
-                    );
-            
-                    document.getElementById("drill-content").innerHTML = html;
-                });
 
-        });
+        // Render images
+        renderImages(drill.images);
+
+        // Render video
+        renderVideo(drill.videoUrl);
+
+        // Load markdown content
+        fetch("/coaches-hub" + drill.path)
+            .then(res => res.text())
+            .then(md => {
+                let html = marked.parse(md);
+
+                // Add icons to section headers
+                html = html
+                    .replace("<h2>Description</h2>", '<h2 data-icon="📝">Description</h2>')
+                    .replace("<h2>Setup</h2>", '<h2 data-icon="⚽">Setup</h2>')
+                    .replace("<h2>Coaching Points</h2>", '<h2 data-icon="🎯">Coaching Points</h2>')
+                    .replace("<h2>Variations</h2>", '<h2 data-icon="🔄">Variations</h2>')
+                    .replace("<h2>Video</h2>", '<h2 data-icon="🎥">Video</h2>');
+
+                document.getElementById("drill-content").innerHTML = html;
+            });
+    });
+
+
+// -----------------------------
+// IMAGE GALLERY
+// -----------------------------
+function renderImages(images) {
+    const gallery = document.getElementById("image-gallery");
+    if (!images || images.length === 0) {
+        gallery.style.display = "none";
+        return;
+    }
+
+    gallery.innerHTML = images
+        .map(url => `<img src="${url}" alt="Drill image">`)
+        .join("");
+}
+
+
+// -----------------------------
+// UNIVERSAL VIDEO EMBED
+// -----------------------------
+function renderVideo(url) {
+    const container = document.getElementById("video-embed");
+    if (!url) {
+        container.style.display = "none";
+        return;
+    }
+
+    // YouTube
+    if (url.includes("youtube.com") || url.includes("youtu.be")) {
+        const id = url.split("v=")[1]?.split("&")[0] ||
+                   url.split("youtu.be/")[1];
+        container.innerHTML = `
+            <iframe src="https://www.youtube.com/embed/${id}"
+                    frameborder="0" allowfullscreen></iframe>`;
+        return;
+    }
+
+    // TikTok
+    if (url.includes("tiktok.com")) {
+        container.innerHTML = `
+            <blockquote class="tiktok-embed" cite="${url}">
+                <a href="${url}"></a>
+            </blockquote>
+            <script async src="https://www.tiktok.com/embed.js"></script>`;
+        return;
+    }
+
+    // Facebook
+    if (url.includes("facebook.com") || url.includes("fb.watch")) {
+        container.innerHTML = `
+            <div id="fb-root"></div>
+            <script async defer crossorigin="anonymous"
+                src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v17.0"></script>
+            <div class="fb-video" data-href="${url}" data-width="500"></div>`;
+        return;
+    }
+
+    // Fallback: link only
+    container.innerHTML = `<p><a href="${url}" target="_blank">Watch Video</a></p>`;
+}
 </script>
+
 
 </body>
 </html>
