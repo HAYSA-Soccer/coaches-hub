@@ -155,7 +155,7 @@ fetch("/coaches-hub/drills/drills.json")
         renderVideo(drill.videoUrl);
 
         // Load markdown content
-        fetch("/coaches-hub" + drill.path)
+        fetch(drill.path)
             .then(res => res.text())
             .then(md => {
                 let html = marked.parse(md);
