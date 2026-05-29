@@ -7,35 +7,36 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
-
+        /* --- TWO COLUMN LAYOUT --- */
         .two-column {
             display: flex;
             gap: 30px;
         }
-        
-        /* LEFT SIDE: drill content */
+
+        /* LEFT SIDE: markdown content */
         .two-column #drill-content {
             flex: 2;
         }
-        
+
         /* RIGHT SIDE: image gallery */
         .two-column #image-gallery {
             flex: 1;
             max-width: 300px;
         }
-        
-        /* Image styling for sidebar layout */
+
+        /* Sidebar image styling */
         #image-gallery img {
             width: 100%;
             border-radius: 8px;
             margin-bottom: 10px;
+            object-fit: cover;
         }
-        
-        /* Remove the old grid layout */
+
+        /* Remove old grid layout */
         #image-gallery {
             margin: 20px 0;
         }
-        
+
         /* Existing styles */
         .drill-content-wrapper {
             max-width: 900px;
@@ -67,7 +68,6 @@
         .back-link:hover {
             text-decoration: underline;
         }
-
     </style>
 </head>
 
@@ -99,12 +99,17 @@
         <span class="info-item"><strong>Tags:</strong> <span id="info-tags"></span></span>
     </div>
 
-    <div class="drill-content-wrapper two-column">
+    <div class="drill-content-wrapper">
 
         <a class="back-link" href="/coaches-hub/drills/index.html">← Back to Drills</a>
-        <div id="image-gallery"></div>
+
+        <div class="two-column">
+            <div id="drill-content" class="markdown-body"></div>
+            <div id="image-gallery"></div>
+        </div>
+
         <div id="video-embed"></div>
-        <div id="drill-content" class="markdown-body"></div>
+
     </div>
 </main>
 
@@ -151,11 +156,7 @@
         gallery.innerHTML = html;
     }
 
-    /*  
-     *  ⭐ FIXED VIDEO EMBED FUNCTION  
-     *  No inline <script> tags inside strings  
-     *  No early termination of the main script  
-     */
+    /* FIXED VIDEO EMBED FUNCTION */
     function renderVideo(url) {
         var container = qs("video-embed");
         if (!url) {
@@ -163,42 +164,41 @@
             return;
         }
 
-        var html = "";
-
         // YouTube
-        if (url.indexOf("youtube.com") !== -1 || url.indexOf("youtu.be") !== -1) {
-            var id = "";
-            if (url.indexOf("v=") !== -1) {
+        if (url.includes("youtube.com") || url.includes("youtu.be")) {
+            let id = "";
+            if (url.includes("v=")) {
                 id = url.split("v=")[1].split("&")[0];
             } else {
                 id = url.split("youtu.be/")[1];
             }
-            html = '<iframe src="https://www.youtube.com/embed/' + id + '" frameborder="0" allowfullscreen></iframe>';
-            container.innerHTML = html;
+            container.innerHTML =
+                '<iframe src="https://www.youtube.com/embed/' + id +
+                '" frameborder="0" allowfullscreen></iframe>';
             return;
         }
 
-        // TikTok — SAFE VERSION
-        if (url.indexOf("tiktok.com") !== -1) {
+        // TikTok
+        if (url.includes("tiktok.com")) {
             container.innerHTML =
                 '<blockquote class="tiktok-embed" cite="' + url + '">' +
                     '<a href="' + url + '"></a>' +
                 '</blockquote>';
 
-            var s = document.createElement("script");
+            const s = document.createElement("script");
             s.src = "https://www.tiktok.com/embed.js";
             s.async = true;
             document.body.appendChild(s);
             return;
         }
 
-        // Facebook — SAFE VERSION
-        if (url.indexOf("facebook.com") !== -1 || url.indexOf("fb.watch") !== -1) {
+        // Facebook
+        if (url.includes("facebook.com") || url.includes("fb.watch")) {
             container.innerHTML =
                 '<div id="fb-root"></div>' +
                 '<div class="fb-video" data-href="' + url + '" data-width="500"></div>';
 
-            var f = document.createElement("script");
+            const f = document.createElement("script");
             f.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v17.0";
             f.async = true;
             f.defer = true;
@@ -207,7 +207,8 @@
         }
 
         // Fallback
-        container.innerHTML = '<p><a href="' + url + '" target="_blank">Watch Video</a></p>';
+        container.innerHTML =
+            '<p><a href="' + url + '" target="_blank">Watch Video</a></p>';
     }
 
     function enhanceHeaders(html) {
@@ -220,19 +221,13 @@
     }
 
     function load() {
-        var params = new URLSearchParams(window.location.search);
-        var slug = params.get("slug");
+        const params = new URLSearchParams(window.location.search);
+        const slug = params.get("slug");
 
         fetch("/coaches-hub/drills/drills.json")
-            .then(function(res) { return res.json(); })
-            .then(function(data) {
-                var drill = null;
-                for (var i = 0; i < data.drills.length; i++) {
-                    if (data.drills[i].slug === slug) {
-                        drill = data.drills[i];
-                        break;
-                    }
-                }
+            .then(res => res.json())
+            .then(data => {
+                const drill = data.drills.find(d => d.slug === slug);
                 if (!drill) return;
 
                 qs("drill-title").innerText = drill.title;
@@ -243,15 +238,15 @@
                 qs("info-category").innerText = drill.categories.join(", ");
                 qs("info-age").innerText = drill.ageGroups.join(", ");
                 qs("info-tags").innerText =
-                    (drill.tags && drill.tags.length > 0) ? drill.tags.join(", ") : "None";
+                    drill.tags?.length ? drill.tags.join(", ") : "None";
 
                 renderImages(drill.images);
                 renderVideo(drill.videoUrl);
 
                 fetch("/coaches-hub" + drill.path)
-                    .then(function(res) { return res.text(); })
-                    .then(function(md) {
-                        var html = marked.parse(md);
+                    .then(res => res.text())
+                    .then(md => {
+                        let html = marked.parse(md);
                         html = enhanceHeaders(html);
                         qs("drill-content").innerHTML = html;
                     });
