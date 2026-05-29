@@ -130,6 +130,11 @@
         gallery.innerHTML = html;
     }
 
+    /*  
+     *  ⭐ FIXED VIDEO EMBED FUNCTION  
+     *  No inline <script> tags inside strings  
+     *  No early termination of the main script  
+     */
     function renderVideo(url) {
         var container = qs("video-embed");
         if (!url) {
@@ -139,6 +144,7 @@
 
         var html = "";
 
+        // YouTube
         if (url.indexOf("youtube.com") !== -1 || url.indexOf("youtu.be") !== -1) {
             var id = "";
             if (url.indexOf("v=") !== -1) {
@@ -147,25 +153,40 @@
                 id = url.split("youtu.be/")[1];
             }
             html = '<iframe src="https://www.youtube.com/embed/' + id + '" frameborder="0" allowfullscreen></iframe>';
-        }
-        else if (url.indexOf("tiktok.com") !== -1) {
-            html =
-                '<blockquote class="tiktok-embed" cite="' + url + '">' +
-                    '<a href="' + url + '"></a>' +
-                '</blockquote>' +
-                '<script async src="https://www.tiktok.com/embed.js"></script>';
-        }
-        else if (url.indexOf("facebook.com") !== -1 || url.indexOf("fb.watch") !== -1) {
-            html =
-                '<div id="fb-root"></div>' +
-                '<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v17.0"></script>' +
-                '<div class="fb-video" data-href="' + url + '" data-width="500"></div>';
-        }
-        else {
-            html = '<p><a href="' + url + '" target="_blank">Watch Video</a></p>';
+            container.innerHTML = html;
+            return;
         }
 
-        container.innerHTML = html;
+        // TikTok — SAFE VERSION
+        if (url.indexOf("tiktok.com") !== -1) {
+            container.innerHTML =
+                '<blockquote class="tiktok-embed" cite="' + url + '">' +
+                    '<a href="' + url + '"></a>' +
+                '</blockquote>';
+
+            var s = document.createElement("script");
+            s.src = "https://www.tiktok.com/embed.js";
+            s.async = true;
+            document.body.appendChild(s);
+            return;
+        }
+
+        // Facebook — SAFE VERSION
+        if (url.indexOf("facebook.com") !== -1 || url.indexOf("fb.watch") !== -1) {
+            container.innerHTML =
+                '<div id="fb-root"></div>' +
+                '<div class="fb-video" data-href="' + url + '" data-width="500"></div>';
+
+            var f = document.createElement("script");
+            f.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v17.0";
+            f.async = true;
+            f.defer = true;
+            document.body.appendChild(f);
+            return;
+        }
+
+        // Fallback
+        container.innerHTML = '<p><a href="' + url + '" target="_blank">Watch Video</a></p>';
     }
 
     function enhanceHeaders(html) {
