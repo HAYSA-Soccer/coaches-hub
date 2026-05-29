@@ -7,46 +7,37 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
-
         #image-gallery {
             margin: 20px 0;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 15px;
         }
-        
         #image-gallery img {
             width: 100%;
             border-radius: 8px;
             object-fit: cover;
         }
-        
-        
-                
         .drill-content-wrapper {
             max-width: 900px;
             margin: 0 auto;
             padding: 20px 0 60px 0;
         }
-
         .markdown-body h2 {
             margin-top: 30px;
             border-bottom: 2px solid #eee;
             padding-bottom: 5px;
         }
-
         .markdown-body p {
             line-height: 1.6;
             margin-bottom: 15px;
         }
-
         iframe {
             width: 100%;
             height: 400px;
             margin-top: 20px;
             border-radius: 8px;
         }
-
         .back-link {
             display: inline-block;
             margin-bottom: 20px;
@@ -54,7 +45,6 @@
             text-decoration: none;
             font-weight: bold;
         }
-
         .back-link:hover {
             text-decoration: underline;
         }
@@ -78,8 +68,6 @@
 </nav>
 
 <main>
-
-    <!-- REQUIRED FOR YOUR CSS TO WORK -->
     <section class="page-header">
         <h1 id="drill-title">Loading...</h1>
         <p id="drill-meta"></p>
@@ -97,17 +85,14 @@
         <div id="video-embed"></div>
         <div id="drill-content" class="markdown-body"></div>
     </div>
-
 </main>
 
 <footer class="site-footer">
     <div class="footer-content">
-
         <div class="footer-section">
             <h3>HAYSA Coaches Hub</h3>
             <p>Resources for Holbrook Avon Youth Soccer coaches.</p>
         </div>
-
         <div class="footer-section">
             <h4>Quick Links</h4>
             <ul>
@@ -118,122 +103,97 @@
                 <li><a href="/coaches-hub/submissions/index.html">Submit a Drill</a></li>
             </ul>
         </div>
-
         <div class="footer-section">
             <h4>Contact</h4>
             <p>Email: <a href="mailto:coachcoordinator.haysa@gmail.com">coachcoordinator.haysa@gmail.com</a></p>
             <p>Website: <a href="https://www.haysa.org" target="_blank">www.haysa.org</a></p>
         </div>
     </div>
-
     <div class="footer-bottom">© HAYSA — Holbrook Avon Youth Soccer Association</div>
 </footer>
 
 <script>
-const params = new URLSearchParams(window.location.search);
-const slug = params.get("slug");
+(function() {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const slug = params.get("slug");
 
-fetch("/coaches-hub/drills/drills.json")
-    .then(res => res.json())
-    .then(data => {
-        const drill = data.drills.find(d => d.slug === slug);
+        fetch("/coaches-hub/drills/drills.json")
+            .then(res => res.json())
+            .then(data => {
+                const drill = data.drills.find(d => d.slug === slug);
+                if (!drill) return;
 
-        document.getElementById("drill-title").innerText = drill.title;
-        document.getElementById("drill-meta").innerText =
-            `${drill.categories.join(", ").toUpperCase()} • ${drill.ageGroups.join(", ")}`;
+                document.getElementById("drill-title").innerText = drill.title;
+                document.getElementById("drill-meta").innerText =
+                    `${drill.categories.join(", ").toUpperCase()} • ${drill.ageGroups.join(", ")}`;
 
-        // Populate info card
-        document.getElementById("info-category").innerText = drill.categories.join(", ");
-        document.getElementById("info-age").innerText = drill.ageGroups.join(", ");
-        document.getElementById("info-tags").innerText =
-            drill.tags && drill.tags.length ? drill.tags.join(", ") : "None";
+                document.getElementById("info-category").innerText = drill.categories.join(", ");
+                document.getElementById("info-age").innerText = drill.ageGroups.join(", ");
+                document.getElementById("info-tags").innerText =
+                    drill.tags?.length ? drill.tags.join(", ") : "None";
 
-        // Render images
-        renderImages(drill.images);
+                renderImages(drill.images);
+                renderVideo(drill.videoUrl);
 
-        // Render video
-        renderVideo(drill.videoUrl);
-
-        // Load markdown content
-        fetch(`/coaches-hub${drill.path}`)
-            .then(res => res.text())
-            .then(md => {
-                let html = marked.parse(md);
-
-                // Add icons to section headers
-                html = html
-                    .replace("<h2>Description</h2>", '<h2 data-icon="📝">Description</h2>')
-                    .replace("<h2>Setup</h2>", '<h2 data-icon="⚽">Setup</h2>')
-                    .replace("<h2>Coaching Points</h2>", '<h2 data-icon="🎯">Coaching Points</h2>')
-                    .replace("<h2>Variations</h2>", '<h2 data-icon="🔄">Variations</h2>')
-                    .replace("<h2>Video</h2>", '<h2 data-icon="🎥">Video</h2>');
-
-                document.getElementById("drill-content").innerHTML = html;
+                fetch(`/coaches-hub${drill.path}`)
+                    .then(res => res.text())
+                    .then(md => {
+                        let html = marked.parse(md);
+                        html = html
+                            .replace("<h2>Description</h2>", '<h2 data-icon="📝">Description</h2>')
+                            .replace("<h2>Setup</h2>", '<h2 data-icon="⚽">Setup</h2>')
+                            .replace("<h2>Coaching Points</h2>", '<h2 data-icon="🎯">Coaching Points</h2>')
+                            .replace("<h2>Variations</h2>", '<h2 data-icon="🔄">Variations</h2>')
+                            .replace("<h2>Video</h2>", '<h2 data-icon="🎥">Video</h2>');
+                        document.getElementById("drill-content").innerHTML = html;
+                    });
             });
-    });
 
+        function renderImages(images) {
+            const gallery = document.getElementById("image-gallery");
+            if (!images?.length) {
+                gallery.style.display = "none";
+                return;
+            }
+            gallery.innerHTML = images.map(url => `<img src="${url}" alt="Drill image">`).join("");
+        }
 
-// -----------------------------
-// IMAGE GALLERY
-// -----------------------------
-function renderImages(images) {
-    const gallery = document.getElementById("image-gallery");
-    if (!images || images.length === 0) {
-        gallery.style.display = "none";
-        return;
+        function renderVideo(url) {
+            const container = document.getElementById("video-embed");
+            if (!url) {
+                container.style.display = "none";
+                return;
+            }
+            if (url.includes("youtube.com") || url.includes("youtu.be")) {
+                const id = url.split("v=")[1]?.split("&")[0] || url.split("youtu.be/")[1];
+                container.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`;
+                return;
+            }
+            if (url.includes("tiktok.com")) {
+                container.innerHTML = `
+                    <blockquote class="tiktok-embed" cite="${url}">
+                        <a href="${url}"></a>
+                    </blockquote>
+                    <script async src="https://www.tiktok.com/embed.js"></script>`;
+                return;
+            }
+            if (url.includes("facebook.com") || url.includes("fb.watch")) {
+                container.innerHTML = `
+                    <div id="fb-root"></div>
+                    <script async defer crossorigin="anonymous"
+                        src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v17.0"></script>
+                    <div class="fb-video" data-href="${url}" data-width="500"></div>`;
+                return;
+            }
+            container.innerHTML = `<p><a href="${url}" target="_blank">Watch Video</a></p>`;
+        }
+
+    } catch (err) {
+        console.error("Viewer crashed:", err);
     }
-
-    gallery.innerHTML = images
-        .map(url => `<img src="${url}" alt="Drill image">`)
-        .join("");
-}
-
-
-// -----------------------------
-// UNIVERSAL VIDEO EMBED
-// -----------------------------
-function renderVideo(url) {
-    const container = document.getElementById("video-embed");
-    if (!url) {
-        container.style.display = "none";
-        return;
-    }
-
-    // YouTube
-    if (url.includes("youtube.com") || url.includes("youtu.be")) {
-        const id = url.split("v=")[1]?.split("&")[0] ||
-                   url.split("youtu.be/")[1];
-        container.innerHTML = `
-            <iframe src="https://www.youtube.com/embed/${id}"
-                    frameborder="0" allowfullscreen></iframe>`;
-        return;
-    }
-
-    // TikTok
-    if (url.includes("tiktok.com")) {
-        container.innerHTML = `
-            <blockquote class="tiktok-embed" cite="${url}">
-                <a href="${url}"></a>
-            </blockquote>
-            <script async src="https://www.tiktok.com/embed.js"></script>`;
-        return;
-    }
-
-    // Facebook
-    if (url.includes("facebook.com") || url.includes("fb.watch")) {
-        container.innerHTML = `
-            <div id="fb-root"></div>
-            <script async defer crossorigin="anonymous"
-                src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v17.0"></script>
-            <div class="fb-video" data-href="${url}" data-width="500"></div>`;
-        return;
-    }
-
-    // Fallback: link only
-    container.innerHTML = `<p><a href="${url}" target="_blank">Watch Video</a></p>`;
-}
+})();
 </script>
-
 
 </body>
 </html>
