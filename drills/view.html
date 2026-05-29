@@ -114,84 +114,110 @@
 
 <script>
 (function() {
-    try {
-        const params = new URLSearchParams(window.location.search);
-        const slug = params.get("slug");
+
+    function qs(id) { return document.getElementById(id); }
+
+    function renderImages(images) {
+        var gallery = qs("image-gallery");
+        if (!images || images.length === 0) {
+            gallery.style.display = "none";
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < images.length; i++) {
+            html += '<img src="' + images[i] + '" alt="Drill image">';
+        }
+        gallery.innerHTML = html;
+    }
+
+    function renderVideo(url) {
+        var container = qs("video-embed");
+        if (!url) {
+            container.style.display = "none";
+            return;
+        }
+
+        var html = "";
+
+        if (url.indexOf("youtube.com") !== -1 || url.indexOf("youtu.be") !== -1) {
+            var id = "";
+            if (url.indexOf("v=") !== -1) {
+                id = url.split("v=")[1].split("&")[0];
+            } else {
+                id = url.split("youtu.be/")[1];
+            }
+            html = '<iframe src="https://www.youtube.com/embed/' + id + '" frameborder="0" allowfullscreen></iframe>';
+        }
+        else if (url.indexOf("tiktok.com") !== -1) {
+            html =
+                '<blockquote class="tiktok-embed" cite="' + url + '">' +
+                    '<a href="' + url + '"></a>' +
+                '</blockquote>' +
+                '<script async src="https://www.tiktok.com/embed.js"></script>';
+        }
+        else if (url.indexOf("facebook.com") !== -1 || url.indexOf("fb.watch") !== -1) {
+            html =
+                '<div id="fb-root"></div>' +
+                '<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v17.0"></script>' +
+                '<div class="fb-video" data-href="' + url + '" data-width="500"></div>';
+        }
+        else {
+            html = '<p><a href="' + url + '" target="_blank">Watch Video</a></p>';
+        }
+
+        container.innerHTML = html;
+    }
+
+    function enhanceHeaders(html) {
+        html = html.replace("<h2>Description</h2>", '<h2 data-icon="📝">Description</h2>');
+        html = html.replace("<h2>Setup</h2>", '<h2 data-icon="⚽">Setup</h2>');
+        html = html.replace("<h2>Coaching Points</h2>", '<h2 data-icon="🎯">Coaching Points</h2>');
+        html = html.replace("<h2>Variations</h2>", '<h2 data-icon="🔄">Variations</h2>');
+        html = html.replace("<h2>Video</h2>", '<h2 data-icon="🎥">Video</h2>');
+        return html;
+    }
+
+    function load() {
+        var params = new URLSearchParams(window.location.search);
+        var slug = params.get("slug");
 
         fetch("/coaches-hub/drills/drills.json")
-            .then(res => res.json())
-            .then(data => {
-                const drill = data.drills.find(d => d.slug === slug);
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                var drill = null;
+                for (var i = 0; i < data.drills.length; i++) {
+                    if (data.drills[i].slug === slug) {
+                        drill = data.drills[i];
+                        break;
+                    }
+                }
                 if (!drill) return;
 
-                document.getElementById("drill-title").innerText = drill.title;
-                document.getElementById("drill-meta").innerText =
-                    `${drill.categories.join(", ").toUpperCase()} • ${drill.ageGroups.join(", ")}`;
+                qs("drill-title").innerText = drill.title;
+                qs("drill-meta").innerText =
+                    drill.categories.join(", ").toUpperCase() + " • " +
+                    drill.ageGroups.join(", ");
 
-                document.getElementById("info-category").innerText = drill.categories.join(", ");
-                document.getElementById("info-age").innerText = drill.ageGroups.join(", ");
-                document.getElementById("info-tags").innerText =
-                    drill.tags?.length ? drill.tags.join(", ") : "None";
+                qs("info-category").innerText = drill.categories.join(", ");
+                qs("info-age").innerText = drill.ageGroups.join(", ");
+                qs("info-tags").innerText =
+                    (drill.tags && drill.tags.length > 0) ? drill.tags.join(", ") : "None";
 
                 renderImages(drill.images);
                 renderVideo(drill.videoUrl);
 
-                fetch(`/coaches-hub${drill.path}`)
-                    .then(res => res.text())
-                    .then(md => {
-                        let html = marked.parse(md);
-                        html = html
-                            .replace("<h2>Description</h2>", '<h2 data-icon="📝">Description</h2>')
-                            .replace("<h2>Setup</h2>", '<h2 data-icon="⚽">Setup</h2>')
-                            .replace("<h2>Coaching Points</h2>", '<h2 data-icon="🎯">Coaching Points</h2>')
-                            .replace("<h2>Variations</h2>", '<h2 data-icon="🔄">Variations</h2>')
-                            .replace("<h2>Video</h2>", '<h2 data-icon="🎥">Video</h2>');
-                        document.getElementById("drill-content").innerHTML = html;
+                fetch("/coaches-hub" + drill.path)
+                    .then(function(res) { return res.text(); })
+                    .then(function(md) {
+                        var html = marked.parse(md);
+                        html = enhanceHeaders(html);
+                        qs("drill-content").innerHTML = html;
                     });
             });
-
-        function renderImages(images) {
-            const gallery = document.getElementById("image-gallery");
-            if (!images?.length) {
-                gallery.style.display = "none";
-                return;
-            }
-            gallery.innerHTML = images.map(url => `<img src="${url}" alt="Drill image">`).join("");
-        }
-
-        function renderVideo(url) {
-            const container = document.getElementById("video-embed");
-            if (!url) {
-                container.style.display = "none";
-                return;
-            }
-            if (url.includes("youtube.com") || url.includes("youtu.be")) {
-                const id = url.split("v=")[1]?.split("&")[0] || url.split("youtu.be/")[1];
-                container.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`;
-                return;
-            }
-            if (url.includes("tiktok.com")) {
-                container.innerHTML = `
-                    <blockquote class="tiktok-embed" cite="${url}">
-                        <a href="${url}"></a>
-                    </blockquote>
-                    <script async src="https://www.tiktok.com/embed.js"></script>`;
-                return;
-            }
-            if (url.includes("facebook.com") || url.includes("fb.watch")) {
-                container.innerHTML = `
-                    <div id="fb-root"></div>
-                    <script async defer crossorigin="anonymous"
-                        src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v17.0"></script>
-                    <div class="fb-video" data-href="${url}" data-width="500"></div>`;
-                return;
-            }
-            container.innerHTML = `<p><a href="${url}" target="_blank">Watch Video</a></p>`;
-        }
-
-    } catch (err) {
-        console.error("Viewer crashed:", err);
     }
+
+    load();
+
 })();
 </script>
 
