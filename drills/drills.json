@@ -67,7 +67,9 @@
       "descriptionLong": "",
       "setup": "One cone is all you need",
       "coachingPoints": "Run to cone, then back to start.",
-      "images": [],
+      "images": [
+        "https://i.imgur.com/abcd123.jpg"
+      ],
       "videoUrl": null,
       "notes": "",
       "hidden": false
