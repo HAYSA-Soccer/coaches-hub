@@ -1,4 +1,4 @@
-# Test Drill 1
+# Warmup Drill
 
 ## Description
 Test drill information.
