@@ -1,4 +1,4 @@
-# Test Drill 3
+# Cone Race Drill
 
 ## Description
 Race to the cone and back
