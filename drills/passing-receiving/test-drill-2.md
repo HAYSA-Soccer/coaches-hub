@@ -1,4 +1,4 @@
-# Test Drill 2
+# Passing Drill
 
 ## Description
 Test Description
