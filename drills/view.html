@@ -7,17 +7,36 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
-        #image-gallery {
-            margin: 20px 0;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 15px;
+
+        .two-column {
+            display: flex;
+            gap: 30px;
         }
+        
+        /* LEFT SIDE: drill content */
+        .two-column #drill-content {
+            flex: 2;
+        }
+        
+        /* RIGHT SIDE: image gallery */
+        .two-column #image-gallery {
+            flex: 1;
+            max-width: 300px;
+        }
+        
+        /* Image styling for sidebar layout */
         #image-gallery img {
             width: 100%;
             border-radius: 8px;
-            object-fit: cover;
+            margin-bottom: 10px;
         }
+        
+        /* Remove the old grid layout */
+        #image-gallery {
+            margin: 20px 0;
+        }
+        
+        /* Existing styles */
         .drill-content-wrapper {
             max-width: 900px;
             margin: 0 auto;
@@ -48,6 +67,7 @@
         .back-link:hover {
             text-decoration: underline;
         }
+
     </style>
 </head>
 
@@ -79,7 +99,8 @@
         <span class="info-item"><strong>Tags:</strong> <span id="info-tags"></span></span>
     </div>
 
-    <div class="drill-content-wrapper">
+    <div class="drill-content-wrapper two-column">
+
         <a class="back-link" href="/coaches-hub/drills/index.html">← Back to Drills</a>
         <div id="image-gallery"></div>
         <div id="video-embed"></div>
