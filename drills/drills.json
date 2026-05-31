@@ -75,6 +75,30 @@
       "videoUrl": null,
       "notes": "",
       "hidden": false
+    },
+    {
+      "slug": "proper-heading",
+      "title": "Proper heading",
+      "categories": [
+        "defending",
+        "goalkeeper"
+      ],
+      "ageGroups": [
+        "Grade 7/8"
+      ],
+      "tags": [
+        "Heading",
+        "header"
+      ],
+      "path": "/drills/defending/proper-heading.md",
+      "description": "Teaches fundamentals of heading",
+      "descriptionLong": "",
+      "setup": "Video details information around heading. Ensure you?re only teaching for specified amounts of time and educating young players appropriately.",
+      "coachingPoints": "Ensure head is properly centered on the ball.  Heading can be used to send the ball back to a goalies hands.",
+      "images": [],
+      "videoUrl": null,
+      "notes": "",
+      "hidden": false
     }
   ]
 }
