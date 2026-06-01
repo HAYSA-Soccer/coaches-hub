@@ -10,7 +10,7 @@ Video details information around heading. Ensure you?re only teaching for specif
 Ensure head is properly centered on the ball.  Heading can be used to send the ball back to a goalies hands.
 
 ## Variations
-
+Test Text in Variations
 
 ## Video
 https://m.youtube.com/watch?v=Dqlar8R3j8M
