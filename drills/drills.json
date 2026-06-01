@@ -18,7 +18,7 @@
       "coachingPoints": "Key teaching points here.",
       "variations": "",
       "images": [],
-      "videoUrl": "www.youtube.com",
+      "videoUrl": null,
       "notes": "",
       "hidden": false
     },
@@ -46,7 +46,7 @@
       "coachingPoints": "Teach stuff.",
       "variations": "",
       "images": [],
-      "videoUrl": "www.tiktok.com",
+      "videoUrl": null,
       "notes": "",
       "hidden": false
     },
@@ -75,7 +75,7 @@
         "https://internationalfootball.academy/wp-content/uploads/Website-Image.png",
         "https://tse1.mm.bing.net/th/id/OIP.Rj7ZfokeWmPf_Me1zvkEQAHaEV?pid=Api&h=220&P=0"
       ],
-      "videoUrl": "https://www.facebook.com/share/r/18NVMvU9BH/?mibextid=wwXIfr",
+      "videoUrl": null,
       "notes": "",
       "hidden": false
     },
