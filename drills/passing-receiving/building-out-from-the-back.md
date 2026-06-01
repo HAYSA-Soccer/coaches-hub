@@ -12,3 +12,5 @@ You want to work with the typical number of players in their normal positions to
 ## Variations
 
 
+## Video
+https://www.facebook.com/share/r/1CzqMqekhU/
