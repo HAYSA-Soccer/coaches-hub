@@ -25,7 +25,6 @@
       color:#1a365d;
     }
 
-    /* Horizontal step path */
     .steps-container {
       display: flex;
       justify-content: space-between;
@@ -93,23 +92,6 @@
       box-shadow:0 4px 12px rgba(0,0,0,0.1);
     }
 
-    /* Cropped calendar window */
-    .calendar-crop {
-      width: 100%;
-      max-width: 1400px;
-      height: 700px; /* visible window */
-      overflow: hidden; /* hides early/late hours */
-      margin: 0 auto;
-      border-radius: 12px;
-    }
-
-    .calendar-iframe {
-      width: 100%;
-      height: 1400px; /* full calendar height */
-      border: none;
-      transform: translateY(-300px); /* shift up to hide 12am–8am */
-    }
-
     #toggleCalendar {
       background:#0078d4;
       color:white;
@@ -153,7 +135,6 @@
     </ul>
 </nav>
 
-<!-- PAGE BANNER -->
 <div style="
   background:#0b5cab;
   color:white;
@@ -168,14 +149,12 @@
   Game Reschedule Center
 </div>
 
-<!-- INTRO -->
 <div class="info-box">
   <strong>How the Reschedule Process Works</strong><br><br>
   Follow the steps below to coordinate with the opposing coach, request a field hold, and submit the official SSSL Game Change Form.  
   Holds are manually entered into the Master Calendar and reviewed internally by the appropriate board members.
 </div>
 
-<!-- HORIZONTAL PATH -->
 <section class="steps-container">
 
   <div class="step-item">
@@ -215,7 +194,6 @@
 
 </section>
 
-<!-- WIDE CROPPED CALENDAR -->
 <section id="availability" class="calendar-section">
   <h2 style="text-align:center; margin-top:0;">Field Availability</h2>
   <p style="text-align:center; color:#555;">Use this calendar to confirm that your proposed reschedule time is available.</p>
@@ -226,12 +204,10 @@
 
   <div id="calendarContainer" style="display:none; width:100%; text-align:center;">
 
-    <div class="calendar-crop">
-      <iframe 
-          src="https://haysa-soccer.github.io/haysa-scheduler-ui/?view=compact"
-          class="calendar-iframe">
-      </iframe>
-    </div>
+    <iframe 
+        src="https://haysa-soccer.github.io/haysa-scheduler-ui/?view=compact"
+        style="width:100%; max-width:1400px; height:900px; border:none; border-radius:12px; margin:0 auto; display:block;">
+    </iframe>
 
     <div style="text-align:center; margin-top:20px;">
       <a class="action-button" href="mailto:webmaster@haysa.org,coachcoordinator.haysa@gmail.com?subject=Field%20Hold%20Request&body=Team%20Name:%0ARequested%20Field:%0ARequested%20Date:%0ARequested%20Time:%0AReason:%0A">
