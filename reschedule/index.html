@@ -25,7 +25,6 @@
       color:#1a365d;
     }
 
-    /* Horizontal step path */
     .steps-container {
       display: flex;
       justify-content: space-between;
@@ -102,6 +101,17 @@
       display:inline-block;
       margin-top:10px;
     }
+
+    #toggleCalendar {
+      background:#0078d4;
+      color:white;
+      padding:10px 18px;
+      border-radius:6px;
+      border:none;
+      font-size:16px;
+      font-weight:600;
+      cursor:pointer;
+    }
   </style>
 </head>
 
@@ -123,7 +133,6 @@
     </ul>
 </nav>
 
-<!-- PAGE BANNER -->
 <div style="
   background:#0b5cab;
   color:white;
@@ -138,14 +147,12 @@
   Game Reschedule Center
 </div>
 
-<!-- INTRO -->
 <div class="info-box">
   <strong>How the Reschedule Process Works</strong><br><br>
-  Coaches follow the steps below to coordinate with the opposing coach, request a field hold, and submit the official SSSL Game Change Form.  
-  Holds are manually entered into the Master Calendar and reviewed internally by the Travel Director and Referee Coordinator.
+  Follow the steps below to coordinate with the opposing coach, request a field hold, and submit the official SSSL Game Change Form.  
+  Holds are manually entered into the Master Calendar and reviewed internally by the appropriate board members.
 </div>
 
-<!-- HORIZONTAL PATH -->
 <section class="steps-container">
 
   <div class="step-item">
@@ -158,8 +165,8 @@
   <div class="step-item">
     <div class="step-number">2</div>
     <div class="step-title">Check Field Availability</div>
-    <div class="step-desc">Use the live calendar below to find an open slot.</div>
-    <a class="step-link" href="#availability">View Calendar</a>
+    <div class="step-desc">Use the calendar to find an open slot.</div>
+    <a class="step-link" href="#availability">Jump to Calendar</a>
   </div>
 
   <div class="step-item">
@@ -185,24 +192,27 @@
 
 </section>
 
-<!-- CALENDAR -->
 <section id="availability" class="calendar-section">
   <h2 style="text-align:center; margin-top:0;">Field Availability</h2>
-  <p style="text-align:center; color:#555;">Live availability across all HAYSA fields.</p>
+  <p style="text-align:center; color:#555;">Use this calendar to confirm that your proposed reschedule time is available.</p>
 
-  <iframe 
-      src="https://haysa-soccer.github.io/haysa-scheduler-ui/"
-      style="width:100%; height:1400px; border:none; border-radius:12px;">
-  </iframe>
+  <div style="text-align:center; margin:20px 0;">
+    <button id="toggleCalendar">Show Field Availability Calendar</button>
+  </div>
 
-  <div style="text-align:center; margin-top:20px;">
-    <a class="action-button" href="mailto:webmaster@haysa.org,coachcoordinator.haysa@gmail.com?subject=Field%20Hold%20Request&body=Team%20Name:%0ARequested%20Field:%0ARequested%20Date:%0ARequested%20Time:%0AReason:%0A">
-      Request a Field Hold
-    </a>
+  <div id="calendarContainer" style="display:none;">
+    <iframe 
+        src="https://haysa-soccer.github.io/haysa-scheduler-ui/?view=compact"
+        style="width:100%; height:600px; border:none; border-radius:12px;">
+    </iframe>
+
+    <div style="text-align:center; margin-top:20px;">
+      <a class="action-button" href="mailto:webmaster@haysa.org,coachcoordinator.haysa@gmail.com?subject=Field%20Hold%20Request&body=Team%20Name:%0ARequested%20Field:%0ARequested%20Date:%0ARequested%20Time:%0AReason:%0A">
+        Request a Field Hold
+      </a>
+    </div>
   </div>
 </section>
-
-</main>
 
 <footer class="site-footer">
     <div class="footer-content">
@@ -235,6 +245,21 @@
 </footer>
 
 <script src="../assets/js/nav.js"></script>
+
+<script>
+  document.getElementById("toggleCalendar").onclick = function() {
+    const container = document.getElementById("calendarContainer");
+    const btn = document.getElementById("toggleCalendar");
+
+    if (container.style.display === "none") {
+      container.style.display = "block";
+      btn.textContent = "Hide Field Availability Calendar";
+    } else {
+      container.style.display = "none";
+      btn.textContent = "Show Field Availability Calendar";
+    }
+  };
+</script>
 
 </body>
 </html>
