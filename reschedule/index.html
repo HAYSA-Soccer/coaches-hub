@@ -93,16 +93,21 @@
       box-shadow:0 4px 12px rgba(0,0,0,0.1);
     }
 
-    .action-button {
-      background:#0078d4;
-      color:white;
-      padding:10px 18px;
-      border-radius:6px;
-      text-decoration:none;
-      font-size:16px;
-      font-weight:600;
-      display:inline-block;
-      margin-top:10px;
+    /* Cropped calendar window */
+    .calendar-crop {
+      width: 100%;
+      max-width: 1400px;
+      height: 700px; /* visible window */
+      overflow: hidden; /* hides early/late hours */
+      margin: 0 auto;
+      border-radius: 12px;
+    }
+
+    .calendar-iframe {
+      width: 100%;
+      height: 1400px; /* full calendar height */
+      border: none;
+      transform: translateY(-300px); /* shift up to hide 12am–8am */
     }
 
     #toggleCalendar {
@@ -114,6 +119,18 @@
       font-size:16px;
       font-weight:600;
       cursor:pointer;
+    }
+
+    .action-button {
+      background:#0078d4;
+      color:white;
+      padding:10px 18px;
+      border-radius:6px;
+      text-decoration:none;
+      font-size:16px;
+      font-weight:600;
+      display:inline-block;
+      margin-top:10px;
     }
   </style>
 </head>
@@ -198,7 +215,7 @@
 
 </section>
 
-<!-- WIDE CALENDAR -->
+<!-- WIDE CROPPED CALENDAR -->
 <section id="availability" class="calendar-section">
   <h2 style="text-align:center; margin-top:0;">Field Availability</h2>
   <p style="text-align:center; color:#555;">Use this calendar to confirm that your proposed reschedule time is available.</p>
@@ -208,10 +225,13 @@
   </div>
 
   <div id="calendarContainer" style="display:none; width:100%; text-align:center;">
-    <iframe 
-        src="https://haysa-soccer.github.io/haysa-scheduler-ui/?view=compact"
-        style="width:100%; max-width:1400px; height:700px; border:none; border-radius:12px; margin:0 auto; display:block;">
-    </iframe>
+
+    <div class="calendar-crop">
+      <iframe 
+          src="https://haysa-soccer.github.io/haysa-scheduler-ui/?view=compact"
+          class="calendar-iframe">
+      </iframe>
+    </div>
 
     <div style="text-align:center; margin-top:20px;">
       <a class="action-button" href="mailto:webmaster@haysa.org,coachcoordinator.haysa@gmail.com?subject=Field%20Hold%20Request&body=Team%20Name:%0ARequested%20Field:%0ARequested%20Date:%0ARequested%20Time:%0AReason:%0A">
