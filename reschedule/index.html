@@ -27,44 +27,46 @@
 <main>
     <section class="hero">
         <h1>Game Reschedule Center</h1>
-        <p>A clear, step‑by‑step workflow for requesting game changes through SSSL and HAYSA.</p>
+        <p>A clear, simple workflow for requesting game changes through SSSL and HAYSA.</p>
     </section>
 
-    <!-- STEP-BY-STEP PIPELINE -->
+    <!-- CLEAN 5-CARD GRID (YOUR ORIGINAL STYLE) -->
     <section class="home-grid">
-        <div class="home-card" style="padding:20px;">
+
+        <a class="home-card" href="#">
             <h3>Step 1 — Coordinate With Opposing Coach</h3>
-            <p>Discuss conflicts and agree on a new date/time. Screenshots of texts or email threads are acceptable.</p>
-        </div>
+            <p>Agree on a new date/time. Screenshots of texts or emails are acceptable.</p>
+        </a>
 
-        <div class="home-card" style="padding:20px;">
+        <a class="home-card" href="#availability">
             <h3>Step 2 — Check Field Availability</h3>
-            <p>Use the live calendar below to see what fields are open.</p>
-        </div>
+            <p>See what fields are open before requesting a change.</p>
+        </a>
 
-        <div class="home-card" style="padding:20px;">
+        <a class="home-card" href="#">
             <h3>Step 3 — Request a Tentative Hold</h3>
-            <p>Reserve the field slot while coordinating with the opposing coach.</p>
-            <a class="home-card" href="#" target="_blank">Request a Field Hold</a>
-        </div>
+            <p>Reserve the field slot while coordinating.</p>
+            <span class="button">Request Hold</span>
+        </a>
 
-        <div class="home-card" style="padding:20px;">
-            <h3>Step 4 — Submit Official SSSL Game Change Form</h3>
-            <p>Attach your conversation screenshots and send to all required contacts.</p>
-            <a class="home-card" href="#" target="_blank">Download SSSL Form</a>
-        </div>
+        <a class="home-card" href="#">
+            <h3>Step 4 — Submit SSSL Game Change Form</h3>
+            <p>Attach your conversation screenshots and send to required contacts.</p>
+            <span class="button">Download Form</span>
+        </a>
 
-        <div class="home-card" style="padding:20px;">
+        <a class="home-card" href="#">
             <h3>Step 5 — Track Your Request</h3>
             <p>Monitor approval status from HAYSA and SSSL.</p>
-            <a class="home-card" href="#" target="_blank">Track Requests</a>
-        </div>
+            <span class="button">Track Requests</span>
+        </a>
+
     </section>
 
-    <!-- FIELD AVAILABILITY EMBED -->
-    <section class="home-card" style="padding:20px; margin-top:20px;">
-        <h2>Live Field Availability</h2>
-        <p>Use this calendar to see all open field slots, practices, games, and holds.</p>
+    <!-- CLEAN CALENDAR SECTION BELOW THE GRID -->
+    <section id="availability" class="home-card" style="padding:20px; margin-top:20px;">
+        <h2>Field Availability</h2>
+        <p>Use this calendar to see open field slots, practices, games, and holds.</p>
 
         <iframe 
             src="https://haysa-soccer.github.io/haysa-scheduler-ui"
@@ -76,20 +78,6 @@
         <p>Once you find an available slot, request a temporary hold so it doesn’t get booked.</p>
 
         <a class="home-card" href="#" target="_blank">Request a Field Hold</a>
-    </section>
-
-    <!-- EMAIL COPY BLOCK -->
-    <section class="home-card" style="padding:20px; margin-top:20px;">
-        <h2>Email Copy Block</h2>
-        <p>Use this block when submitting your SSSL Game Change Request:</p>
-
-        <pre style="background:#f4f4f4; padding:15px; border-radius:8px;">
-game.scheduler@southshoresoccer.com, referee.assignor@southshoresoccer.com,
-president@haysa.org, vicepresident@haysa.org,
-RefereeCoordinator.HAYSA@gmail.com, treasurer@haysa.org,
-webmaster@haysa.org, TravelDirector.HAYSA@gmail.com,
-[Opposing Coach Email], [Opposing Town President Email]
-        </pre>
     </section>
 
 </main>
