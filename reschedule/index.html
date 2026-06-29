@@ -5,7 +5,74 @@
   <title>Game Reschedule Center | HAYSA Coaches Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../assets/css/style.css">
+
+  <style>
+    /* Horizontal step path */
+    .steps-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin: 40px 0;
+      flex-wrap: wrap;
+    }
+
+    .step-item {
+      flex: 1;
+      min-width: 160px;
+      text-align: center;
+    }
+
+    .step-number {
+      width: 32px;
+      height: 32px;
+      margin: 0 auto 10px;
+      border-radius: 50%;
+      background: #1b3a6b;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .step-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .step-desc {
+      font-size: 0.85rem;
+      color: #444;
+      line-height: 1.3;
+    }
+
+    .step-link {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 0.85rem;
+      color: #1b3a6b;
+      text-decoration: underline;
+    }
+
+    /* Mobile: stack vertically */
+    @media (max-width: 700px) {
+      .steps-container {
+        flex-direction: column;
+        gap: 30px;
+      }
+    }
+
+    /* Calendar section */
+    .calendar-section {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+  </style>
 </head>
+
 <body>
 
 <header>
@@ -24,36 +91,52 @@
     </ul>
 </nav>
 
-<main>
+<main style="max-width:900px; margin:0 auto; padding:20px;">
 
-    <section class="hero">
-        <h1>Game Reschedule Center</h1>
-        <p>A simple, clear workflow for requesting game changes through SSSL and HAYSA.</p>
+    <h1>Game Reschedule Center</h1>
+    <p>A simple, guided workflow for requesting game changes through SSSL and HAYSA.</p>
+
+    <!-- HORIZONTAL PATH -->
+    <section class="steps-container">
+
+      <div class="step-item">
+        <div class="step-number">1</div>
+        <div class="step-title">Coordinate With Opposing Coach</div>
+        <div class="step-desc">Agree on a new date/time. Screenshots of texts or emails are acceptable.</div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-number">2</div>
+        <div class="step-title">Check Field Availability</div>
+        <div class="step-desc">Use the live calendar below to see what fields are open.</div>
+        <a class="step-link" href="#availability">View Calendar</a>
+      </div>
+
+      <div class="step-item">
+        <div class="step-number">3</div>
+        <div class="step-title">Request a Tentative Hold</div>
+        <div class="step-desc">Reserve the field slot while coordinating.</div>
+        <a class="step-link" href="#" target="_blank">Request Hold</a>
+      </div>
+
+      <div class="step-item">
+        <div class="step-number">4</div>
+        <div class="step-title">Submit SSSL Form</div>
+        <div class="step-desc">Attach your conversation screenshots and send to required contacts.</div>
+        <a class="step-link" href="#" target="_blank">Download Form</a>
+      </div>
+
+      <div class="step-item">
+        <div class="step-number">5</div>
+        <div class="step-title">Track Your Request</div>
+        <div class="step-desc">Monitor approval status from HAYSA and SSSL.</div>
+        <a class="step-link" href="#" target="_blank">Track Status</a>
+      </div>
+
     </section>
 
-    <section style="max-width:800px; margin:0 auto; padding:20px;">
-
-        <h2>Step 1 — Coordinate With Opposing Coach</h2>
-        <p>Discuss conflicts and agree on a new date/time. Screenshots of texts or email threads are acceptable.</p>
-
-        <h2>Step 2 — Check Field Availability</h2>
-        <p>Use the live calendar below to see what fields are open before requesting a change.</p>
-
-        <h2>Step 3 — Request a Tentative Hold</h2>
-        <p>Reserve the field slot while coordinating with the opposing coach.</p>
-        <p><a href="#" class="button">Request a Field Hold</a></p>
-
-        <h2>Step 4 — Submit the SSSL Game Change Form</h2>
-        <p>Attach your conversation screenshots and send to all required contacts.</p>
-        <p><a href="#" class="button">Download SSSL Form</a></p>
-
-        <h2>Step 5 — Track Your Request</h2>
-        <p>Monitor approval status from HAYSA and SSSL.</p>
-        <p><a href="#" class="button">Track Requests</a></p>
-
-    </section>
-
-    <section id="availability" style="max-width:900px; margin:40px auto; padding:20px;">
+    <!-- CALENDAR SECTION -->
+    <section id="availability" class="calendar-section">
         <h2>Field Availability</h2>
         <p>Use this calendar to see open field slots, practices, games, and holds.</p>
 
@@ -65,7 +148,7 @@
 
         <h3 style="margin-top:20px;">Request a Tentative Hold</h3>
         <p>Once you find an available slot, request a temporary hold so it doesn’t get booked.</p>
-        <p><a href="#" class="button">Request a Field Hold</a></p>
+        <a class="step-link" href="#" target="_blank">Request Hold</a>
     </section>
 
 </main>
