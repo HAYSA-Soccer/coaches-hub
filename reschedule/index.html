@@ -4,396 +4,127 @@
   <meta charset="UTF-8">
   <title>Game Reschedule Center | HAYSA Coaches Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- If your main CSS is assets/style.css, keep this; adjust if different -->
-  <link rel="stylesheet" href="../assets/style.css">
-  <style>
-    /* Light inline styling to keep this page usable even without your main CSS */
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      margin: 0;
-      background: #f5f7fb;
-      color: #222;
-    }
-    header {
-      background: #1b3a6b;
-      color: #fff;
-      padding: 1rem 1.5rem;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 1.6rem;
-    }
-    nav {
-      margin-top: 0.5rem;
-    }
-    nav a {
-      color: #e4ecff;
-      text-decoration: none;
-      margin-right: 1rem;
-      font-size: 0.95rem;
-    }
-    nav a:hover {
-      text-decoration: underline;
-    }
-    main {
-      max-width: 1100px;
-      margin: 1.5rem auto 2.5rem;
-      padding: 0 1rem;
-    }
-    .page-intro {
-      background: #ffffff;
-      border-radius: 8px;
-      padding: 1.25rem 1.5rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-      margin-bottom: 1.5rem;
-    }
-    .page-intro h2 {
-      margin-top: 0;
-      font-size: 1.4rem;
-    }
-    .pill {
-      display: inline-block;
-      padding: 0.25rem 0.7rem;
-      border-radius: 999px;
-      background: #e3f2ff;
-      color: #1b3a6b;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .card {
-      background: #ffffff;
-      border-radius: 8px;
-      padding: 1rem 1.1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-    }
-    .card h3 {
-      margin-top: 0;
-      font-size: 1.1rem;
-    }
-    .card p {
-      margin: 0.4rem 0 0.6rem;
-      font-size: 0.92rem;
-    }
-    .card ul {
-      margin: 0.4rem 0 0.6rem 1.1rem;
-      padding: 0;
-      font-size: 0.9rem;
-    }
-    .card ul li {
-      margin-bottom: 0.25rem;
-    }
-    .btn-row {
-      margin-top: 0.6rem;
-    }
-    .btn {
-      display: inline-block;
-      padding: 0.45rem 0.9rem;
-      border-radius: 999px;
-      border: none;
-      background: #1b3a6b;
-      color: #fff;
-      font-size: 0.9rem;
-      cursor: pointer;
-      text-decoration: none;
-      margin-right: 0.4rem;
-    }
-    .btn.secondary {
-      background: #f0f3fa;
-      color: #1b3a6b;
-      border: 1px solid #c7d2f3;
-    }
-    .btn:hover {
-      opacity: 0.9;
-    }
-    .section-title {
-      font-size: 1.2rem;
-      margin: 1.5rem 0 0.75rem;
-    }
-    .pipeline {
-      background: #ffffff;
-      border-radius: 8px;
-      padding: 1rem 1.1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-      margin-bottom: 1.5rem;
-    }
-    .pipeline-step {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 0.6rem;
-      font-size: 0.95rem;
-    }
-    .pipeline-step-icon {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 2px solid #c7d2f3;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 0.6rem;
-      font-size: 0.8rem;
-      background: #f0f3fa;
-      color: #1b3a6b;
-      flex-shrink: 0;
-    }
-    .pipeline-step-label {
-      font-weight: 600;
-    }
-    .pipeline-step-desc {
-      font-size: 0.88rem;
-      color: #555;
-    }
-    .embed-box {
-      background: #ffffff;
-      border-radius: 8px;
-      padding: 1rem 1.1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-      margin-bottom: 1.5rem;
-    }
-    .embed-box p {
-      font-size: 0.9rem;
-      margin-top: 0;
-    }
-    .embed-placeholder {
-      border: 1px dashed #c7d2f3;
-      border-radius: 6px;
-      padding: 0.75rem;
-      font-size: 0.85rem;
-      color: #555;
-      background: #f8f9ff;
-      text-align: center;
-    }
-    footer {
-      text-align: center;
-      font-size: 0.8rem;
-      color: #777;
-      padding: 1rem 0 1.5rem;
-    }
-  </style>
+  <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-  <header>
+
+<header>
     <h1>HAYSA Coaches Hub</h1>
-    <nav>
-      <!-- Adjust these links to match your actual main nav paths -->
-      <a href="../index.html">Home</a>
-      <a href="../drills/index.html">Drills</a>
-      <a href="../practice-plans/index.html">Practice Plans</a>
-      <a href="../guides/index.html">Coaching Guides</a>
-      <a href="../submissions/index.html">Submissions</a>
-      <a href="index.html"><strong>Game Reschedule Center</strong></a>
-    </nav>
-  </header>
+</header>
 
-  <main>
-    <section class="page-intro">
-      <span class="pill">Game Change Process</span>
-      <h2>Game Reschedule Center</h2>
-      <p>
-        This page turns the South Shore Soccer League (SSSL) game change process into a clear, step‑by‑step workflow.
-        Coaches can see exactly where they are in the process and what needs to happen next.
-      </p>
-      <p>
-        <strong>Important:</strong> All reschedules must follow SSSL rules and use the official Game Change Request Form.
-        This hub keeps everything organized and easy to track.
-      </p>
+<nav class="navbar">
+    <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+    <ul class="nav-links">
+        <li><a href="/coaches-hub/index.html">Home</a></li>
+        <li><a href="/coaches-hub/drills/index.html">Drill Library</a></li>
+        <li><a href="/coaches-hub/practice-plans/index.html">Practice Plans</a></li>
+        <li><a href="/coaches-hub/guides/index.html">Coaching Guides</a></li>
+        <li><a href="/coaches-hub/submissions/index.html">Submit a Drill</a></li>
+        <li><a class="active" href="/coaches-hub/reschedule/index.html">Game Reschedule Center</a></li>
+    </ul>
+</nav>
+
+<main>
+    <section class="hero">
+        <h1>Game Reschedule Center</h1>
+        <p>A clear, step‑by‑step workflow for requesting game changes through SSSL and HAYSA.</p>
     </section>
 
-    <h2 class="section-title">Step‑by‑Step Workflow</h2>
+    <!-- STEP-BY-STEP PIPELINE -->
+    <section class="home-grid">
+        <div class="home-card" style="padding:20px;">
+            <h3>Step 1 — Coordinate With Opposing Coach</h3>
+            <p>Discuss conflicts and agree on a new date/time. Screenshots of texts or email threads are acceptable.</p>
+        </div>
 
-    <section class="pipeline">
-      <div class="pipeline-step">
-        <div class="pipeline-step-icon">1</div>
-        <div>
-          <div class="pipeline-step-label">Coach Coordination</div>
-          <div class="pipeline-step-desc">
-            Contact the opposing coach, discuss conflicts, and agree on a new date, time, and location.
-            Screenshots of text messages or email threads are acceptable proof of agreement.
-          </div>
+        <div class="home-card" style="padding:20px;">
+            <h3>Step 2 — Check Field Availability</h3>
+            <p>Use the live calendar below to see what fields are open.</p>
         </div>
-      </div>
-      <div class="pipeline-step">
-        <div class="pipeline-step-icon">2</div>
-        <div>
-          <div class="pipeline-step-label">Confirm Field & Referee Availability (Home Games)</div>
-          <div class="pipeline-step-desc">
-            For home games, confirm that the field and referees are available at the proposed time.
-            Coordinate with the Referee Coordinator and check the field calendar.
-          </div>
+
+        <div class="home-card" style="padding:20px;">
+            <h3>Step 3 — Request a Tentative Hold</h3>
+            <p>Reserve the field slot while coordinating with the opposing coach.</p>
+            <a class="home-card" href="#" target="_blank">Request a Field Hold</a>
         </div>
-      </div>
-      <div class="pipeline-step">
-        <div class="pipeline-step-icon">3</div>
-        <div>
-          <div class="pipeline-step-label">Attach Conversation Proof</div>
-          <div class="pipeline-step-desc">
-            Save your conversation with the opposing coach (email thread, text message screenshots, or other written
-            confirmation). This must clearly show both sides agreeing to the new game details.
-          </div>
+
+        <div class="home-card" style="padding:20px;">
+            <h3>Step 4 — Submit Official SSSL Game Change Form</h3>
+            <p>Attach your conversation screenshots and send to all required contacts.</p>
+            <a class="home-card" href="#" target="_blank">Download SSSL Form</a>
         </div>
-      </div>
-      <div class="pipeline-step">
-        <div class="pipeline-step-icon">4</div>
-        <div>
-          <div class="pipeline-step-label">Submit Official Game Change Request</div>
-          <div class="pipeline-step-desc">
-            Complete the SSSL Game Change Request Form and submit it along with your conversation proof.
-            The form and email must include all required recipients (SSSL, HAYSA Board, opposing coach, opposing town president).
-          </div>
+
+        <div class="home-card" style="padding:20px;">
+            <h3>Step 5 — Track Your Request</h3>
+            <p>Monitor approval status from HAYSA and SSSL.</p>
+            <a class="home-card" href="#" target="_blank">Track Requests</a>
         </div>
-      </div>
-      <div class="pipeline-step">
-        <div class="pipeline-step-icon">5</div>
-        <div>
-          <div class="pipeline-step-label">Approval, Updates & Notification</div>
-          <div class="pipeline-step-desc">
-            Wait for confirmation from SSSL. Once approved, SSSL updates their site and HAYSA updates TeamSideline.
-            Families and coaches will see the new game details in their schedules.
-          </div>
-        </div>
-      </div>
     </section>
 
-    <h2 class="section-title">Tools & Links</h2>
+    <!-- FIELD AVAILABILITY EMBED -->
+    <section class="home-card" style="padding:20px; margin-top:20px;">
+        <h2>Live Field Availability</h2>
+        <p>Use this calendar to see all open field slots, practices, games, and holds.</p>
 
-    <section class="grid">
-      <article class="card">
-        <h3>Opposing Coach Contact Info</h3>
-        <p>
-          Request or look up the opposing coach’s contact information so you can start the coordination process.
-        </p>
-        <ul>
-          <li>Use this to initiate the game change conversation.</li>
-          <li>Keep all communication in a single email or message thread when possible.</li>
-        </ul>
-        <div class="btn-row">
-          <!-- Replace href with your actual contact directory link or Registrar email instructions -->
-          <a class="btn secondary" href="#" title="Contact Registrar or view directory">
-            Request Contact Info
-          </a>
-        </div>
-      </article>
+        <iframe 
+            src="https://haysa-soccer.github.io/haysa-scheduler-ui"
+            style="width:100%; height:800px; border:1px solid #ccc; border-radius:8px;"
+            loading="lazy">
+        </iframe>
 
-      <article class="card">
-        <h3>Field Availability (Home Games)</h3>
-        <p>
-          Check which fields and time slots are available for home games before proposing a new date and time.
-        </p>
-        <ul>
-          <li>Confirm field and referee availability with the Referee Coordinator.</li>
-          <li>Use this before finalizing the new game time with the opposing coach.</li>
-        </ul>
-        <div class="btn-row">
-          <!-- Replace href with your actual calendar or field schedule link -->
-          <a class="btn secondary" href="#" title="View field calendar">
-            View Field Calendar
-          </a>
-        </div>
-      </article>
+        <h3 style="margin-top:20px;">Request a Tentative Hold</h3>
+        <p>Once you find an available slot, request a temporary hold so it doesn’t get booked.</p>
 
-      <article class="card">
-        <h3>SSSL Game Change Request Form</h3>
-        <p>
-          This is the official South Shore Soccer League Game Change Request Form. It must be completed for every
-          rescheduled game.
-        </p>
-        <ul>
-          <li>Fill out all required fields accurately.</li>
-          <li>Attach your conversation proof when submitting.</li>
-        </ul>
-        <div class="btn-row">
-          <!-- Replace href with the actual DOCX or SSSL link -->
-          <a class="btn" href="#" title="Download SSSL Game Change Request Form">
-            Download Form (DOCX)
-          </a>
-        </div>
-      </article>
-
-      <article class="card">
-        <h3>Email Recipients & Copy Block</h3>
-        <p>
-          All communication should remain in a single email thread. Once agreement is reached, CC the required board
-          members and SSSL contacts.
-        </p>
-        <ul>
-          <li>Use the copy‑and‑paste block below to ensure no one is missed.</li>
-          <li>Include the opposing coach and opposing town president.</li>
-        </ul>
-        <div class="btn-row">
-          <a class="btn secondary" href="#email-block" title="Jump to email copy block">
-            View Email Copy Block
-          </a>
-        </div>
-      </article>
+        <a class="home-card" href="#" target="_blank">Request a Field Hold</a>
     </section>
 
-    <section class="embed-box">
-      <h3>Submit a Game Change Request</h3>
-      <p>
-        Use the form below to submit your game change request. Attach your conversation proof (screenshots or text),
-        and ensure all required fields are completed. This form mirrors the SSSL requirements and keeps everything
-        organized for HAYSA.
-      </p>
-      <div class="embed-placeholder">
-        <!-- Replace this with your actual Google Form embed -->
-        <p><strong>Embed Game Change Request Form here.</strong></p>
-        <p>Example: paste the Google Form iframe once created.</p>
-      </div>
+    <!-- EMAIL COPY BLOCK -->
+    <section class="home-card" style="padding:20px; margin-top:20px;">
+        <h2>Email Copy Block</h2>
+        <p>Use this block when submitting your SSSL Game Change Request:</p>
+
+        <pre style="background:#f4f4f4; padding:15px; border-radius:8px;">
+game.scheduler@southshoresoccer.com, referee.assignor@southshoresoccer.com,
+president@haysa.org, vicepresident@haysa.org,
+RefereeCoordinator.HAYSA@gmail.com, treasurer@haysa.org,
+webmaster@haysa.org, TravelDirector.HAYSA@gmail.com,
+[Opposing Coach Email], [Opposing Town President Email]
+        </pre>
     </section>
 
-    <section class="embed-box">
-      <h3>Track Your Requests</h3>
-      <p>
-        Once submitted, your requests can be tracked here. You’ll see where each request is in the process:
-        coordination, submitted, HAYSA review, SSSL review, and finalized.
-      </p>
-      <div class="embed-placeholder">
-        <!-- Replace this with a Google Sheet or custom JSON-driven tracker -->
-        <p><strong>Embed status tracker here.</strong></p>
-        <p>Example: Google Sheet or a small JS app that reads from a backend sheet.</p>
-      </div>
-    </section>
+</main>
 
-    <section id="email-block" class="embed-box">
-      <h3>Copy & Paste Email Block</h3>
-      <p>
-        Use this block when sending the completed Game Change Request Form and conversation thread. Replace
-        <code>[Opposing Coach Email]</code> and <code>[Opposing Town President Email]</code> with the correct addresses.
-      </p>
-      <div class="embed-placeholder" style="text-align:left;">
-        <p>
-          game.scheduler@southshoresoccer.com, referee.assignor@southshoresoccer.com,<br>
-          president@haysa.org, vicepresident@haysa.org,<br>
-          RefereeCoordinator.HAYSA@gmail.com, treasurer@haysa.org,<br>
-          webmaster@haysa.org, TravelDirector.HAYSA@gmail.com,<br>
-          [Opposing Coach Email], [Opposing Town President Email]
-        </p>
-        <p style="margin-top:0.5rem;">
-          Find opposing town president here: <strong>SSSL Town Contacts</strong><br>
-          Download Game Change Request Form: <strong>SSSL Game Change Request Form</strong>
-        </p>
-      </div>
-    </section>
-  </main>
+<footer class="site-footer">
+    <div class="footer-content">
 
-  <footer>
-    Game Reschedule Center · HAYSA Coaches Hub · This page summarizes the official SSSL game change process
-    in a coach‑friendly workflow.
-  </footer>
+        <div class="footer-section">
+            <h3>HAYSA Coaches Hub</h3>
+            <p>Resources for Holbrook Avon Youth Soccer coaches.</p>
+        </div>
 
-  <!-- Optional: JS hook for future dynamic status tracking -->
-  <script>
-    // Placeholder for future enhancements:
-    // - Fetch status data from a JSON or Google Sheet
-    // - Render per‑coach pipelines
-    // For now, this page is static and ready to deploy.
-  </script>
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="/coaches-hub/index.html">Home</a></li>
+                <li><a href="/coaches-hub/drills/index.html">Drill Library</a></li>
+                <li><a href="/coaches-hub/practice-plans/index.html">Practice Plans</a></li>
+                <li><a href="/coaches-hub/guides/index.html">Coaching Guides</a></li>
+                <li><a href="/coaches-hub/submissions/index.html">Submit a Drill</a></li>
+                <li><a href="/coaches-hub/reschedule/index.html">Game Reschedule Center</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h4>Contact</h4>
+            <p>Email: <a href="mailto:coachcoordinator.haysa@gmail.com">coachcoordinator.haysa@gmail.com</a></p>
+            <p>Website: <a href="https://www.haysa.org" target="_blank">www.haysa.org</a></p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">© HAYSA — Holbrook Avon Youth Soccer Association</div>
+</footer>
+
+<script src="../assets/js/nav.js"></script>
+
 </body>
 </html>
