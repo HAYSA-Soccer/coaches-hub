@@ -81,7 +81,6 @@
       }
     }
 
-    /* WIDE CALENDAR SECTION */
     .calendar-section {
       width: 100%;
       max-width: 100%;
@@ -198,22 +197,24 @@
   <h2 style="text-align:center; margin-top:0;">Field Availability</h2>
   <p style="text-align:center; color:#555;">Use this calendar to confirm that your proposed reschedule time is available.</p>
 
+  <!-- BUTTON MOVED ABOVE CALENDAR -->
+  <div style="text-align:center; margin:20px 0;">
+    <a class="action-button" href="mailto:webmaster@haysa.org,coachcoordinator.haysa@gmail.com?subject=Field%20Hold%20Request&body=Team%20Name:%0ARequested%20Field:%0ARequested%20Date:%0ARequested%20Time:%0AReason:%0A">
+      Request a Field Hold
+    </a>
+  </div>
+
+  <!-- Toggle -->
   <div style="text-align:center; margin:20px 0;">
     <button id="toggleCalendar">Show Field Availability Calendar</button>
   </div>
 
+  <!-- Calendar -->
   <div id="calendarContainer" style="display:none; width:100%; text-align:center;">
-
     <iframe 
         src="https://haysa-soccer.github.io/haysa-scheduler-ui/?view=compact"
         style="width:100%; max-width:1400px; height:1600px; border:none; border-radius:12px; margin:0 auto; display:block;">
     </iframe>
-
-    <div style="text-align:center; margin-top:20px;">
-      <a class="action-button" href="mailto:webmaster@haysa.org,coachcoordinator.haysa@gmail.com?subject=Field%20Hold%20Request&body=Team%20Name:%0ARequested%20Field:%0ARequested%20Date:%0ARequested%20Time:%0AReason:%0A">
-        Request a Field Hold
-      </a>
-    </div>
   </div>
 </section>
 
