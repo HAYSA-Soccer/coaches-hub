@@ -26,7 +26,6 @@ function initRescheduleChecklist() {
         statusEl.textContent = "Completed";
         statusEl.classList.add("step-completed");
       }
-      // Future: send non-sensitive status to backend if desired.
     });
   });
 }
@@ -40,7 +39,6 @@ function initSlotProposalForm() {
   const fieldSelect = document.getElementById("slotField");
   if (!form || !fieldSelect) return;
 
-  // Static field list for now; can be wired to calendar snapshot later.
   const fields = [
     "Turf Field",
     "Sumner Field",
@@ -234,112 +232,138 @@ function initGameChangeForm() {
         <style>
           body {
             font-family: Arial, sans-serif;
-            padding: 30px;
+            padding: 40px;
             line-height: 1.5;
+            font-size: 14px;
           }
           h1 {
             text-align: center;
-            font-size: 24px;
+            font-size: 20px;
             margin-bottom: 10px;
             text-transform: uppercase;
           }
-          h2 {
-            font-size: 18px;
-            margin-top: 25px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 4px;
+          p {
+            margin: 4px 0;
+          }
+          .fill {
+            display: inline-block;
+            min-width: 260px;
+            border-bottom: 1px solid #000;
+            padding: 0 4px;
+          }
+          .fill-short {
+            display: inline-block;
+            min-width: 160px;
+            border-bottom: 1px solid #000;
+            padding: 0 4px;
           }
           .section {
-            margin-bottom: 20px;
+            margin-top: 12px;
           }
-          .label {
-            font-weight: bold;
+          .signature-line {
+            display: inline-block;
+            min-width: 260px;
+            border-bottom: 1px solid #000;
+            padding: 0 4px;
           }
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-          }
-          td {
-            padding: 6px;
-            border-bottom: 1px solid #ccc;
-          }
-          .signature-block {
-            margin-top: 20px;
-          }
-          .signature-block img {
-            margin-top: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-          }
-          .footer {
-            margin-top: 40px;
-            font-size: 14px;
+          .signature-image {
+            margin-top: 8px;
           }
         </style>
       </head>
-
       <body>
 
         <h1>SSSL Reschedule of Game Form</h1>
 
         <div class="section">
-          <p><strong>USE THIS FORM ONLY FOR RESCHEDULING OF OFFICIAL GAMES</strong></p>
-          <p>Form must be received at least 10 days prior to the current and new game dates.</p>
-          <p>All fields must be completed — no TBDs allowed.</p>
+          <p>A. It shall be the responsibility of the coach initiating the reschedule to fill out the form and pay the fees, if any.</p>
+          <p>B. Form fees from section 5.2 are based on postmark date</p>
+          <p>C. This form must be received at least 10 days prior to the “Current and New Game Dates”</p>
+          <p>D. If this form is not completed in its entirety, (no TBDs or TBDs allowed) it will be rejected.</p>
         </div>
 
-        <h2>Game Information</h2>
-        <table>
-          <tr><td class="label">Age, Gender, Division:</td><td>${teamName}</td></tr>
-          <tr><td class="label">Home Team:</td><td>${teamName}</td></tr>
-          <tr><td class="label">Away Team:</td><td>${opponent}</td></tr>
-        </table>
-
-        <h2>Current Game Details</h2>
-        <table>
-          <tr><td class="label">Current Game Date:</td><td>${origDate}</td></tr>
-          <tr><td class="label">Current Game Time:</td><td>${origTime}</td></tr>
-          <tr><td class="label">Current Game Location:</td><td>${origField}</td></tr>
-          <tr><td class="label">Game Number:</td><td>(Coach fills manually)</td></tr>
-        </table>
-
-        <h2>New Game Details</h2>
-        <table>
-          <tr><td class="label">New Game Date:</td><td>${newDate}</td></tr>
-          <tr><td class="label">New Game Time:</td><td>${newTime}</td></tr>
-          <tr><td class="label">New Game Location:</td><td>${newField}</td></tr>
-          <tr><td class="label">Reason for Change:</td><td>${reason}</td></tr>
-        </table>
-
-        <h2>Coach Information</h2>
-        <table>
-          <tr><td class="label">Coach Initiating Reschedule:</td><td>${coachName}</td></tr>
-          <tr><td class="label">Telephone:</td><td>${coachPhone}</td></tr>
-          <tr><td class="label">Email:</td><td>${coachEmail}</td></tr>
-        </table>
-
-        <h2>Opposing Coach</h2>
-        <table>
-          <tr><td class="label">Name of Opposing Coach:</td><td>(Coach fills manually)</td></tr>
-          <tr><td class="label">Telephone:</td><td>(Coach fills manually)</td></tr>
-        </table>
-
-        <div class="signature-block">
-          <h2>Coach Signature</h2>
-          <img src="${signatureDataUrl}" width="300" />
+        <div class="section">
+          <p><strong>Do not USE this form for Make-up Games. (Games postponed due to unsafe natural conditions)</strong></p>
         </div>
 
-        <div class="footer">
-          <p><strong>Mail completed form and fee to:</strong><br>
-          South Shore Soccer League<br>
-          P.O. BOX 486<br>
-          West Bridgewater, MA 02379</p>
+        <div class="section">
+          <p>Age, Gender, and Division of the game being rescheduled
+            <span class="fill">${teamName}</span>
+          </p>
 
-          <p><strong>Email:</strong> game.scheduler@southshoresoccer.com & referee.assignor@southshoresoccer.com</p>
+          <p>Home Team:
+            <span class="fill-short">${teamName}</span>
+            &nbsp;&nbsp;&nbsp;
+            Away Team:
+            <span class="fill-short">${opponent}</span>
+          </p>
+
+          <p>Current Game Date:
+            <span class="fill-short">${origDate}</span>
+            &nbsp;&nbsp;&nbsp;
+            Current Game Time:
+            <span class="fill-short">${origTime}</span>
+          </p>
+
+          <p>Current Game Location:
+            <span class="fill">${origField}</span>
+            &nbsp;&nbsp;&nbsp;
+            Game Number:
+            <span class="fill-short"></span>
+          </p>
+
+          <p>New Game date:
+            <span class="fill-short">${newDate}</span>
+            &nbsp;&nbsp;&nbsp;
+            New Game Time:
+            <span class="fill-short">${newTime}</span>
+          </p>
+
+          <p>New game Location:
+            <span class="fill">${newField}</span>
+          </p>
+
+          <p>Name of Coach Initiating the Reschedule:
+            <span class="fill">${coachName}</span>
+          </p>
+
+          <p>Telephone:
+            <span class="fill-short">${coachPhone}</span>
+          </p>
+
+          <p>Name of Opposing Coach:
+            <span class="fill-short"></span>
+            &nbsp;&nbsp;&nbsp;
+            Telephone:
+            <span class="fill-short"></span>
+          </p>
         </div>
 
-        <script>window.print();</script>
+        <div class="section">
+          <p><strong>I certify that the Opposing Coach has agreed to the above reschedule, subject to forfeit.</strong></p>
+        </div>
+
+        <div class="section">
+          <p>Signed:
+            <span class="signature-line"></span>
+          </p>
+          <div class="signature-image">
+            <img src="${signatureDataUrl}" width="300" />
+          </div>
+        </div>
+
+        <div class="section" style="margin-top: 20px;">
+          <p><strong>Mail completed form and fee to:</strong></p>
+          <p>South Shore Soccer League</p>
+          <p>P.O. BOX 486</p>
+          <p>West Bridgewater, MA 02379</p>
+          <p>&nbsp;</p>
+          <p>Email: game.scheduler@southshoresoccer.com &amp; referee.assignor@southshoresoccer.com</p>
+        </div>
+
+        <script>
+          window.print();
+        </script>
 
       </body>
       </html>
@@ -354,6 +378,6 @@ function initGameChangeForm() {
     form.reset();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    alert("SSSL Game Reschedule Form generated. Save/print as PDF. Email and phone have been cleared.");
+    alert("SSSL Reschedule of Game Form generated. Save/print as PDF. Email and phone have been cleared.");
   });
 }
