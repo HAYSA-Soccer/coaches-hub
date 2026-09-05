@@ -221,7 +221,6 @@ function initGameChangeForm() {
 
     const signatureDataUrl = canvas.toDataURL("image/png");
 
-    // Build a simple printable document in a new window
     const win = window.open("", "_blank");
     if (!win) {
       alert("Popup blocked. Please allow popups to generate the PDF.");
@@ -231,68 +230,130 @@ function initGameChangeForm() {
     win.document.write(`
       <html>
       <head>
-        <title>Game Change Form - ${teamName}</title>
+        <title>SSSL Reschedule of Game Form - ${teamName}</title>
         <style>
-          body { font-family: Arial, sans-serif; padding: 20px; }
-          h1 { font-size: 22px; margin-bottom: 10px; }
-          h2 { font-size: 18px; margin-top: 20px; }
-          p  { font-size: 14px; line-height: 1.5; }
-          .section { margin-bottom: 18px; }
-          .label { font-weight: bold; }
-          .signature { margin-top: 10px; }
-          img { border: 1px solid #ccc; border-radius: 4px; }
+          body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            line-height: 1.5;
+          }
+          h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+          }
+          h2 {
+            font-size: 18px;
+            margin-top: 25px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 4px;
+          }
+          .section {
+            margin-bottom: 20px;
+          }
+          .label {
+            font-weight: bold;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+          }
+          td {
+            padding: 6px;
+            border-bottom: 1px solid #ccc;
+          }
+          .signature-block {
+            margin-top: 20px;
+          }
+          .signature-block img {
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+          }
+          .footer {
+            margin-top: 40px;
+            font-size: 14px;
+          }
         </style>
       </head>
+
       <body>
-        <h1>Game Change Form</h1>
+
+        <h1>SSSL Reschedule of Game Form</h1>
 
         <div class="section">
-          <h2>Team Information</h2>
-          <p><span class="label">Team Name:</span> ${teamName}</p>
-          <p><span class="label">Coach Name:</span> ${coachName}</p>
-          <p><span class="label">Coach Email:</span> ${coachEmail}</p>
-          <p><span class="label">Coach Phone:</span> ${coachPhone}</p>
+          <p><strong>USE THIS FORM ONLY FOR RESCHEDULING OF OFFICIAL GAMES</strong></p>
+          <p>Form must be received at least 10 days prior to the current and new game dates.</p>
+          <p>All fields must be completed — no TBDs allowed.</p>
         </div>
 
-        <div class="section">
-          <h2>Original Game Details</h2>
-          <p><span class="label">Date:</span> ${origDate}</p>
-          <p><span class="label">Time:</span> ${origTime}</p>
-          <p><span class="label">Field:</span> ${origField}</p>
-          <p><span class="label">Opponent:</span> ${opponent}</p>
-        </div>
+        <h2>Game Information</h2>
+        <table>
+          <tr><td class="label">Age, Gender, Division:</td><td>${teamName}</td></tr>
+          <tr><td class="label">Home Team:</td><td>${teamName}</td></tr>
+          <tr><td class="label">Away Team:</td><td>${opponent}</td></tr>
+        </table>
 
-        <div class="section">
-          <h2>New Requested Details</h2>
-          <p><span class="label">Date:</span> ${newDate}</p>
-          <p><span class="label">Time:</span> ${newTime}</p>
-          <p><span class="label">Field:</span> ${newField}</p>
-          <p><span class="label">Reason:</span> ${reason}</p>
-        </div>
+        <h2>Current Game Details</h2>
+        <table>
+          <tr><td class="label">Current Game Date:</td><td>${origDate}</td></tr>
+          <tr><td class="label">Current Game Time:</td><td>${origTime}</td></tr>
+          <tr><td class="label">Current Game Location:</td><td>${origField}</td></tr>
+          <tr><td class="label">Game Number:</td><td>(Coach fills manually)</td></tr>
+        </table>
 
-        <div class="section signature">
+        <h2>New Game Details</h2>
+        <table>
+          <tr><td class="label">New Game Date:</td><td>${newDate}</td></tr>
+          <tr><td class="label">New Game Time:</td><td>${newTime}</td></tr>
+          <tr><td class="label">New Game Location:</td><td>${newField}</td></tr>
+          <tr><td class="label">Reason for Change:</td><td>${reason}</td></tr>
+        </table>
+
+        <h2>Coach Information</h2>
+        <table>
+          <tr><td class="label">Coach Initiating Reschedule:</td><td>${coachName}</td></tr>
+          <tr><td class="label">Telephone:</td><td>${coachPhone}</td></tr>
+          <tr><td class="label">Email:</td><td>${coachEmail}</td></tr>
+        </table>
+
+        <h2>Opposing Coach</h2>
+        <table>
+          <tr><td class="label">Name of Opposing Coach:</td><td>(Coach fills manually)</td></tr>
+          <tr><td class="label">Telephone:</td><td>(Coach fills manually)</td></tr>
+        </table>
+
+        <div class="signature-block">
           <h2>Coach Signature</h2>
-          <img src="${signatureDataUrl}" alt="Signature" />
+          <img src="${signatureDataUrl}" width="300" />
         </div>
 
-        <script>
-          window.print();
-        </script>
+        <div class="footer">
+          <p><strong>Mail completed form and fee to:</strong><br>
+          South Shore Soccer League<br>
+          P.O. BOX 486<br>
+          West Bridgewater, MA 02379</p>
+
+          <p><strong>Email:</strong> game.scheduler@southshoresoccer.com & referee.assignor@southshoresoccer.com</p>
+        </div>
+
+        <script>window.print();</script>
+
       </body>
       </html>
     `);
 
     win.document.close();
 
-    // PRIVACY: wipe sensitive fields immediately
     document.querySelectorAll('[data-sensitive="true"]').forEach(input => {
       input.value = "";
     });
 
-    // Reset the form and signature pad
     form.reset();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    alert("Game Change Form generated. You can save/print it as PDF. Email and phone have been cleared.");
+    alert("SSSL Game Reschedule Form generated. Save/print as PDF. Email and phone have been cleared.");
   });
 }
