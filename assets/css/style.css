@@ -319,3 +319,142 @@ section {
     font-size: 0.95rem;
     color: #444;
 }
+
+/* ================================
+   RESCHEDULE WORKFLOW COMPONENTS
+   ================================ */
+
+.reschedule-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 15px 60px 15px;
+}
+
+.reschedule-checklist {
+    flex: 1 1 350px;
+    background: white;
+    border: 1px solid #dce3ee;
+    border-radius: 10px;
+    padding: 20px 25px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.reschedule-checklist h2 {
+    margin-top: 0;
+    font-size: 1.4rem;
+    color: #003366;
+    border-bottom: 3px solid #ff7f32;
+    padding-bottom: 8px;
+}
+
+#rescheduleChecklist {
+    list-style: decimal;
+    padding-left: 20px;
+    margin-top: 20px;
+}
+
+#rescheduleChecklist li {
+    margin-bottom: 22px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.step-status {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 0.85rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: #e0e0e0;
+    color: #333;
+}
+
+.step-completed {
+    background: #2e7d32;
+    color: white;
+}
+
+.step-pending-review {
+    background: #c77800;
+    color: white;
+}
+
+.step-complete-btn {
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: #0055a5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.step-complete-btn:hover {
+    background: #003f7f;
+}
+
+#slotProposalForm {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+#slotProposalForm label {
+    font-size: 0.9rem;
+    color: #003366;
+    font-weight: bold;
+}
+
+#slotProposalForm input,
+#slotProposalForm select,
+#slotProposalForm textarea {
+    padding: 8px;
+    border: 1px solid #dce3ee;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+#slotProposalForm button {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: #ff7f32;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#slotProposalForm button:hover {
+    background: #e66f28;
+}
+
+.reschedule-calendar {
+    flex: 1 1 350px;
+}
+
+.reschedule-calendar h2 {
+    margin-top: 0;
+    font-size: 1.4rem;
+    color: #003366;
+    border-bottom: 3px solid #ff7f32;
+    padding-bottom: 8px;
+}
+
+.calendar-iframe {
+    width: 100%;
+    min-height: 650px;
+    border: 2px solid #003366;
+    border-radius: 10px;
+}
+
+.calendar-note {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #444;
+}
