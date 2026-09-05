@@ -2,120 +2,181 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>HAYSA Reschedule Workflow</title>
+  <title>Game Reschedule Workflow</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
 </head>
+
 <body>
+
+  <!-- HEADER -->
   <header>
-    <h1>Game Reschedule Workflow</h1>
-    <p>Follow each step in order. Nothing is sent automatically.</p>
+    <h1>HAYSA Coaches Hub</h1>
+    <p>Game Reschedule Workflow</p>
   </header>
 
-  <main class="reschedule-layout">
-    <!-- LEFT: Checklist -->
-    <section class="reschedule-checklist">
-      <h2>Reschedule Checklist</h2>
-      <ol id="rescheduleChecklist">
-        <li data-step="1">
-          <strong>Request Opposing Coach Contact</strong>
-          <button class="step-complete-btn">Mark Complete</button>
-          <span class="step-status">Pending</span>
-        </li>
-        <li data-step="2">
-          <strong>Make Contact & Upload Agreement Screenshot</strong>
-          <input type="file" id="agreementUpload" accept="image/*,application/pdf" />
-          <button class="step-complete-btn">Mark Complete</button>
-          <span class="step-status">Pending</span>
-        </li>
-        <li data-step="3">
-          <strong>Check Field Availability (Calendar Below)</strong>
-          <button class="step-complete-btn">Mark Complete</button>
-          <span class="step-status">Pending</span>
-        </li>
-        <li data-step="4">
-          <strong>Propose Date / Time / Field</strong>
-          <form id="slotProposalForm">
-            <label>
-              Field:
-              <select id="slotField"></select>
-            </label>
-            <label>
-              Date:
-              <input type="date" id="slotDate" required />
-            </label>
-            <label>
-              Start Time:
-              <input type="time" id="slotStart" required />
-            </label>
-            <label>
-              End Time:
-              <input type="time" id="slotEnd" required />
-            </label>
-            <label>
-              Notes:
-              <textarea id="slotNotes"></textarea>
-            </label>
-            <button type="submit">Propose Slot (Manual Review)</button>
-          </form>
-          <span class="step-status">Pending</span>
-        </li>
-        <li data-step="5">
-          <strong>Board Reviews Proposal (Manual)</strong>
-          <span class="step-status">Pending</span>
-        </li>
-        <li data-step="6">
-          <strong>Request Temporary Field Hold (Email)</strong>
-          <a id="fieldHoldEmailLink" href="#">Open Email Draft</a>
-          <button class="step-complete-btn">Mark Complete</button>
-          <span class="step-status">Pending</span>
-        </li>
-        <li data-step="7">
-          <strong>Board Approves Hold (Manual)</strong>
-          <span class="step-status">Pending</span>
-        </li>
-        <li data-step="8">
-          <strong>Complete Game Change Form</strong>
-          <a href="form.html" target="_blank">Open Game Change Form</a>
-          <button class="step-complete-btn">Mark Complete</button>
-          <span class="step-status">Pending</span>
-        </li>
-        <li data-step="9">
-          <strong>Upload Email Chain</strong>
-          <input type="file" id="emailChainUpload" accept="image/*,application/pdf" />
-          <button class="step-complete-btn">Mark Complete</button>
-          <span class="step-status">Pending</span>
-        </li>
-        <li data-step="10">
-          <strong>Board Inspects Packet (Manual)</strong>
-          <span class="step-status">Pending</span>
-        </li>
-        <li data-step="11">
-          <strong>Board Sends Email to SSSL + HAYSA</strong>
-          <button class="step-complete-btn">Mark Complete</button>
-          <span class="step-status">Pending</span>
-        </li>
-        <li data-step="12">
-          <strong>Log SSSL Response</strong>
-          <button class="step-complete-btn">Mark Complete</button>
-          <span class="step-status">Pending</span>
-        </li>
-      </ol>
-    </section>
+  <!-- NAVIGATION -->
+  <nav>
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../drills/index.html">Drills</a></li>
+      <li><a href="../practice-plans/index.html">Practice Plans</a></li>
+      <li><a href="index.html" class="active">Reschedule</a></li>
+    </ul>
+  </nav>
 
-    <!-- RIGHT: Calendar + context -->
-    <section class="reschedule-calendar">
-      <h2>Field Availability Calendar</h2>
-      <iframe
-        src="https://haysa-scheduler-ui/?view=compact"
-        title="HAYSA Field Calendar"
-        class="calendar-iframe"
-      ></iframe>
-      <p class="calendar-note">
-        Use the calendar to visually confirm availability before proposing a slot.
-      </p>
-    </section>
+  <main>
+
+    <div class="reschedule-layout">
+
+      <!-- CHECKLIST -->
+      <section class="reschedule-checklist">
+        <h2>Reschedule Checklist</h2>
+
+        <ol id="rescheduleChecklist">
+
+          <li data-step="1">
+            <strong>Request Opposing Coach Contact</strong><br>
+            <button class="step-complete-btn">Mark Complete</button>
+            <span class="step-status">Pending</span>
+          </li>
+
+          <li data-step="2">
+            <strong>Make Contact & Upload Agreement Screenshot</strong><br>
+            <input type="file" id="agreementUpload" accept="image/*,application/pdf" />
+            <button class="step-complete-btn">Mark Complete</button>
+            <span class="step-status">Pending</span>
+          </li>
+
+          <li data-step="3">
+            <strong>Check Field Availability (Calendar Below)</strong><br>
+            <button class="step-complete-btn">Mark Complete</button>
+            <span class="step-status">Pending</span>
+          </li>
+
+          <li data-step="4">
+            <strong>Propose Date / Time / Field</strong>
+
+            <form id="slotProposalForm">
+              <label>Field:
+                <select id="slotField"></select>
+              </label>
+
+              <label>Date:
+                <input type="date" id="slotDate" required />
+              </label>
+
+              <label>Start Time:
+                <input type="time" id="slotStart" required />
+              </label>
+
+              <label>End Time:
+                <input type="time" id="slotEnd" required />
+              </label>
+
+              <label>Notes:
+                <textarea id="slotNotes"></textarea>
+              </label>
+
+              <button type="submit">Propose Slot (Manual Review)</button>
+            </form>
+
+            <span class="step-status">Pending</span>
+          </li>
+
+          <li data-step="5">
+            <strong>Board Reviews Proposal (Manual)</strong><br>
+            <span class="step-status">Pending</span>
+          </li>
+
+          <li data-step="6">
+            <strong>Request Temporary Field Hold (Email)</strong><br>
+            <a id="fieldHoldEmailLink" href="#">Open Email Draft</a><br>
+            <button class="step-complete-btn">Mark Complete</button>
+            <span class="step-status">Pending</span>
+          </li>
+
+          <li data-step="7">
+            <strong>Board Approves Hold (Manual)</strong><br>
+            <span class="step-status">Pending</span>
+          </li>
+
+          <li data-step="8">
+            <strong>Complete Game Change Form</strong><br>
+            <a href="form.html" target="_blank">Open Game Change Form</a><br>
+            <button class="step-complete-btn">Mark Complete</button>
+            <span class="step-status">Pending</span>
+          </li>
+
+          <li data-step="9">
+            <strong>Upload Email Chain</strong><br>
+            <input type="file" id="emailChainUpload" accept="image/*,application/pdf" />
+            <button class="step-complete-btn">Mark Complete</button>
+            <span class="step-status">Pending</span>
+          </li>
+
+          <li data-step="10">
+            <strong>Board Inspects Packet (Manual)</strong><br>
+            <span class="step-status">Pending</span>
+          </li>
+
+          <li data-step="11">
+            <strong>Board Sends Email to SSSL + HAYSA</strong><br>
+            <button class="step-complete-btn">Mark Complete</button>
+            <span class="step-status">Pending</span>
+          </li>
+
+          <li data-step="12">
+            <strong>Log SSSL Response</strong><br>
+            <button class="step-complete-btn">Mark Complete</button>
+            <span class="step-status">Pending</span>
+          </li>
+
+        </ol>
+      </section>
+
+      <!-- CALENDAR -->
+      <section class="reschedule-calendar">
+        <h2>Field Availability Calendar</h2>
+
+        <!-- FIXED WORKING CALENDAR URL -->
+        <iframe
+          src="https://haysa-soccer.github.io/haysa-scheduler-ui/?view=compact"
+          title="HAYSA Field Calendar"
+          class="calendar-iframe"
+        ></iframe>
+
+        <p class="calendar-note">
+          Use the calendar to visually confirm availability before proposing a slot.
+        </p>
+      </section>
+
+    </div>
+
   </main>
 
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>HAYSA</h3>
+        <p>Holbrook Youth Soccer Association</p>
+      </div>
+      <div class="footer-section">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="../drills/index.html">Drills</a></li>
+          <li><a href="../practice-plans/index.html">Practice Plans</a></li>
+          <li><a href="index.html">Reschedule Workflow</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      © 2026 HAYSA — All Rights Reserved
+    </div>
+  </footer>
+
   <script src="../assets/js/main.js"></script>
+
 </body>
 </html>
