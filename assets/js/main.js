@@ -1,5 +1,5 @@
 // ================================
-// RESCHEDULE CHECKLIST + CALENDAR
+// RESCHEDULE WORKFLOW BOOTSTRAP
 // ================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -8,6 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
   initFieldHoldEmailLink();
   initGameChangeForm();
 });
+
+// ================================
+// RESCHEDULE CHECKLIST
+// ================================
 
 function initRescheduleChecklist() {
   const checklist = document.getElementById("rescheduleChecklist");
@@ -22,17 +26,21 @@ function initRescheduleChecklist() {
         statusEl.textContent = "Completed";
         statusEl.classList.add("step-completed");
       }
-      // In the future, you can send non-sensitive status to a backend here.
+      // Future: send non-sensitive status to backend if desired.
     });
   });
 }
+
+// ================================
+// SLOT PROPOSAL FORM
+// ================================
 
 function initSlotProposalForm() {
   const form = document.getElementById("slotProposalForm");
   const fieldSelect = document.getElementById("slotField");
   if (!form || !fieldSelect) return;
 
-  // Simple static field list for now; can be wired to calendar snapshot later.
+  // Static field list for now; can be wired to calendar snapshot later.
   const fields = [
     "Turf Field",
     "Sumner Field",
@@ -76,6 +84,10 @@ function initSlotProposalForm() {
     form.reset();
   });
 }
+
+// ================================
+// FIELD HOLD EMAIL LINK
+// ================================
 
 function initFieldHoldEmailLink() {
   const link = document.getElementById("fieldHoldEmailLink");
