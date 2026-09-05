@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Game Change Form</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <h1>HAYSA Coaches Hub</h1>
+    <p>Game Change Form</p>
+  </header>
+
+  <!-- NAVIGATION -->
+  <nav>
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../drills/index.html">Drills</a></li>
+      <li><a href="../practice-plans/index.html">Practice Plans</a></li>
+      <li><a href="index.html" class="active">Reschedule</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="form-wrapper">
+
+      <h2 style="color:#003366; border-bottom:3px solid #ff7f32; padding-bottom:8px;">
+        Complete Game Change Form
+      </h2>
+
+      <p style="color:#444; font-size:0.95rem;">
+        Fill out the form below. When you click <strong>Generate PDF</strong>, your email and phone
+        will be used ONLY inside the PDF and then immediately erased from the system.
+        Nothing is stored.
+      </p>
+
+      <form id="gameChangeForm">
+
+        <!-- TEAM INFO -->
+        <h3 style="color:#003366;">Team Information</h3>
+
+        <label>Team Name:
+          <input type="text" id="teamName" required />
+        </label>
+
+        <label>Coach Name:
+          <input type="text" id="coachName" required />
+        </label>
+
+        <label>Coach Email:
+          <input type="email" id="coachEmail" data-sensitive="true" required />
+        </label>
+
+        <label>Coach Phone:
+          <input type="tel" id="coachPhone" data-sensitive="true" required />
+        </label>
+
+        <!-- GAME DETAILS -->
+        <h3 style="color:#003366; margin-top:30px;">Original Game Details</h3>
+
+        <label>Original Date:
+          <input type="date" id="origDate" required />
+        </label>
+
+        <label>Original Time:
+          <input type="time" id="origTime" required />
+        </label>
+
+        <label>Original Field:
+          <input type="text" id="origField" required />
+        </label>
+
+        <label>Opponent:
+          <input type="text" id="opponent" required />
+        </label>
+
+        <!-- NEW DETAILS -->
+        <h3 style="color:#003366; margin-top:30px;">New Requested Details</h3>
+
+        <label>New Date:
+          <input type="date" id="newDate" required />
+        </label>
+
+        <label>New Time:
+          <input type="time" id="newTime" required />
+        </label>
+
+        <label>New Field:
+          <input type="text" id="newField" required />
+        </label>
+
+        <label>Reason for Change:
+          <textarea id="reason" required></textarea>
+        </label>
+
+        <!-- SIGNATURE -->
+        <h3 style="color:#003366; margin-top:30px;">Coach Signature</h3>
+
+        <p style="font-size:0.9rem; color:#555;">
+          Sign below using your mouse or finger.
+        </p>
+
+        <canvas id="signaturePad" width="500" height="150"
+          style="border:1px solid #ccc; border-radius:6px; background:white;"></canvas>
+
+        <button type="button" id="clearSignature"
+          style="margin-top:10px; padding:6px 12px; background:#0055a5; color:white; border:none; border-radius:6px;">
+          Clear Signature
+        </button>
+
+        <!-- SUBMIT -->
+        <button type="submit"
+          style="margin-top:25px; padding:12px 18px; background:#ff7f32; color:white; border:none; border-radius:6px; font-size:1rem; font-weight:bold;">
+          Generate PDF
+        </button>
+
+      </form>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>HAYSA</h3>
+        <p>Holbrook Youth Soccer Association</p>
+      </div>
+      <div class="footer-section">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="../drills/index.html">Drills</a></li>
+          <li><a href="../practice-plans/index.html">Practice Plans</a></li>
+          <li><a href="index.html">Reschedule Workflow</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      © 2026 HAYSA — All Rights Reserved
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+
+</body>
+</html>
