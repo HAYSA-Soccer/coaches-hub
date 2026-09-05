@@ -219,6 +219,11 @@ function initGameChangeForm() {
 
     const signatureDataUrl = canvas.toDataURL("image/png");
 
+    // difference highlighting
+    const isDateChanged  = origDate && newDate && origDate !== newDate;
+    const isTimeChanged  = origTime && newTime && origTime !== newTime;
+    const isFieldChanged = origField && newField && origField !== newField;
+
     const win = window.open("", "_blank");
     if (!win) {
       alert("Popup blocked. Please allow popups to generate the PDF.");
@@ -245,20 +250,25 @@ function initGameChangeForm() {
           p {
             margin: 4px 0;
           }
-          .fill {
-            display: inline-block;
-            min-width: 260px;
-            border-bottom: 1px solid #000;
-            padding: 0 4px;
-          }
-          .fill-short {
-            display: inline-block;
-            min-width: 160px;
-            border-bottom: 1px solid #000;
-            padding: 0 4px;
-          }
           .section {
             margin-top: 12px;
+          }
+          .fill,
+          .fill-short {
+            display: inline-block;
+            border-bottom: 1px solid #000;
+            padding: 0 4px;
+            color: #000;
+          }
+          .fill {
+            min-width: 260px;
+          }
+          .fill-short {
+            min-width: 160px;
+          }
+          .fill-red {
+            color: #c00000;
+            font-weight: bold;
           }
           .signature-line {
             display: inline-block;
@@ -313,14 +323,14 @@ function initGameChangeForm() {
           </p>
 
           <p>New Game date:
-            <span class="fill-short">${newDate}</span>
+            <span class="fill-short ${isDateChanged ? 'fill-red' : ''}">${newDate}</span>
             &nbsp;&nbsp;&nbsp;
             New Game Time:
-            <span class="fill-short">${newTime}</span>
+            <span class="fill-short ${isTimeChanged ? 'fill-red' : ''}">${newTime}</span>
           </p>
 
           <p>New game Location:
-            <span class="fill">${newField}</span>
+            <span class="fill ${isFieldChanged ? 'fill-red' : ''}">${newField}</span>
           </p>
 
           <p>Name of Coach Initiating the Reschedule:
@@ -371,6 +381,7 @@ function initGameChangeForm() {
 
     win.document.close();
 
+    // wipe sensitive fields immediately
     document.querySelectorAll('[data-sensitive="true"]').forEach(input => {
       input.value = "";
     });
