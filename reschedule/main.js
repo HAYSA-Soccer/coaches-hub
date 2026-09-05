@@ -1,55 +1,114 @@
-// ================================
-// GAME NUMBER WORKFLOW TRACKING
-// ================================
+// ===============================================
+// CONFIG — your Google Apps Script WebApp endpoint
+// ===============================================
+const API_URL = "YOUR_WEBAPP_URL_HERE"; 
+// Example: https://script.google.com/macros/s/AKfjsdf.../exec
 
+
+// ===============================================
+// API HELPERS
+// ===============================================
+
+async function apiGetRow(gameNumber) {
+  const url = `${API_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}`;
+  const res = await fetch(url);
+  return res.json();
+}
+
+async function apiCreateRow(gameNumber) {
+  const form = new FormData();
+  form.append("action", "createRow");
+  form.append("game_number", gameNumber);
+
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
+
+async function apiUpdateStep(gameNumber, step) {
+  const form = new FormData();
+  form.append("action", "updateStep");
+  form.append("game_number", gameNumber);
+  form.append("step", step);
+
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
+
+async function apiUpdateOptions(gameNumber, opt1, opt2, opt3) {
+  const form = new FormData();
+  form.append("action", "updateOptions");
+  form.append("game_number", gameNumber);
+  form.append("opt1", JSON.stringify(opt1));
+  form.append("opt2", JSON.stringify(opt2));
+  form.append("opt3", JSON.stringify(opt3));
+
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
+
+async function apiUpdateFinal(gameNumber, finalDate, finalTime, finalField) {
+  const form = new FormData();
+  form.append("action", "updateFinal");
+  form.append("game_number", gameNumber);
+  form.append("final_date", finalDate);
+  form.append("final_time", finalTime);
+  form.append("final_field", finalField);
+
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
+
+async function apiDeleteRow(gameNumber) {
+  const form = new FormData();
+  form.append("action", "deleteRow");
+  form.append("game_number", gameNumber);
+
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
+
+
+// ===============================================
+// STATE
+// ===============================================
 let currentGameNumber = null;
+let currentRowData = null;
 
-/**
- * Update the status panel showing:
- * - Completed steps
- * - Pending steps
- * - Last updated timestamp
- */
-function updateStatusPanel(saved) {
+
+// ===============================================
+// UI HELPERS
+// ===============================================
+
+function updateStatusPanel() {
   const statusDiv = document.getElementById("gameStatus");
 
-  if (!currentGameNumber) {
+  if (!currentRowData) {
     statusDiv.textContent = "";
     return;
   }
 
-  const steps = document.querySelectorAll("li[data-step]");
-  let completed = 0;
-
-  steps.forEach(li => {
-    const step = li.getAttribute("data-step");
-    if (saved[step]) completed++;
-  });
-
+  const steps = currentRowData.slice(16, 28); // step_1 through step_12
+  const completed = steps.filter(s => s === true).length;
   const total = steps.length;
+
+  const lastUpdated = currentRowData[28] || "Never";
 
   statusDiv.innerHTML = `
     <strong>Game #${currentGameNumber}</strong><br>
     Completed: ${completed} / ${total}<br>
     Pending: ${total - completed}<br>
-    Last Updated: ${saved.lastUpdated || "Never"}
+    Last Updated: ${lastUpdated}
   `;
 }
 
-/**
- * Load workflow state for a specific game number
- */
-function loadGameWorkflow(gameNumber) {
-  currentGameNumber = gameNumber;
-
-  const key = "rescheduleSteps_" + gameNumber;
-  const saved = JSON.parse(localStorage.getItem(key) || "{}");
+function applyRowToChecklist() {
+  const steps = currentRowData.slice(16, 28);
 
   document.querySelectorAll("li[data-step]").forEach(li => {
-    const step = li.getAttribute("data-step");
+    const step = Number(li.getAttribute("data-step"));
     const statusEl = li.querySelector(".step-status");
 
-    if (saved[step]) {
+    if (steps[step - 1] === true) {
       statusEl.textContent = "Completed";
       statusEl.classList.add("step-completed");
     } else {
@@ -58,17 +117,40 @@ function loadGameWorkflow(gameNumber) {
     }
   });
 
-  updateStatusPanel(saved);
+  updateStatusPanel();
 }
 
-/**
- * Initialize Game Number UI
- */
+
+// ===============================================
+// LOAD WORKFLOW
+// ===============================================
+
+async function loadGameWorkflow(gameNumber) {
+  currentGameNumber = gameNumber;
+
+  const row = await apiGetRow(gameNumber);
+
+  if (!row.exists) {
+    // Create new row
+    await apiCreateRow(gameNumber);
+    currentRowData = (await apiGetRow(gameNumber)).data;
+  } else {
+    currentRowData = row.data;
+  }
+
+  applyRowToChecklist();
+}
+
+
+// ===============================================
+// INIT GAME NUMBER UI
+// ===============================================
+
 function initGameNumberUI() {
   const loadBtn = document.getElementById("loadGameBtn");
   const clearBtn = document.getElementById("clearGameBtn");
 
-  loadBtn.addEventListener("click", () => {
+  loadBtn.addEventListener("click", async () => {
     const gameNumber = document.getElementById("gameNumberInput").value.trim();
 
     if (!gameNumber) {
@@ -76,64 +158,62 @@ function initGameNumberUI() {
       return;
     }
 
-    loadGameWorkflow(gameNumber);
+    await loadGameWorkflow(gameNumber);
   });
 
-  clearBtn.addEventListener("click", () => {
+  clearBtn.addEventListener("click", async () => {
     if (!currentGameNumber) {
       alert("No game loaded.");
       return;
     }
 
-    const key = "rescheduleSteps_" + currentGameNumber;
-    localStorage.removeItem(key);
+    await apiDeleteRow(currentGameNumber);
+    currentRowData = null;
+    currentGameNumber = null;
 
-    loadGameWorkflow(currentGameNumber);
+    document.getElementById("gameStatus").textContent = "";
+    document.querySelectorAll(".step-status").forEach(el => {
+      el.textContent = "Pending";
+      el.classList.remove("step-completed");
+    });
+
+    alert("Workflow deleted.");
   });
 }
 
-// ================================
-// CHECKLIST COMPLETION LOGIC
-// ================================
+
+// ===============================================
+// CHECKLIST COMPLETION
+// ===============================================
 
 function initRescheduleChecklist() {
-  const checklist = document.getElementById("rescheduleChecklist");
-  if (!checklist) return;
-
   document.querySelectorAll(".step-complete-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       if (!currentGameNumber) {
         alert("Please enter your SSSL Game Number first.");
         return;
       }
 
       const li = btn.closest("li");
-      const step = li.getAttribute("data-step");
-      const statusEl = li.querySelector(".step-status");
+      const step = Number(li.getAttribute("data-step"));
 
-      statusEl.textContent = "Completed";
-      statusEl.classList.add("step-completed");
+      await apiUpdateStep(currentGameNumber, step);
 
-      const key = "rescheduleSteps_" + currentGameNumber;
-      const saved = JSON.parse(localStorage.getItem(key) || "{}");
-
-      saved[step] = true;
-      saved.lastUpdated = new Date().toLocaleString();
-
-      localStorage.setItem(key, JSON.stringify(saved));
-
-      updateStatusPanel(saved);
+      currentRowData = (await apiGetRow(currentGameNumber)).data;
+      applyRowToChecklist();
     });
   });
 }
 
-// ================================
-// SLOT PROPOSAL FORM
-// ================================
+
+// ===============================================
+// SLOT PROPOSAL FORM (OPTION ENTRY)
+// ===============================================
 
 function initSlotProposalForm() {
   const form = document.getElementById("slotProposalForm");
   const fieldSelect = document.getElementById("slotField");
+
   if (!form || !fieldSelect) return;
 
   const fields = [
@@ -150,39 +230,37 @@ function initSlotProposalForm() {
     fieldSelect.appendChild(opt);
   });
 
-  form.addEventListener("submit", e => {
+  form.addEventListener("submit", async e => {
     e.preventDefault();
 
-    const field = fieldSelect.value;
-    const date = document.getElementById("slotDate").value;
-    const start = document.getElementById("slotStart").value;
-    const end = document.getElementById("slotEnd").value;
-    const notes = document.getElementById("slotNotes").value;
-
-    if (!field || !date || !start || !end) {
-      alert("Please complete field, date, start, and end time.");
+    if (!currentGameNumber) {
+      alert("Load a game number first.");
       return;
     }
 
-    console.log("Slot proposed:", { field, date, start, end, notes });
+    const opt1 = {
+      date: document.getElementById("slotDate").value,
+      time: document.getElementById("slotStart").value + "-" + document.getElementById("slotEnd").value,
+      field: document.getElementById("slotField").value
+    };
 
-    const stepLi = document.querySelector('li[data-step="4"]');
-    if (stepLi) {
-      const statusEl = stepLi.querySelector(".step-status");
-      if (statusEl) {
-        statusEl.textContent = "Slot Proposed (Pending Board Review)";
-        statusEl.classList.add("step-pending-review");
-      }
-    }
+    const opt2 = {}; // You can expand later
+    const opt3 = {}; // You can expand later
 
-    alert("Slot proposed. Board will review manually.");
+    await apiUpdateOptions(currentGameNumber, opt1, opt2, opt3);
+
+    currentRowData = (await apiGetRow(currentGameNumber)).data;
+    updateStatusPanel();
+
+    alert("Option saved. Board will review manually.");
     form.reset();
   });
 }
 
-// ================================
+
+// ===============================================
 // FIELD HOLD EMAIL LINK
-// ================================
+// ===============================================
 
 function initFieldHoldEmailLink() {
   const link = document.getElementById("fieldHoldEmailLink");
@@ -197,13 +275,11 @@ function initFieldHoldEmailLink() {
     const body = encodeURIComponent(
 `Please review and confirm a temporary field hold:
 
-Team Name:
-Coach Name:
 Field:
 Date:
 Start Time:
 End Time:
-Reason / Notes:
+Notes:
 
 (Confirmed against the HAYSA field calendar.)`
     );
@@ -212,9 +288,10 @@ Reason / Notes:
   });
 }
 
-// ================================
-// GAME CHANGE FORM + SIGNATURE PAD
-// ================================
+
+// ===============================================
+// GAME CHANGE FORM SIGNATURE PAD (unchanged)
+// ===============================================
 
 function initGameChangeForm() {
   const form = document.getElementById("gameChangeForm");
@@ -251,7 +328,6 @@ function initGameChangeForm() {
     drawing = false;
   }
 
-  // Mouse events
   canvas.addEventListener("mousedown", e => {
     const rect = canvas.getBoundingClientRect();
     startDraw(e.clientX - rect.left, e.clientY - rect.top);
@@ -265,7 +341,6 @@ function initGameChangeForm() {
   canvas.addEventListener("mouseup", stopDraw);
   canvas.addEventListener("mouseleave", stopDraw);
 
-  // Touch events
   canvas.addEventListener("touchstart", e => {
     e.preventDefault();
     const rect = canvas.getBoundingClientRect();
@@ -290,9 +365,10 @@ function initGameChangeForm() {
   });
 }
 
-// ================================
-// INITIALIZE EVERYTHING
-// ================================
+
+// ===============================================
+// INIT EVERYTHING
+// ===============================================
 
 document.addEventListener("DOMContentLoaded", () => {
   initGameNumberUI();
