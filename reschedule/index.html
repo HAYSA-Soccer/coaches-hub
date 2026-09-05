@@ -32,6 +32,17 @@
       <section class="reschedule-checklist">
         <h2>Reschedule Checklist</h2>
 
+        <!-- GAME NUMBER UI -->
+        <div id="gameNumberUI" style="margin-bottom: 20px;">
+          <label for="gameNumberInput"><strong>Enter SSSL Game Number:</strong></label>
+          <input id="gameNumberInput" type="text" placeholder="e.g., 1849201" style="margin-left: 10px;">
+
+          <button id="loadGameBtn">Load Workflow</button>
+          <button id="clearGameBtn">Clear Progress</button>
+
+          <div id="gameStatus" style="margin-top: 10px; font-size: 14px; color: #444;"></div>
+        </div>
+
         <ol id="rescheduleChecklist">
 
           <li data-step="1">
@@ -138,7 +149,6 @@
       <section class="reschedule-calendar">
         <h2>Field Availability Calendar</h2>
 
-        <!-- FIXED WORKING CALENDAR URL -->
         <iframe
           src="https://haysa-soccer.github.io/haysa-scheduler-ui/?view=compact"
           title="HAYSA Field Calendar"
