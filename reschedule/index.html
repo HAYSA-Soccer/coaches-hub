@@ -2,168 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>HAYSA Reschedule Workflow</title>
+  <title>HAYSA Game Reschedule Workflow</title>
   <link rel="stylesheet" href="styles.css">
-
-  <!-- Main JS -->
   <script src="main.js" defer></script>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    h1, h2 {
-      margin-top: 25px;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 10px;
-    }
-    input, select {
-      padding: 8px;
-      width: 100%;
-      margin-top: 5px;
-    }
-    button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      font-size: 16px;
-    }
-    ul {
-      list-style: none;
-      padding-left: 0;
-    }
-    li {
-      margin-bottom: 10px;
-    }
-    .step-status {
-      font-weight: bold;
-      margin-left: 10px;
-    }
-    .step-completed {
-      color: green;
-    }
-    .link-button {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px 15px;
-      background: #1976d2;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-    }
-  </style>
 </head>
 
 <body>
 
-  <h1>HAYSA Game Reschedule Workflow</h1>
-  <p>Enter your SSSL Game Number to begin.</p>
+  <header class="header">
+    <h1>HAYSA Game Reschedule</h1>
+    <p class="subtitle">A guided workflow to move your SSSL game</p>
+  </header>
 
   <!-- GAME NUMBER INPUT -->
-  <label>SSSL Game Number</label>
-  <input type="text" id="gameNumberInput" placeholder="Example: G12345">
+  <section class="game-number-section card">
+    <label for="gameNumberInput">Enter SSSL Game Number</label>
+    <input type="text" id="gameNumberInput" placeholder="Example: 22920056">
+    <button id="loadGameBtn" class="primary-btn">Load Game</button>
+    <button id="clearGameBtn" class="secondary-btn">Clear</button>
+    <p id="gameLoadMessage" class="info-text"></p>
+  </section>
 
-  <button id="loadGameBtn">Load Game</button>
-  <button id="clearGameBtn">Clear Workflow</button>
+  <!-- TIMELINE -->
+  <nav class="timeline">
+    <div class="timeline-step" data-step="1">Original Game</div>
+    <div class="timeline-step" data-step="2">Opponent</div>
+    <div class="timeline-step" data-step="3">Field Hold</div>
+    <div class="timeline-step" data-step="4">SSSL Form</div>
+    <div class="timeline-step" data-step="5">Approval</div>
+    <div class="timeline-step" data-step="6">Calendar</div>
+    <div class="timeline-step" data-step="7">Notify</div>
+  </nav>
 
-  <!-- STATUS PANEL -->
-  <h2>Game Status</h2>
-  <div id="gameStatus"></div>
+  <!-- DYNAMIC PANEL -->
+  <section id="panelContainer" class="panel card">
+    <!-- JS will inject content here -->
+  </section>
 
-  <!-- CHECKLIST -->
-  <h2>Reschedule Checklist</h2>
-  <ul>
-    <li data-step="1">
-      Step 1: Coach submits reschedule request
-      <span class="step-status">Pending</span>
-      <button class="step-complete-btn">Mark Complete</button>
-    </li>
-    <li data-step="2">
-      Step 2: Board reviews request
-      <span class="step-status">Pending</span>
-      <button class="step-complete-btn">Mark Complete</button>
-    </li>
-    <li data-step="3">
-      Step 3: Field availability checked
-      <span class="step-status">Pending</span>
-      <button class="step-complete-btn">Mark Complete</button>
-    </li>
-    <li data-step="4">
-      Step 4: Opposing coach contacted
-      <span class="step-status">Pending</span>
-      <button class="step-complete-btn">Mark Complete</button>
-    </li>
-    <li data-step="5">
-      Step 5: Temporary field hold placed
-      <span class="step-status">Pending</span>
-      <button class="step-complete-btn">Mark Complete</button>
-    </li>
-    <li data-step="6">
-      Step 6: SSSL form prepared
-      <span class="step-status">Pending</span>
-      <button class="step-complete-btn">Mark Complete</button>
-    </li>
-    <li data-step="7">
-      Step 7: SSSL form submitted
-      <span class="step-status">Pending</span>
-      <button class="step-complete-btn">Mark Complete</button>
-    </li>
-    <li data-step="8">
-      Step 8: SSSL approval received
-      <span class="step-status">Pending</span>
-      <button class="step-complete-btn">Mark Complete</button>
-    </li>
-    <li data-step="9">
-      Step 9: Referee assignor notified
-      <span class="step-status">Pending</span>
-      <button class="step-complete-btn">Mark Complete</button>
-    </li>
-    <li data-step="10">
-      Step 10: Calendar updated
-      <span class="step-status">Pending</span>
-      <button class="step-complete-btn">Mark Complete</button>
-    </li>
-    <li data-step="11">
-      Step 11: Website updated
-      <span class="step-status">Pending</span>
-      <button class="step-complete-btn">Mark Complete</button>
-    </li>
-    <li data-step="12">
-      Step 12: Confirmation sent to both coaches
-      <span class="step-status">Pending</span>
-      <button class="step-complete-btn">Mark Complete</button>
-    </li>
-  </ul>
-
-  <!-- SLOT PROPOSAL FORM -->
-  <h2>Propose a New Game Slot</h2>
-
-  <form id="slotProposalForm">
-    <label>Field</label>
-    <select id="slotField"></select>
-
-    <label>Date</label>
-    <input type="date" id="slotDate">
-
-    <label>Start Time</label>
-    <input type="time" id="slotStart">
-
-    <label>End Time</label>
-    <input type="time" id="slotEnd">
-
-    <button type="submit">Save Option</button>
-  </form>
-
-  <!-- FIELD HOLD EMAIL -->
-  <h2>Temporary Field Hold</h2>
-  <a href="#" id="fieldHoldEmailLink" class="link-button">Send Field Hold Email</a>
-
-  <!-- LINK TO GAME CHANGE FORM -->
-  <h2>SSSL Game Change Form</h2>
-  <a href="form.html" class="link-button">Open Game Change Form</a>
+  <!-- NEXT STEP BUTTON -->
+  <div class="next-step-container">
+    <button id="nextStepBtn" class="primary-btn">Next Step →</button>
+  </div>
 
 </body>
 </html>
