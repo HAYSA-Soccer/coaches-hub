@@ -1,7 +1,7 @@
 // ===============================================
 // CONFIG — your Google Apps Script WebApp endpoint
 // ===============================================
-const API_URL = "YOUR_WEBAPP_URL_HERE"; 
+const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec"; 
 // Example: https://script.google.com/macros/s/AKfjsdf.../exec
 
 
@@ -62,6 +62,26 @@ async function apiDeleteRow(gameNumber) {
   const form = new FormData();
   form.append("action", "deleteRow");
   form.append("game_number", gameNumber);
+
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
+
+// ===============================================
+// ⭐ NEW: UPDATE GAME CHANGE FORM (SAFE FIELDS ONLY)
+// ===============================================
+
+async function apiUpdateGameChangeForm(payload) {
+  const form = new FormData();
+  form.append("action", "updateGameChangeForm");
+  form.append("game_number", payload.game_number);
+  form.append("team_name", payload.team_name || "");
+  form.append("orig_date", payload.orig_date || "");
+  form.append("orig_time", payload.orig_time || "");
+  form.append("orig_field", payload.orig_field || "");
+  form.append("final_date", payload.final_date || "");
+  form.append("final_time", payload.final_time || "");
+  form.append("final_field", payload.final_field || "");
 
   const res = await fetch(API_URL, { method: "POST", body: form });
   return res.json();
@@ -131,7 +151,6 @@ async function loadGameWorkflow(gameNumber) {
   const row = await apiGetRow(gameNumber);
 
   if (!row.exists) {
-    // Create new row
     await apiCreateRow(gameNumber);
     currentRowData = (await apiGetRow(gameNumber)).data;
   } else {
@@ -207,7 +226,7 @@ function initRescheduleChecklist() {
 
 
 // ===============================================
-// SLOT PROPOSAL FORM (OPTION ENTRY)
+// SLOT PROPOSAL FORM
 // ===============================================
 
 function initSlotProposalForm() {
@@ -244,8 +263,8 @@ function initSlotProposalForm() {
       field: document.getElementById("slotField").value
     };
 
-    const opt2 = {}; // You can expand later
-    const opt3 = {}; // You can expand later
+    const opt2 = {};
+    const opt3 = {};
 
     await apiUpdateOptions(currentGameNumber, opt1, opt2, opt3);
 
@@ -290,7 +309,7 @@ Notes:
 
 
 // ===============================================
-// GAME CHANGE FORM SIGNATURE PAD (unchanged)
+// GAME CHANGE FORM — SIGNATURE PAD + SUBMIT
 // ===============================================
 
 function initGameChangeForm() {
@@ -300,6 +319,9 @@ function initGameChangeForm() {
 
   if (!form || !canvas || !clearBtn) return;
 
+  // -------------------------
+  // Signature Pad
+  // -------------------------
   const ctx = canvas.getContext("2d");
   let drawing = false;
   let lastX = 0;
@@ -362,6 +384,74 @@ function initGameChangeForm() {
 
   clearBtn.addEventListener("click", () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
+
+  // -------------------------
+  // ⭐ NEW: FORM SUBMIT HANDLER
+  // -------------------------
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(form);
+
+    // SAFE fields (stored in sheet)
+    const gameNumber = formData.get("game_number");
+    const teamName = formData.get("team_name");
+    const origDate = formData.get("orig_date");
+    const origTime = formData.get("orig_time");
+    const origField = formData.get("orig_field");
+    const finalDate = formData.get("final_date");
+    const finalTime = formData.get("final_time");
+    const finalField = formData.get("final_field");
+
+    // PRIVATE fields (NOT stored)
+    const coachName = formData.get("coach_name");
+    const coachEmail = formData.get("coach_email");
+    const coachPhone = formData.get("coach_phone");
+    const oppCoachName = formData.get("opp_coach_name");
+    const oppCoachPhone = formData.get("opp_coach_phone");
+
+    // Signature (canvas → PNG)
+    const signatureData = canvas.toDataURL();
+
+    // 1) Generate PDF (private)
+    await generateReschedulePDF({
+      game_number: gameNumber,
+      team_name: teamName,
+      orig_date: origDate,
+      orig_time: origTime,
+      orig_field: origField,
+      final_date: finalDate,
+      final_time: finalTime,
+      final_field: finalField,
+
+      coach_name: coachName,
+      coach_email: coachEmail,
+      coach_phone: coachPhone,
+      opp_coach_name: oppCoachName,
+      opp_coach_phone: oppCoachPhone,
+      signature_data: signatureData,
+    });
+
+    // 2) Save ONLY safe fields to Google Sheets
+    try {
+      await apiUpdateGameChangeForm({
+        game_number: gameNumber,
+        team_name: teamName,
+        orig_date: origDate,
+        orig_time: origTime,
+        orig_field: origField,
+        final_date: finalDate,
+        final_time: finalTime,
+        final_field: finalField,
+      });
+
+      alert("Your Game Change Form has been saved!");
+    } catch (err) {
+      console.error(err);
+      alert("There was a problem saving your form.");
+    }
   });
 }
 
