@@ -1,8 +1,8 @@
 // ===============================================
 // CONFIG — your Google Apps Script WebApp endpoint
 // ===============================================
-const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec"; 
-// Example: https://script.google.com/macros/s/AKfjsdf.../exec
+const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
+
 
 // ===============================================
 // API HELPERS
@@ -18,7 +18,6 @@ async function apiCreateRow(gameNumber) {
   const form = new FormData();
   form.append("action", "createRow");
   form.append("game_number", gameNumber);
-
   const res = await fetch(API_URL, { method: "POST", body: form });
   return res.json();
 }
@@ -28,45 +27,10 @@ async function apiUpdateStep(gameNumber, step) {
   form.append("action", "updateStep");
   form.append("game_number", gameNumber);
   form.append("step", step);
-
   const res = await fetch(API_URL, { method: "POST", body: form });
   return res.json();
 }
 
-async function apiUpdateOptions(gameNumber, opt1, opt2, opt3) {
-  const form = new FormData();
-  form.append("action", "updateOptions");
-  form.append("game_number", gameNumber);
-  form.append("opt1", JSON.stringify(opt1));
-  form.append("opt2", JSON.stringify(opt2));
-  form.append("opt3", JSON.stringify(opt3));
-
-  const res = await fetch(API_URL, { method: "POST", body: form });
-  return res.json();
-}
-
-async function apiUpdateFinal(gameNumber, finalDate, finalTime, finalField) {
-  const form = new FormData();
-  form.append("action", "updateFinal");
-  form.append("game_number", gameNumber);
-  form.append("final_date", finalDate);
-  form.append("final_time", finalTime);
-  form.append("final_field", finalField);
-
-  const res = await fetch(API_URL, { method: "POST", body: form });
-  return res.json();
-}
-
-async function apiDeleteRow(gameNumber) {
-  const form = new FormData();
-  form.append("action", "deleteRow");
-  form.append("game_number", gameNumber);
-
-  const res = await fetch(API_URL, { method: "POST", body: form });
-  return res.json();
-}
-
-// NEW: safe game change form update
 async function apiUpdateGameChangeForm(payload) {
   const form = new FormData();
   form.append("action", "updateGameChangeForm");
@@ -78,7 +42,6 @@ async function apiUpdateGameChangeForm(payload) {
   form.append("final_date", payload.final_date || "");
   form.append("final_time", payload.final_time || "");
   form.append("final_field", payload.final_field || "");
-
   const res = await fetch(API_URL, { method: "POST", body: form });
   return res.json();
 }
@@ -89,7 +52,7 @@ async function apiUpdateGameChangeForm(payload) {
 // ===============================================
 let currentGameNumber = null;
 let currentRowData = null;
-let currentStep = 1; // 1–7 timeline
+let currentStep = 1;
 let isNewGame = false;
 
 
@@ -98,989 +61,318 @@ let isNewGame = false;
 // ===============================================
 
 function setActiveTimelineStep(step) {
-  const steps = document.querySelectorAll(".timeline-step");
-  steps.forEach(s => {
-    const sStep = Number(s.getAttribute("data-step"));
-    if (sStep === step) {
-      s.classList.add("active");
-    } else {
-      s.classList.remove("active");
-    }
+  document.querySelectorAll(".timeline-step").forEach(el => {
+    el.classList.toggle("active", Number(el.dataset.step) === step);
   });
 }
 
-function getPanelContainer() {
-  return document.getElementById("panelContainer");
-}
-
 function renderPanelForStep(step) {
-  const panel = getPanelContainer();
+  const panel = document.getElementById("panelContainer");
   if (!panel) return;
 
   switch (step) {
-    case 1:
-      renderOriginalGamePanel(panel);
-      break;
-    case 2:
-      renderOpponentPanel(panel);
-      break;
-    case 3:
-      renderMoveGamePanel(panel);
-      break;
-    case 4:
-      renderSSSLFormPanel(panel);
-      break;
-    case 5:
-      renderApprovalPanel(panel);
-      break;
-    case 6:
-      renderCalendarPanel(panel);
-      break;
-    case 7:
-      renderNotifyPanel(panel);
-      break;
+    case 1: renderStep1(panel); break;
+    case 2: renderStep2(panel); break;
+    case 3: renderStep3(panel); break;
+    case 4: renderStep4(panel); break;
+    case 5: renderStep5(panel); break;
+    case 6: renderStep6(panel); break;
+    case 7: renderStep7(panel); break;
     default:
-      panel.innerHTML = "<p>Select a step in the timeline above.</p>";
+      panel.innerHTML = "<p>Select a step above.</p>";
   }
 }
 
 
 // ===============================================
-// PANEL RENDERERS
+// STEP PANELS
 // ===============================================
 
-function renderOriginalGamePanel(panel) {
-  const gameNum = currentGameNumber || "";
+// STEP 1 — ORIGINAL GAME DETAILS
+function renderStep1(panel) {
   panel.innerHTML = `
     <h2>Step 1 — Original Game Details</h2>
     <p>Enter or confirm the original game information.</p>
 
-    <div class="field-group">
-      <label>SSSL Game Number</label>
-      <input type="text" id="orig_game_number" value="${gameNum}" readonly>
-    </div>
+    <label>Game Number</label>
+    <input type="text" id="s1_game" value="${currentGameNumber || ""}" readonly>
 
-    <div class="field-group">
-      <label>Team Name</label>
-      <input type="text" id="team_name_input" placeholder="Example: 5/6 Girls (Baird-Miller)">
-    </div>
+    <label>Team Name</label>
+    <input type="text" id="s1_team">
 
-    <div class="field-group">
-      <label>Original Game Date</label>
-      <input type="date" id="orig_date_input">
-    </div>
+    <label>Original Date</label>
+    <input type="date" id="s1_date">
 
-    <div class="field-group">
-      <label>Original Game Time</label>
-      <input type="time" id="orig_time_input">
-    </div>
+    <label>Original Time</label>
+    <input type="time" id="s1_time">
 
-    <div class="field-group">
-      <label>Original Game Field</label>
-      <input type="text" id="orig_field_input" placeholder="Example: Turf Field">
-    </div>
+    <label>Original Field</label>
+    <input type="text" id="s1_field">
 
-    <button id="saveOriginalBtn" class="primary-btn">Save Original Details</button>
-    <button id="markStep1CompleteBtn" class="secondary-btn">Mark Step 1 Complete</button>
+    <button id="s1_save" class="primary-btn">Save Original Details</button>
+    <button id="s1_done" class="secondary-btn">Mark Step Complete</button>
   `;
 
-  const saveBtn = document.getElementById("saveOriginalBtn");
-  const completeBtn = document.getElementById("markStep1CompleteBtn");
+  document.getElementById("s1_save").onclick = async () => {
+    const team = document.getElementById("s1_team").value.trim();
+    const date = document.getElementById("s1_date").value;
+    const time = document.getElementById("s1_time").value;
+    const field = document.getElementById("s1_field").value.trim();
 
-  if (saveBtn) {
-    saveBtn.addEventListener("click", async () => {
-      if (!currentGameNumber) {
-        alert("Please enter and load a game number first.");
-        return;
-      }
+    if (!team || !date || !time || !field) {
+      alert("Please fill all fields.");
+      return;
+    }
 
-      const teamName = document.getElementById("team_name_input").value.trim();
-      const origDate = document.getElementById("orig_date_input").value;
-      const origTime = document.getElementById("orig_time_input").value;
-      const origField = document.getElementById("orig_field_input").value.trim();
-
-      if (!teamName || !origDate || !origTime || !origField) {
-        alert("Please fill in all original game details.");
-        return;
-      }
-
-      try {
-        await apiUpdateGameChangeForm({
-          game_number: currentGameNumber,
-          team_name: teamName,
-          orig_date: origDate,
-          orig_time: origTime,
-          orig_field: origField
-        });
-        alert("Original game details saved.");
-      } catch (err) {
-        console.error(err);
-        alert("There was a problem saving original game details.");
-      }
+    await apiUpdateGameChangeForm({
+      game_number: currentGameNumber,
+      team_name: team,
+      orig_date: date,
+      orig_time: time,
+      orig_field: field
     });
-  }
 
-  if (completeBtn) {
-    completeBtn.addEventListener("click", async () => {
-      if (!currentGameNumber) {
-        alert("Please enter and load a game number first.");
-        return;
-      }
-      try {
-        await apiUpdateStep(currentGameNumber, 1);
-        alert("Step 1 marked complete.");
-      } catch (err) {
-        console.error(err);
-        alert("There was a problem marking Step 1 complete.");
-      }
-    });
-  }
+    alert("Original details saved.");
+  };
+
+  document.getElementById("s1_done").onclick = async () => {
+    await apiUpdateStep(currentGameNumber, 1);
+    alert("Step 1 complete.");
+  };
 }
 
-function renderOpponentPanel(panel) {
+
+// STEP 2 — OPPONENT
+function renderStep2(panel) {
   panel.innerHTML = `
     <h2>Step 2 — Opponent Coordination</h2>
-    <p>Record details about contacting the opposing coach.</p>
+    <p>Record opponent coach details (not stored).</p>
 
-    <div class="field-group">
-      <label>Opponent Coach Name</label>
-      <input type="text" id="opp_name_input" placeholder="Opponent coach name">
-    </div>
+    <label>Opponent Coach Name</label>
+    <input type="text" id="s2_name">
 
-    <div class="field-group">
-      <label>Opponent Coach Phone</label>
-      <input type="tel" id="opp_phone_input" placeholder="Opponent coach phone">
-    </div>
+    <label>Opponent Coach Phone</label>
+    <input type="tel" id="s2_phone">
 
-    <div class="field-group">
-      <label>Notes</label>
-      <textarea id="opp_notes_input" rows="3" placeholder="Agreement details, preferred dates, etc."></textarea>
-    </div>
+    <label>Notes</label>
+    <textarea id="s2_notes" rows="3"></textarea>
 
-    <p class="info-text">These details are not stored in the sheet; they are for your reference while working.</p>
-
-    <button id="markStep2CompleteBtn" class="primary-btn">Mark Step 2 Complete</button>
+    <button id="s2_done" class="primary-btn">Mark Step Complete</button>
   `;
 
-  const completeBtn = document.getElementById("markStep2CompleteBtn");
-  if (completeBtn) {
-    completeBtn.addEventListener("click", async () => {
-      if (!currentGameNumber) {
-        alert("Please enter and load a game number first.");
-        return;
-      }
-      try {
-        await apiUpdateStep(currentGameNumber, 2);
-        alert("Step 2 marked complete.");
-      } catch (err) {
-        console.error(err);
-        alert("There was a problem marking Step 2 complete.");
-      }
-    });
-  }
+  document.getElementById("s2_done").onclick = async () => {
+    await apiUpdateStep(currentGameNumber, 2);
+    alert("Step 2 complete.");
+  };
 }
 
-function renderMoveGamePanel(panel) {
+
+// STEP 3 — MOVE THE GAME
+function renderStep3(panel) {
   panel.innerHTML = `
     <h2>Step 3 — Move the Game</h2>
-    <p>Choose the new date, time, and field for this game.</p>
+    <p>Choose the new date, time, and field.</p>
 
-    <div class="field-group">
-      <label>New Game Date</label>
-      <input type="date" id="final_date_input">
-    </div>
+    <label>New Date</label>
+    <input type="date" id="s3_date">
 
-    <div class="field-group">
-      <label>New Game Time</label>
-      <input type="time" id="final_time_input">
-    </div>
+    <label>New Time</label>
+    <input type="time" id="s3_time">
 
-    <div class="field-group">
-      <label>New Game Field</label>
-      <input type="text" id="final_field_input" placeholder="Example: Turf Field">
-    </div>
+    <label>New Field</label>
+    <input type="text" id="s3_field">
 
-    <button id="saveNewSlotBtn" class="primary-btn">Save New Game Slot</button>
-    <button id="markStep3CompleteBtn" class="secondary-btn">Mark Step 3 Complete</button>
+    <button id="s3_save" class="primary-btn">Save New Slot</button>
+    <button id="s3_done" class="secondary-btn">Mark Step Complete</button>
   `;
 
-  const saveBtn = document.getElementById("saveNewSlotBtn");
-  const completeBtn = document.getElementById("markStep3CompleteBtn");
+  document.getElementById("s3_save").onclick = async () => {
+    const date = document.getElementById("s3_date").value;
+    const time = document.getElementById("s3_time").value;
+    const field = document.getElementById("s3_field").value.trim();
 
-  if (saveBtn) {
-    saveBtn.addEventListener("click", async () => {
-      if (!currentGameNumber) {
-        alert("Please enter and load a game number first.");
-        return;
-      }
+    if (!date || !time || !field) {
+      alert("Please fill all fields.");
+      return;
+    }
 
-      const finalDate = document.getElementById("final_date_input").value;
-      const finalTime = document.getElementById("final_time_input").value;
-      const finalField = document.getElementById("final_field_input").value.trim();
-
-      if (!finalDate || !finalTime || !finalField) {
-        alert("Please fill in all new game details.");
-        return;
-      }
-
-      try {
-        await apiUpdateGameChangeForm({
-          game_number: currentGameNumber,
-          final_date: finalDate,
-          final_time: finalTime,
-          final_field: finalField
-        });
-        await apiUpdateFinal(currentGameNumber, finalDate, finalTime, finalField);
-        alert("New game slot saved.");
-      } catch (err) {
-        console.error(err);
-        alert("There was a problem saving the new game slot.");
-      }
+    await apiUpdateGameChangeForm({
+      game_number: currentGameNumber,
+      final_date: date,
+      final_time: time,
+      final_field: field
     });
-  }
 
-  if (completeBtn) {
-    completeBtn.addEventListener("click", async () => {
-      if (!currentGameNumber) {
-        alert("Please enter and load a game number first.");
-        return;
-      }
-      try {
-        await apiUpdateStep(currentGameNumber, 3);
-        alert("Step 3 marked complete.");
-      } catch (err) {
-        console.error(err);
-        alert("There was a problem marking Step 3 complete.");
-      }
-    });
-  }
+    alert("New slot saved.");
+  };
+
+  document.getElementById("s3_done").onclick = async () => {
+    await apiUpdateStep(currentGameNumber, 3);
+    alert("Step 3 complete.");
+  };
 }
 
-function renderSSSLFormPanel(panel) {
-  const gameNum = currentGameNumber || "";
-  const formUrl = gameNum
-    ? `form.html?game_number=${encodeURIComponent(gameNum)}`
-    : `form.html`;
+
+// STEP 4 — SSSL FORM
+function renderStep4(panel) {
+  const url = `form.html?game_number=${currentGameNumber}`;
 
   panel.innerHTML = `
     <h2>Step 4 — SSSL Game Change Form</h2>
-    <p>Generate the official SSSL Game Change Form PDF.</p>
+    <p>Open the SSSL form, fill it out, sign, and download the PDF.</p>
 
-    <p class="info-text">
-      When you click the button below, the SSSL form page will open.
-      Fill in any remaining details, sign, and download the PDF.
-    </p>
-
-    <a href="${formUrl}" class="primary-btn" id="openFormLink">Open SSSL Game Change Form</a>
-
-    <button id="markStep4CompleteBtn" class="secondary-btn">Mark Step 4 Complete</button>
+    <a href="${url}" class="primary-btn">Open SSSL Form</a>
+    <button id="s4_done" class="secondary-btn">Mark Step Complete</button>
   `;
 
-  const completeBtn = document.getElementById("markStep4CompleteBtn");
-  if (completeBtn) {
-    completeBtn.addEventListener("click", async () => {
-      if (!currentGameNumber) {
-        alert("Please enter and load a game number first.");
-        return;
-      }
-      try {
-        await apiUpdateStep(currentGameNumber, 4);
-        alert("Step 4 marked complete.");
-      } catch (err) {
-        console.error(err);
-        alert("There was a problem marking Step 4 complete.");
-      }
-    });
-  }
+  document.getElementById("s4_done").onclick = async () => {
+    await apiUpdateStep(currentGameNumber, 4);
+    alert("Step 4 complete.");
+  };
 }
 
-function renderApprovalPanel(panel) {
+
+// STEP 5 — APPROVAL
+function renderStep5(panel) {
   panel.innerHTML = `
     <h2>Step 5 — SSSL Approval</h2>
-    <p>Track when SSSL approves the game change.</p>
+    <p>Track approval status.</p>
 
-    <div class="field-group">
-      <label>Approval Notes</label>
-      <textarea id="approval_notes_input" rows="3" placeholder="Approval email, notes, etc."></textarea>
-    </div>
+    <label>Approval Notes</label>
+    <textarea id="s5_notes" rows="3"></textarea>
 
-    <button id="markStep5CompleteBtn" class="primary-btn">Mark Step 5 Complete</button>
+    <button id="s5_done" class="primary-btn">Mark Step Complete</button>
   `;
 
-  const completeBtn = document.getElementById("markStep5CompleteBtn");
-  if (completeBtn) {
-    completeBtn.addEventListener("click", async () => {
-      if (!currentGameNumber) {
-        alert("Please enter and load a game number first.");
-        return;
-      }
-      try {
-        await apiUpdateStep(currentGameNumber, 5);
-        alert("Step 5 marked complete.");
-      } catch (err) {
-        console.error(err);
-        alert("There was a problem marking Step 5 complete.");
-      }
-    });
-  }
+  document.getElementById("s5_done").onclick = async () => {
+    await apiUpdateStep(currentGameNumber, 5);
+    alert("Step 5 complete.");
+  };
 }
 
-function renderCalendarPanel(panel) {
+
+// STEP 6 — CALENDAR
+function renderStep6(panel) {
   panel.innerHTML = `
     <h2>Step 6 — Calendar Update</h2>
-    <p>Confirm that the new game date/time/field have been updated in the HAYSA calendar.</p>
+    <p>Confirm the new game details are updated in the calendar.</p>
 
-    <button id="markStep6CompleteBtn" class="primary-btn">Mark Step 6 Complete</button>
+    <button id="s6_done" class="primary-btn">Mark Step Complete</button>
   `;
 
-  const completeBtn = document.getElementById("markStep6CompleteBtn");
-  if (completeBtn) {
-    completeBtn.addEventListener("click", async () => {
-      if (!currentGameNumber) {
-        alert("Please enter and load a game number first.");
-        return;
-      }
-      try {
-        await apiUpdateStep(currentGameNumber, 6);
-        alert("Step 6 marked complete.");
-      } catch (err) {
-        console.error(err);
-        alert("There was a problem marking Step 6 complete.");
-      }
-    });
-  }
+  document.getElementById("s6_done").onclick = async () => {
+    await apiUpdateStep(currentGameNumber, 6);
+    alert("Step 6 complete.");
+  };
 }
 
-function renderNotifyPanel(panel) {
+
+// STEP 7 — NOTIFY
+function renderStep7(panel) {
   panel.innerHTML = `
     <h2>Step 7 — Notify Coaches</h2>
-    <p>Send final confirmation to both coaches with the new game details.</p>
+    <p>Send final confirmation email.</p>
 
-    <button id="sendNotifyEmailBtn" class="primary-btn">Compose Confirmation Email</button>
-    <button id="markStep7CompleteBtn" class="secondary-btn">Mark Step 7 Complete</button>
+    <button id="s7_email" class="primary-btn">Compose Email</button>
+    <button id="s7_done" class="secondary-btn">Mark Step Complete</button>
   `;
 
-  const sendBtn = document.getElementById("sendNotifyEmailBtn");
-  const completeBtn = document.getElementById("markStep7CompleteBtn");
+  document.getElementById("s7_email").onclick = () => {
+    const subject = encodeURIComponent("Game Reschedule Confirmation");
+    const body = encodeURIComponent(
+`Game Number: ${currentGameNumber}
 
-  if (sendBtn) {
-    sendBtn.addEventListener("click", () => {
-      if (!currentGameNumber) {
-        alert("Please enter and load a game number first.");
-        return;
-      }
+Your game has been rescheduled.
 
-      const subject = encodeURIComponent("Game Reschedule Confirmation");
-      const body = encodeURIComponent(
-`This email confirms the reschedule of your SSSL game.
+Please contact us with any questions.`
+    );
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  };
 
-Game Number: ${currentGameNumber || ""}
-
-New Date:
-New Time:
-New Field:
-
-Please reply if you have any questions.`
-      );
-
-      window.location.href = `mailto:?subject=${subject}&body=${body}`;
-    });
-  }
-
-  if (completeBtn) {
-    completeBtn.addEventListener("click", async () => {
-      if (!currentGameNumber) {
-        alert("Please enter and load a game number first.");
-        return;
-      }
-      try {
-        await apiUpdateStep(currentGameNumber, 7);
-        alert("Step 7 marked complete.");
-      } catch (err) {
-        console.error(err);
-        alert("There was a problem marking Step 7 complete.");
-      }
-    });
-  }
+  document.getElementById("s7_done").onclick = async () => {
+    await apiUpdateStep(currentGameNumber, 7);
+    alert("Step 7 complete.");
+  };
 }
 
 
 // ===============================================
-// WORKFLOW INIT (INDEX.HTML)
+// WORKFLOW INIT
 // ===============================================
 
 async function loadGameWorkflow(gameNumber) {
-  currentGameNumber = gameNumber;
-  const msgEl = document.getElementById("gameLoadMessage");
-
-  try {
-    const row = await apiGetRow(gameNumber);
-
-    if (!row.exists) {
-      await apiCreateRow(gameNumber);
-      isNewGame = true;
-      currentRowData = null;
-      if (msgEl) {
-        msgEl.textContent = "New game created. Please enter original details in Step 1.";
-      }
-    } else {
-      isNewGame = false;
-      currentRowData = row.data;
-      if (msgEl) {
-        msgEl.textContent = "Game loaded. Review details in Step 1.";
-      }
-    }
-
-    currentStep = 1;
-    setActiveTimelineStep(currentStep);
-    renderPanelForStep(currentStep);
-  } catch (err) {
-    console.error(err);
-    if (msgEl) {
-      msgEl.textContent = "There was a problem loading this game.";
-    }
-  }
-}
-
-function initGameNumberUI() {
-  const loadBtn = document.getElementById("loadGameBtn");
-  const clearBtn = document.getElementById("clearGameBtn");
-
-  if (loadBtn) {
-    loadBtn.addEventListener("click", async () => {
-      const gameNumber = document.getElementById("gameNumberInput").value.trim();
-
-      if (!gameNumber) {
-        alert("Please enter a valid SSSL Game Number.");
-        return;
-      }
-
-      await loadGameWorkflow(gameNumber);
-    });
-  }
-
-  if (clearBtn) {
-    clearBtn.addEventListener("click", async () => {
-      currentGameNumber = null;
-      currentRowData = null;
-      currentStep = 1;
-      isNewGame = false;
-
-      const msgEl = document.getElementById("gameLoadMessage");
-      if (msgEl) msgEl.textContent = "";
-
-      const panel = getPanelContainer();
-      if (panel) panel.innerHTML = "<p>Enter a game number above to begin.</p>";
-
-      const steps = document.querySelectorAll(".timeline-step");
-      steps.forEach(s => s.classList.remove("active"));
-    });
-  }
-}
-
-function initTimeline() {
-  const steps = document.querySelectorAll(".timeline-step");
-  steps.forEach(stepEl => {
-    stepEl.addEventListener("click", () => {
-      const step = Number(stepEl.getAttribute("data-step"));
-      currentStep = step;
-      setActiveTimelineStep(step);
-      renderPanelForStep(step);
-    });
-  });
-
-  const nextBtn = document.getElementById("nextStepBtn");
-  if (nextBtn) {
-    nextBtn.addEventListener("click", () => {
-      if (currentStep < 7) {
-        currentStep += 1;
-        setActiveTimelineStep(currentStep);
-        renderPanelForStep(currentStep);
-      }
-    });
-  }
-
-  // Initial panel
-  const panel = getPanelContainer();
-  if (panel) {
-    panel.innerHTML = "<p>Enter a game number above to begin.</p>";
-  }
-}
-
-
-// ===============================================
-// GAME CHANGE FORM PAGE (form.html)
-// ===============================================
-
-function initGameChangeForm() {
-  const form = document.getElementById("gameChangeForm");
-  const canvas = document.getElementById("signaturePad");
-  const clearBtn = document.getElementById("clearSignature");
-
-  if (!form || !canvas || !clearBtn) return;
-
-  // Signature pad
-  const ctx = canvas.getContext("2d");
-  let drawing = false;
-  let lastX = 0;
-  let lastY = 0;
-
-  function startDraw(x, y) {
-    drawing = true;
-    lastX = x;
-    lastY = y;
-  }
-
-  function drawLine(x, y) {
-    if (!drawing) return;
-    ctx.strokeStyle = "#000";
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(lastX, lastY);
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    lastX = x;
-    lastY = y;
-  }
-
-  function stopDraw() {
-    drawing = false;
-  }
-
-  canvas.addEventListener("mousedown", e => {
-    const rect = canvas.getBoundingClientRect();
-    startDraw(e.clientX - rect.left, e.clientY - rect.top);
-  });
-
-  canvas.addEventListener("mousemove", e => {
-    const rect = canvas.getBoundingClientRect();
-    drawLine(e.clientX - rect.left, e.clientY - rect.top);
-  });
-
-  canvas.addEventListener("mouseup", stopDraw);
-  canvas.addEventListener("mouseleave", stopDraw);
-
-  canvas.addEventListener("touchstart", e => {
-    e.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    const touch = e.touches[0];
-    startDraw(touch.clientX - rect.left, touch.clientY - rect.top);
-  });
-
-  canvas.addEventListener("touchmove", e => {
-    e.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    const touch = e.touches[0];
-    drawLine(touch.clientX - rect.left, touch.clientY - rect.top);
-  });
-
-  canvas.addEventListener("touchend", e => {
-    e.preventDefault();
-    stopDraw();
-  });
-
-  clearBtn.addEventListener("click", () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  });
-
-  // Form submit → PDF + safe sheet update
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const formData = new FormData(form);
-
-    const gameNumber = formData.get("game_number");
-    const teamName = formData.get("team_name");
-    const origDate = formData.get("orig_date");
-    const origTime = formData.get("orig_time");
-    const origField = formData.get("orig_field");
-    const finalDate = formData.get("final_date");
-    const finalTime = formData.get("final_time");
-    const finalField = formData.get("final_field");
-
-    const coachName = formData.get("coach_name");
-    const coachEmail = formData.get("coach_email");
-    const coachPhone = formData.get("coach_phone");
-    const oppCoachName = formData.get("opp_coach_name");
-    const oppCoachPhone = formData.get("opp_coach_phone");
-
-    const signatureData = canvas.toDataURL();
-
-    // PDF
-    await generateReschedulePDF({
-      game_number: gameNumber,
-      team_name: teamName,
-      orig_date: origDate,
-      orig_time: origTime,
-      orig_field: origField,
-      final_date: finalDate,
-      final_time: finalTime,
-      final_field: finalField,
-      coach_name: coachName,
-      coach_email: coachEmail,
-      coach_phone: coachPhone,
-      opp_coach_name: oppCoachName,
-      opp_coach_phone: oppCoachPhone,
-      signature_data: signatureData,
-    });
-
-    // Safe sheet update
-    try {
-      await apiUpdateGameChangeForm({
-        game_number: gameNumber,
-        team_name: teamName,
-        orig_date: origDate,
-        orig_time: origTime,
-        orig_field: origField,
-        final_date: finalDate,
-        final_time: finalTime,
-        final_field: finalField,
-      });
-
-      alert("Your Game Change Form has been saved.");
-    } catch (err) {
-      console.error(err);
-      alert("There was a problem saving your form.");
-    }
-  });
-}
-
-
-// ===============================================
-// INIT EVERYTHING
-// ===============================================
-
-document.addEventListener("DOMContentLoaded", () => {
-  // If we're on the workflow page
-  if (document.getElementById("panelContainer")) {
-    initGameNumberUI();
-    initTimeline();
-  }
-
-  // If we're on the SSSL form page
-  initGameChangeForm();
-});
-
-
-// ===============================================
-// API HELPERS
-// ===============================================
-
-async function apiGetRow(gameNumber) {
-  const url = `${API_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}`;
-  const res = await fetch(url);
-  return res.json();
-}
-
-async function apiCreateRow(gameNumber) {
-  const form = new FormData();
-  form.append("action", "createRow");
-  form.append("game_number", gameNumber);
-
-  const res = await fetch(API_URL, { method: "POST", body: form });
-  return res.json();
-}
-
-async function apiUpdateStep(gameNumber, step) {
-  const form = new FormData();
-  form.append("action", "updateStep");
-  form.append("game_number", gameNumber);
-  form.append("step", step);
-
-  const res = await fetch(API_URL, { method: "POST", body: form });
-  return res.json();
-}
-
-async function apiUpdateOptions(gameNumber, opt1, opt2, opt3) {
-  const form = new FormData();
-  form.append("action", "updateOptions");
-  form.append("game_number", gameNumber);
-  form.append("opt1", JSON.stringify(opt1));
-  form.append("opt2", JSON.stringify(opt2));
-  form.append("opt3", JSON.stringify(opt3));
-
-  const res = await fetch(API_URL, { method: "POST", body: form });
-  return res.json();
-}
-
-async function apiUpdateFinal(gameNumber, finalDate, finalTime, finalField) {
-  const form = new FormData();
-  form.append("action", "updateFinal");
-  form.append("game_number", gameNumber);
-  form.append("final_date", finalDate);
-  form.append("final_time", finalTime);
-  form.append("final_field", finalField);
-
-  const res = await fetch(API_URL, { method: "POST", body: form });
-  return res.json();
-}
-
-async function apiDeleteRow(gameNumber) {
-  const form = new FormData();
-  form.append("action", "deleteRow");
-  form.append("game_number", gameNumber);
-
-  const res = await fetch(API_URL, { method: "POST", body: form });
-  return res.json();
-}
-
-// ===============================================
-// ⭐ NEW: UPDATE GAME CHANGE FORM (SAFE FIELDS ONLY)
-// ===============================================
-
-async function apiUpdateGameChangeForm(payload) {
-  const form = new FormData();
-  form.append("action", "updateGameChangeForm");
-  form.append("game_number", payload.game_number);
-  form.append("team_name", payload.team_name || "");
-  form.append("orig_date", payload.orig_date || "");
-  form.append("orig_time", payload.orig_time || "");
-  form.append("orig_field", payload.orig_field || "");
-  form.append("final_date", payload.final_date || "");
-  form.append("final_time", payload.final_time || "");
-  form.append("final_field", payload.final_field || "");
-
-  const res = await fetch(API_URL, { method: "POST", body: form });
-  return res.json();
-}
-
-
-// ===============================================
-// STATE
-// ===============================================
-let currentGameNumber = null;
-let currentRowData = null;
-
-
-// ===============================================
-// UI HELPERS
-// ===============================================
-
-function updateStatusPanel() {
-  const statusDiv = document.getElementById("gameStatus");
-
-  if (!currentRowData) {
-    statusDiv.textContent = "";
-    return;
-  }
-
-  const steps = currentRowData.slice(16, 28); // step_1 through step_12
-  const completed = steps.filter(s => s === true).length;
-  const total = steps.length;
-
-  const lastUpdated = currentRowData[28] || "Never";
-
-  statusDiv.innerHTML = `
-    <strong>Game #${currentGameNumber}</strong><br>
-    Completed: ${completed} / ${total}<br>
-    Pending: ${total - completed}<br>
-    Last Updated: ${lastUpdated}
-  `;
-}
-
-function applyRowToChecklist() {
-  const steps = currentRowData.slice(16, 28);
-
-  document.querySelectorAll("li[data-step]").forEach(li => {
-    const step = Number(li.getAttribute("data-step"));
-    const statusEl = li.querySelector(".step-status");
-
-    if (steps[step - 1] === true) {
-      statusEl.textContent = "Completed";
-      statusEl.classList.add("step-completed");
-    } else {
-      statusEl.textContent = "Pending";
-      statusEl.classList.remove("step-completed");
-    }
-  });
-
-  updateStatusPanel();
-}
-
-
-// ===============================================
-// LOAD WORKFLOW
-// ===============================================
-
-async function loadGameWorkflow(gameNumber) {
-  currentGameNumber = gameNumber;
+  const msg = document.getElementById("gameLoadMessage");
 
   const row = await apiGetRow(gameNumber);
 
   if (!row.exists) {
     await apiCreateRow(gameNumber);
-    currentRowData = (await apiGetRow(gameNumber)).data;
+    isNewGame = true;
+    msg.textContent = "New game created. Enter original details in Step 1.";
   } else {
+    isNewGame = false;
     currentRowData = row.data;
+    msg.textContent = "Game loaded. Review details in Step 1.";
   }
 
-  applyRowToChecklist();
+  currentStep = 1;
+  setActiveTimelineStep(1);
+  renderPanelForStep(1);
 }
-
-
-// ===============================================
-// INIT GAME NUMBER UI
-// ===============================================
 
 function initGameNumberUI() {
-  const loadBtn = document.getElementById("loadGameBtn");
-  const clearBtn = document.getElementById("clearGameBtn");
-
-  loadBtn.addEventListener("click", async () => {
+  document.getElementById("loadGameBtn").onclick = async () => {
     const gameNumber = document.getElementById("gameNumberInput").value.trim();
-
     if (!gameNumber) {
-      alert("Please enter a valid SSSL Game Number.");
+      alert("Enter a game number.");
       return;
     }
-
+    currentGameNumber = gameNumber;
     await loadGameWorkflow(gameNumber);
-  });
+  };
 
-  clearBtn.addEventListener("click", async () => {
-    if (!currentGameNumber) {
-      alert("No game loaded.");
-      return;
-    }
-
-    await apiDeleteRow(currentGameNumber);
-    currentRowData = null;
+  document.getElementById("clearGameBtn").onclick = () => {
     currentGameNumber = null;
-
-    document.getElementById("gameStatus").textContent = "";
-    document.querySelectorAll(".step-status").forEach(el => {
-      el.textContent = "Pending";
-      el.classList.remove("step-completed");
-    });
-
-    alert("Workflow deleted.");
-  });
+    currentRowData = null;
+    currentStep = 1;
+    isNewGame = false;
+    document.getElementById("gameLoadMessage").textContent = "";
+    document.getElementById("panelContainer").innerHTML = "<p>Enter a game number above to begin.</p>";
+    document.querySelectorAll(".timeline-step").forEach(el => el.classList.remove("active"));
+  };
 }
 
-
-// ===============================================
-// CHECKLIST COMPLETION
-// ===============================================
-
-function initRescheduleChecklist() {
-  document.querySelectorAll(".step-complete-btn").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      if (!currentGameNumber) {
-        alert("Please enter your SSSL Game Number first.");
-        return;
-      }
-
-      const li = btn.closest("li");
-      const step = Number(li.getAttribute("data-step"));
-
-      await apiUpdateStep(currentGameNumber, step);
-
-      currentRowData = (await apiGetRow(currentGameNumber)).data;
-      applyRowToChecklist();
-    });
-  });
-}
-
-
-// ===============================================
-// SLOT PROPOSAL FORM
-// ===============================================
-
-function initSlotProposalForm() {
-  const form = document.getElementById("slotProposalForm");
-  const fieldSelect = document.getElementById("slotField");
-
-  if (!form || !fieldSelect) return;
-
-  const fields = [
-    "Turf Field",
-    "Sumner Field",
-    "Brookville Field",
-    "Butler Field"
-  ];
-
-  fields.forEach(f => {
-    const opt = document.createElement("option");
-    opt.value = f;
-    opt.textContent = f;
-    fieldSelect.appendChild(opt);
-  });
-
-  form.addEventListener("submit", async e => {
-    e.preventDefault();
-
-    if (!currentGameNumber) {
-      alert("Load a game number first.");
-      return;
-    }
-
-    const opt1 = {
-      date: document.getElementById("slotDate").value,
-      time: document.getElementById("slotStart").value + "-" + document.getElementById("slotEnd").value,
-      field: document.getElementById("slotField").value
+function initTimeline() {
+  document.querySelectorAll(".timeline-step").forEach(el => {
+    el.onclick = () => {
+      currentStep = Number(el.dataset.step);
+      setActiveTimelineStep(currentStep);
+      renderPanelForStep(currentStep);
     };
-
-    const opt2 = {};
-    const opt3 = {};
-
-    await apiUpdateOptions(currentGameNumber, opt1, opt2, opt3);
-
-    currentRowData = (await apiGetRow(currentGameNumber)).data;
-    updateStatusPanel();
-
-    alert("Option saved. Board will review manually.");
-    form.reset();
   });
+
+  document.getElementById("nextStepBtn").onclick = () => {
+    if (currentStep < 7) {
+      currentStep++;
+      setActiveTimelineStep(currentStep);
+      renderPanelForStep(currentStep);
+    }
+  };
 }
 
 
 // ===============================================
-// FIELD HOLD EMAIL LINK
-// ===============================================
-
-function initFieldHoldEmailLink() {
-  const link = document.getElementById("fieldHoldEmailLink");
-  if (!link) return;
-
-  link.addEventListener("click", e => {
-    e.preventDefault();
-
-    const to = "webmaster@haysa.org,coachcoordinator.haysa@gmail.com";
-    const subject = encodeURIComponent("Temporary Field Hold Request");
-
-    const body = encodeURIComponent(
-`Please review and confirm a temporary field hold:
-
-Field:
-Date:
-Start Time:
-End Time:
-Notes:
-
-(Confirmed against the HAYSA field calendar.)`
-    );
-
-    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
-  });
-}
-
-
-// ===============================================
-// GAME CHANGE FORM — SIGNATURE PAD + SUBMIT
+// FORM.HTML SIGNATURE + PDF
 // ===============================================
 
 function initGameChangeForm() {
   const form = document.getElementById("gameChangeForm");
+  if (!form) return;
+
   const canvas = document.getElementById("signaturePad");
   const clearBtn = document.getElementById("clearSignature");
-
-  if (!form || !canvas || !clearBtn) return;
-
-  // -------------------------
-  // Signature Pad
-  // -------------------------
   const ctx = canvas.getContext("2d");
+
   let drawing = false;
   let lastX = 0;
   let lastY = 0;
@@ -1104,113 +396,69 @@ function initGameChangeForm() {
     lastY = y;
   }
 
-  function stopDraw() {
-    drawing = false;
-  }
+  canvas.onmousedown = e => {
+    const r = canvas.getBoundingClientRect();
+    startDraw(e.clientX - r.left, e.clientY - r.top);
+  };
+  canvas.onmousemove = e => {
+    const r = canvas.getBoundingClientRect();
+    drawLine(e.clientX - r.left, e.clientY - r.top);
+  };
+  canvas.onmouseup = () => drawing = false;
+  canvas.onmouseleave = () => drawing = false;
 
-  canvas.addEventListener("mousedown", e => {
-    const rect = canvas.getBoundingClientRect();
-    startDraw(e.clientX - rect.left, e.clientY - rect.top);
-  });
-
-  canvas.addEventListener("mousemove", e => {
-    const rect = canvas.getBoundingClientRect();
-    drawLine(e.clientX - rect.left, e.clientY - rect.top);
-  });
-
-  canvas.addEventListener("mouseup", stopDraw);
-  canvas.addEventListener("mouseleave", stopDraw);
-
-  canvas.addEventListener("touchstart", e => {
+  canvas.ontouchstart = e => {
     e.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    const touch = e.touches[0];
-    startDraw(touch.clientX - rect.left, touch.clientY - rect.top);
-  });
-
-  canvas.addEventListener("touchmove", e => {
+    const r = canvas.getBoundingClientRect();
+    const t = e.touches[0];
+    startDraw(t.clientX - r.left, t.clientY - r.top);
+  };
+  canvas.ontouchmove = e => {
     e.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    const touch = e.touches[0];
-    drawLine(touch.clientX - rect.left, touch.clientY - rect.top);
-  });
+    const r = canvas.getBoundingClientRect();
+    const t = e.touches[0];
+    drawLine(t.clientX - r.left, t.clientY - r.top);
+  };
+  canvas.ontouchend = () => drawing = false;
 
-  canvas.addEventListener("touchend", e => {
+  clearBtn.onclick = () => ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  form.onsubmit = async e => {
     e.preventDefault();
-    stopDraw();
-  });
 
-  clearBtn.addEventListener("click", () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  });
-
-  // -------------------------
-  // ⭐ NEW: FORM SUBMIT HANDLER
-  // -------------------------
-
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const formData = new FormData(form);
-
-    // SAFE fields (stored in sheet)
-    const gameNumber = formData.get("game_number");
-    const teamName = formData.get("team_name");
-    const origDate = formData.get("orig_date");
-    const origTime = formData.get("orig_time");
-    const origField = formData.get("orig_field");
-    const finalDate = formData.get("final_date");
-    const finalTime = formData.get("final_time");
-    const finalField = formData.get("final_field");
-
-    // PRIVATE fields (NOT stored)
-    const coachName = formData.get("coach_name");
-    const coachEmail = formData.get("coach_email");
-    const coachPhone = formData.get("coach_phone");
-    const oppCoachName = formData.get("opp_coach_name");
-    const oppCoachPhone = formData.get("opp_coach_phone");
-
-    // Signature (canvas → PNG)
+    const fd = new FormData(form);
     const signatureData = canvas.toDataURL();
 
-    // 1) Generate PDF (private)
     await generateReschedulePDF({
-      game_number: gameNumber,
-      team_name: teamName,
-      orig_date: origDate,
-      orig_time: origTime,
-      orig_field: origField,
-      final_date: finalDate,
-      final_time: finalTime,
-      final_field: finalField,
-
-      coach_name: coachName,
-      coach_email: coachEmail,
-      coach_phone: coachPhone,
-      opp_coach_name: oppCoachName,
-      opp_coach_phone: oppCoachPhone,
-      signature_data: signatureData,
+      game_number: fd.get("game_number"),
+      team_name: fd.get("team_name"),
+      orig_date: fd.get("orig_date"),
+      orig_time: fd.get("orig_time"),
+      orig_field: fd.get("orig_field"),
+      final_date: fd.get("final_date"),
+      final_time: fd.get("final_time"),
+      final_field: fd.get("final_field"),
+      coach_name: fd.get("coach_name"),
+      coach_email: fd.get("coach_email"),
+      coach_phone: fd.get("coach_phone"),
+      opp_coach_name: fd.get("opp_coach_name"),
+      opp_coach_phone: fd.get("opp_coach_phone"),
+      signature_data: signatureData
     });
 
-    // 2) Save ONLY safe fields to Google Sheets
-    try {
-      await apiUpdateGameChangeForm({
-        game_number: gameNumber,
-        team_name: teamName,
-        orig_date: origDate,
-        orig_time: origTime,
-        orig_field: origField,
-        final_date: finalDate,
-        final_time: finalTime,
-        final_field: finalField,
-      });
+    await apiUpdateGameChangeForm({
+      game_number: fd.get("game_number"),
+      team_name: fd.get("team_name"),
+      orig_date: fd.get("orig_date"),
+      orig_time: fd.get("orig_time"),
+      orig_field: fd.get("orig_field"),
+      final_date: fd.get("final_date"),
+      final_time: fd.get("final_time"),
+      final_field: fd.get("final_field")
+    });
 
-      alert("Your Game Change Form has been saved!");
-    } catch (err) {
-      console.error(err);
-      alert("There was a problem saving your form.");
-    }
-  });
+    alert("Form saved.");
+  };
 }
 
 
@@ -1219,9 +467,9 @@ function initGameChangeForm() {
 // ===============================================
 
 document.addEventListener("DOMContentLoaded", () => {
-  initGameNumberUI();
-  initRescheduleChecklist();
-  initSlotProposalForm();
-  initFieldHoldEmailLink();
+  if (document.getElementById("panelContainer")) {
+    initGameNumberUI();
+    initTimeline();
+  }
   initGameChangeForm();
 });
