@@ -1,192 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Game Reschedule Workflow</title>
-  <link rel="stylesheet" href="../assets/css/style.css" />
+  <meta charset="UTF-8">
+  <title>HAYSA Reschedule Workflow</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Main JS -->
+  <script src="main.js" defer></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1, h2 {
+      margin-top: 25px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+    input, select {
+      padding: 8px;
+      width: 100%;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+    .step-status {
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    .step-completed {
+      color: green;
+    }
+    .link-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 15px;
+      background: #1976d2;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <header>
-    <h1>HAYSA Coaches Hub</h1>
-    <p>Game Reschedule Workflow</p>
-  </header>
+  <h1>HAYSA Game Reschedule Workflow</h1>
+  <p>Enter your SSSL Game Number to begin.</p>
 
-  <!-- NAVIGATION -->
-  <nav>
-    <ul>
-      <li><a href="../index.html">Home</a></li>
-      <li><a href="../drills/index.html">Drills</a></li>
-      <li><a href="../practice-plans/index.html">Practice Plans</a></li>
-      <li><a href="index.html" class="active">Reschedule</a></li>
-    </ul>
-  </nav>
+  <!-- GAME NUMBER INPUT -->
+  <label>SSSL Game Number</label>
+  <input type="text" id="gameNumberInput" placeholder="Example: G12345">
 
-  <main>
+  <button id="loadGameBtn">Load Game</button>
+  <button id="clearGameBtn">Clear Workflow</button>
 
-    <div class="reschedule-layout">
+  <!-- STATUS PANEL -->
+  <h2>Game Status</h2>
+  <div id="gameStatus"></div>
 
-      <!-- CHECKLIST -->
-      <section class="reschedule-checklist">
-        <h2>Reschedule Checklist</h2>
+  <!-- CHECKLIST -->
+  <h2>Reschedule Checklist</h2>
+  <ul>
+    <li data-step="1">
+      Step 1: Coach submits reschedule request
+      <span class="step-status">Pending</span>
+      <button class="step-complete-btn">Mark Complete</button>
+    </li>
+    <li data-step="2">
+      Step 2: Board reviews request
+      <span class="step-status">Pending</span>
+      <button class="step-complete-btn">Mark Complete</button>
+    </li>
+    <li data-step="3">
+      Step 3: Field availability checked
+      <span class="step-status">Pending</span>
+      <button class="step-complete-btn">Mark Complete</button>
+    </li>
+    <li data-step="4">
+      Step 4: Opposing coach contacted
+      <span class="step-status">Pending</span>
+      <button class="step-complete-btn">Mark Complete</button>
+    </li>
+    <li data-step="5">
+      Step 5: Temporary field hold placed
+      <span class="step-status">Pending</span>
+      <button class="step-complete-btn">Mark Complete</button>
+    </li>
+    <li data-step="6">
+      Step 6: SSSL form prepared
+      <span class="step-status">Pending</span>
+      <button class="step-complete-btn">Mark Complete</button>
+    </li>
+    <li data-step="7">
+      Step 7: SSSL form submitted
+      <span class="step-status">Pending</span>
+      <button class="step-complete-btn">Mark Complete</button>
+    </li>
+    <li data-step="8">
+      Step 8: SSSL approval received
+      <span class="step-status">Pending</span>
+      <button class="step-complete-btn">Mark Complete</button>
+    </li>
+    <li data-step="9">
+      Step 9: Referee assignor notified
+      <span class="step-status">Pending</span>
+      <button class="step-complete-btn">Mark Complete</button>
+    </li>
+    <li data-step="10">
+      Step 10: Calendar updated
+      <span class="step-status">Pending</span>
+      <button class="step-complete-btn">Mark Complete</button>
+    </li>
+    <li data-step="11">
+      Step 11: Website updated
+      <span class="step-status">Pending</span>
+      <button class="step-complete-btn">Mark Complete</button>
+    </li>
+    <li data-step="12">
+      Step 12: Confirmation sent to both coaches
+      <span class="step-status">Pending</span>
+      <button class="step-complete-btn">Mark Complete</button>
+    </li>
+  </ul>
 
-        <!-- GAME NUMBER UI -->
-        <div id="gameNumberUI" style="margin-bottom: 20px;">
-          <label for="gameNumberInput"><strong>Enter SSSL Game Number:</strong></label>
-          <input id="gameNumberInput" type="text" placeholder="e.g., 1849201" style="margin-left: 10px;">
+  <!-- SLOT PROPOSAL FORM -->
+  <h2>Propose a New Game Slot</h2>
 
-          <button id="loadGameBtn">Load Workflow</button>
-          <button id="clearGameBtn">Clear Progress</button>
+  <form id="slotProposalForm">
+    <label>Field</label>
+    <select id="slotField"></select>
 
-          <div id="gameStatus" style="margin-top: 10px; font-size: 14px; color: #444;"></div>
-        </div>
+    <label>Date</label>
+    <input type="date" id="slotDate">
 
-        <ol id="rescheduleChecklist">
+    <label>Start Time</label>
+    <input type="time" id="slotStart">
 
-          <li data-step="1">
-            <strong>Request Opposing Coach Contact</strong><br>
-            <button class="step-complete-btn">Mark Complete</button>
-            <span class="step-status">Pending</span>
-          </li>
+    <label>End Time</label>
+    <input type="time" id="slotEnd">
 
-          <li data-step="2">
-            <strong>Make Contact & Upload Agreement Screenshot</strong><br>
-            <input type="file" id="agreementUpload" accept="image/*,application/pdf" />
-            <button class="step-complete-btn">Mark Complete</button>
-            <span class="step-status">Pending</span>
-          </li>
+    <button type="submit">Save Option</button>
+  </form>
 
-          <li data-step="3">
-            <strong>Check Field Availability (Calendar Below)</strong><br>
-            <button class="step-complete-btn">Mark Complete</button>
-            <span class="step-status">Pending</span>
-          </li>
+  <!-- FIELD HOLD EMAIL -->
+  <h2>Temporary Field Hold</h2>
+  <a href="#" id="fieldHoldEmailLink" class="link-button">Send Field Hold Email</a>
 
-          <li data-step="4">
-            <strong>Propose Date / Time / Field</strong>
-
-            <form id="slotProposalForm">
-              <label>Field:
-                <select id="slotField"></select>
-              </label>
-
-              <label>Date:
-                <input type="date" id="slotDate" required />
-              </label>
-
-              <label>Start Time:
-                <input type="time" id="slotStart" required />
-              </label>
-
-              <label>End Time:
-                <input type="time" id="slotEnd" required />
-              </label>
-
-              <label>Notes:
-                <textarea id="slotNotes"></textarea>
-              </label>
-
-              <button type="submit">Propose Slot (Manual Review)</button>
-            </form>
-
-            <span class="step-status">Pending</span>
-          </li>
-
-          <li data-step="5">
-            <strong>Board Reviews Proposal (Manual)</strong><br>
-            <span class="step-status">Pending</span>
-          </li>
-
-          <li data-step="6">
-            <strong>Request Temporary Field Hold (Email)</strong><br>
-            <a id="fieldHoldEmailLink" href="#">Open Email Draft</a><br>
-            <button class="step-complete-btn">Mark Complete</button>
-            <span class="step-status">Pending</span>
-          </li>
-
-          <li data-step="7">
-            <strong>Board Approves Hold (Manual)</strong><br>
-            <span class="step-status">Pending</span>
-          </li>
-
-          <li data-step="8">
-            <strong>Complete Game Change Form</strong><br>
-            <a href="form.html" target="_blank">Open Game Change Form</a><br>
-            <button class="step-complete-btn">Mark Complete</button>
-            <span class="step-status">Pending</span>
-          </li>
-
-          <li data-step="9">
-            <strong>Upload Email Chain</strong><br>
-            <input type="file" id="emailChainUpload" accept="image/*,application/pdf" />
-            <button class="step-complete-btn">Mark Complete</button>
-            <span class="step-status">Pending</span>
-          </li>
-
-          <li data-step="10">
-            <strong>Board Inspects Packet (Manual)</strong><br>
-            <span class="step-status">Pending</span>
-          </li>
-
-          <li data-step="11">
-            <strong>Board Sends Email to SSSL + HAYSA</strong><br>
-            <button class="step-complete-btn">Mark Complete</button>
-            <span class="step-status">Pending</span>
-          </li>
-
-          <li data-step="12">
-            <strong>Log SSSL Response</strong><br>
-            <button class="step-complete-btn">Mark Complete</button>
-            <span class="step-status">Pending</span>
-          </li>
-
-        </ol>
-      </section>
-
-      <!-- CALENDAR -->
-      <section class="reschedule-calendar">
-        <h2>Field Availability Calendar</h2>
-
-        <iframe
-          src="https://haysa-soccer.github.io/haysa-scheduler-ui/?view=compact"
-          title="HAYSA Field Calendar"
-          class="calendar-iframe"
-        ></iframe>
-
-        <p class="calendar-note">
-          Use the calendar to visually confirm availability before proposing a slot.
-        </p>
-      </section>
-
-    </div>
-
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="site-footer">
-    <div class="footer-content">
-      <div class="footer-section">
-        <h3>HAYSA</h3>
-        <p>Holbrook Youth Soccer Association</p>
-      </div>
-      <div class="footer-section">
-        <h4>Resources</h4>
-        <ul>
-          <li><a href="../drills/index.html">Drills</a></li>
-          <li><a href="../practice-plans/index.html">Practice Plans</a></li>
-          <li><a href="index.html">Reschedule Workflow</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      © 2026 HAYSA — All Rights Reserved
-    </div>
-  </footer>
-
-  <script src="../assets/js/main.js"></script>
+  <!-- LINK TO GAME CHANGE FORM -->
+  <h2>SSSL Game Change Form</h2>
+  <a href="form.html" class="link-button">Open Game Change Form</a>
 
 </body>
 </html>
