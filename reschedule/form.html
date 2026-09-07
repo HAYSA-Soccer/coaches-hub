@@ -1,156 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Game Change Form</title>
-  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- PDF-LIB for PDF generation -->
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
+  <!-- Main JS + PDF JS -->
+  <script src="main.js" defer></script>
+  <script src="pdf.js" defer></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    canvas {
+      border: 1px solid #000;
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <header>
-    <h1>HAYSA Coaches Hub</h1>
-    <p>Game Change Form</p>
-  </header>
+  <h1>SSSL Game Change Form</h1>
+  <p>Please complete all fields below. Your PDF will download automatically.</p>
 
-  <!-- NAVIGATION -->
-  <nav>
-    <ul>
-      <li><a href="../index.html">Home</a></li>
-      <li><a href="../drills/index.html">Drills</a></li>
-      <li><a href="../practice-plans/index.html">Practice Plans</a></li>
-      <li><a href="index.html" class="active">Reschedule</a></li>
-    </ul>
-  </nav>
+  <form id="gameChangeForm">
 
-  <main>
-    <div class="form-wrapper">
+    <!-- GAME NUMBER -->
+    <label>SSSL Game Number</label>
+    <input type="text" name="game_number" id="game_number" required>
 
-      <h2 style="color:#003366; border-bottom:3px solid #ff7f32; padding-bottom:8px;">
-        Complete Game Change Form
-      </h2>
+    <!-- TEAM NAME -->
+    <label>Team Name</label>
+    <input type="text" name="team_name" id="team_name" required>
 
-      <p style="color:#444; font-size:0.95rem;">
-        Fill out the form below. When you click <strong>Generate PDF</strong>, your email and phone
-        will be used ONLY inside the PDF and then immediately erased from the system.
-        Nothing is stored.
-      </p>
+    <!-- ORIGINAL GAME DETAILS (READ-ONLY) -->
+    <label>Original Game Date</label>
+    <input type="date" name="orig_date" id="orig_date" readonly>
 
-      <form id="gameChangeForm">
+    <label>Original Game Time</label>
+    <input type="time" name="orig_time" id="orig_time" readonly>
 
-        <!-- TEAM INFO -->
-        <h3 style="color:#003366;">Team Information</h3>
+    <label>Original Game Field</label>
+    <input type="text" name="orig_field" id="orig_field" readonly>
 
-        <label>Team Name:
-          <input type="text" id="teamName" required />
-        </label>
+    <!-- NEW GAME DETAILS -->
+    <label>New Game Date</label>
+    <input type="date" name="final_date" id="final_date" required>
 
-        <label>Coach Name:
-          <input type="text" id="coachName" required />
-        </label>
+    <label>New Game Time</label>
+    <input type="time" name="final_time" id="final_time" required>
 
-        <label>Coach Email:
-          <input type="email" id="coachEmail" data-sensitive="true" required />
-        </label>
+    <label>New Game Field</label>
+    <input type="text" name="final_field" id="final_field" required>
 
-        <label>Coach Phone:
-          <input type="tel" id="coachPhone" data-sensitive="true" required />
-        </label>
+    <!-- PRIVATE FIELDS (NOT STORED) -->
+    <h2>Coach Information (Not Stored)</h2>
 
-        <!-- GAME DETAILS -->
-        <h3 style="color:#003366; margin-top:30px;">Original Game Details</h3>
+    <label>Initiating Coach Name</label>
+    <input type="text" name="coach_name" id="coach_name" required>
 
-        <label>Original Date:
-          <input type="date" id="origDate" required />
-        </label>
+    <label>Initiating Coach Email</label>
+    <input type="email" name="coach_email" id="coach_email" required>
 
-        <label>Original Time:
-          <input type="time" id="origTime" required />
-        </label>
+    <label>Initiating Coach Phone</label>
+    <input type="tel" name="coach_phone" id="coach_phone" required>
 
-        <label>Original Field:
-          <input type="text" id="origField" required />
-        </label>
+    <label>Opponent Coach Name</label>
+    <input type="text" name="opp_coach_name" id="opp_coach_name" required>
 
-        <label>Opponent:
-          <input type="text" id="opponent" required />
-        </label>
+    <label>Opponent Coach Phone</label>
+    <input type="tel" name="opp_coach_phone" id="opp_coach_phone" required>
 
-        <!-- NEW DETAILS -->
-        <h3 style="color:#003366; margin-top:30px;">New Requested Details</h3>
+    <!-- SIGNATURE PAD -->
+    <h2>Signature</h2>
+    <p>Please sign below:</p>
 
-        <label>New Date:
-          <input type="date" id="newDate" required />
-        </label>
+    <canvas id="signaturePad" width="400" height="150"></canvas>
+    <button type="button" id="clearSignature">Clear Signature</button>
 
-        <label>New Time:
-          <input type="time" id="newTime" required />
-        </label>
+    <!-- SUBMIT -->
+    <button type="submit">Generate PDF & Save</button>
 
-        <label>New Field:
-          <input type="text" id="newField" required />
-        </label>
+  </form>
 
-        <label>Reason for Change:
-          <textarea id="reason" required></textarea>
-        </label>
-
-        <!-- SIGNATURE -->
-        <h3 style="color:#003366; margin-top:30px;">Coach Signature</h3>
-
-        <p style="font-size:0.9rem; color:#555;">
-          Sign below using your mouse or finger.
-        </p>
-
-        <canvas id="signaturePad" width="500" height="150"
-          style="border:1px solid #ccc; border-radius:6px; background:white;"></canvas>
-
-        <button type="button" id="clearSignature"
-          style="margin-top:10px; padding:6px 12px; background:#0055a5; color:white; border:none; border-radius:6px;">
-          Clear Signature
-        </button>
-
-        <!-- SUBMIT -->
-        <button type="submit"
-          style="margin-top:25px; padding:12px 18px; background:#ff7f32; color:white; border:none; border-radius:6px; font-size:1rem; font-weight:bold;">
-          Generate PDF
-        </button>
-
-      </form>
-
-    </div>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="site-footer">
-    <div class="footer-content">
-      <div class="footer-section">
-        <h3>HAYSA</h3>
-        <p>Holbrook Youth Soccer Association</p>
-      </div>
-      <div class="footer-section">
-        <h4>Resources</h4>
-        <ul>
-          <li><a href="../drills/index.html">Drills</a></li>
-          <li><a href="../practice-plans/index.html">Practice Plans</a></li>
-          <li><a href="index.html">Reschedule Workflow</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      © 2026 HAYSA — All Rights Reserved
-    </div>
-  </footer>
-
-    <!-- PDF Library -->
-  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
-
-  <!-- PDF Generator -->
-  <script src="pdf.js"></script>
-
-  <!-- Existing Logic (signature pad, workflow, etc.) -->
-  <script src="../assets/js/main.js"></script>
 </body>
 </html>
