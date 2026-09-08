@@ -8,12 +8,41 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9a
 // API HELPERS
 // ===============================================
 
-async function apiGetRow(gameNumber) {
-  const url = `${API_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}`;
-  const res = await fetch(url);
-  return res.json();
+// ⭐ JSONP version (replaces fetch-based apiGetRow)
+function apiGetRow(gameNumber) {
+  return new Promise((resolve, reject) => {
+    const callbackName = "haysaWorkflowCallback_" + gameNumber;
+
+    // Define callback on window
+    window[callbackName] = function (data) {
+      delete window[callbackName];
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+      resolve(data);
+    };
+
+    // Build JSONP URL
+    const url =
+      `${API_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}&callback=${encodeURIComponent(callbackName)}`;
+
+    // Create script tag
+    const script = document.createElement("script");
+    script.src = url;
+
+    script.onerror = function () {
+      delete window[callbackName];
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+      reject(new Error("Failed to load workflow data"));
+    };
+
+    document.body.appendChild(script);
+  });
 }
 
+// ⭐ POST requests DO NOT need JSONP — keep them as-is
 async function apiCreateRow(gameNumber) {
   const form = new FormData();
   form.append("action", "createRow");
