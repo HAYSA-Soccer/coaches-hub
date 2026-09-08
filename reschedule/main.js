@@ -1,5 +1,5 @@
 // ===============================================
-// CONFIG — Google Apps Script WebApp endpoint
+// CONFIG
 // ===============================================
 const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
 
@@ -7,7 +7,6 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9a
 // ===============================================
 // API HELPERS
 // ===============================================
-
 function apiGetRow(gameNumber) {
   return new Promise((resolve, reject) => {
     const callbackName = "haysaWorkflowCallback_" + gameNumber;
@@ -69,56 +68,59 @@ async function apiUpdateGameChangeForm(payload) {
 let currentGameNumber = null;
 let currentRowData = null;
 let currentStep = 1;
-let isNewGame = false;
 
 
 // ===============================================
-// GAME NUMBER LOOKUP (NEW ENTRY POINT)
+// LOOKUP FLOW (ONE GAME NUMBER PER ROW)
 // ===============================================
 async function lookupGameNumber() {
   const gameNumber = document.getElementById("lookupGameNumber").value.trim();
+  const statusEl = document.getElementById("lookupStatus");
+
   if (!gameNumber) {
-    document.getElementById("lookupStatus").innerHTML = "<p>Please enter a game number.</p>";
+    statusEl.textContent = "Please enter a game number.";
     return;
   }
 
-  const row = await apiGetRow(gameNumber);
-  currentGameNumber = gameNumber;
+  statusEl.textContent = "Looking up game…";
 
-  if (row.exists) {
-    currentRowData = row.data;
-    isNewGame = false;
+  try {
+    const row = await apiGetRow(gameNumber);
+    currentGameNumber = gameNumber;
+    document.getElementById("form_game_number").value = gameNumber;
 
-    document.getElementById("lookupStatus").innerHTML = `
-      <p>Existing request found for Game #${gameNumber}.</p>
-      <button onclick="beginWorkflow()">Continue Request</button>
-    `;
-  } else {
-    isNewGame = true;
-
-    document.getElementById("lookupStatus").innerHTML = `
-      <p>No existing request found for Game #${gameNumber}.</p>
-      <button onclick="createNewWorkflow('${gameNumber}')">Start New Request</button>
-    `;
+    if (row.exists) {
+      currentRowData = row.data;
+      statusEl.innerHTML = `
+        <p>Existing request found for Game #${gameNumber}.</p>
+        <button class="primary-btn" onclick="beginWorkflow()">Continue Request</button>
+      `;
+    } else {
+      statusEl.innerHTML = `
+        <p>No existing request found for Game #${gameNumber}.</p>
+        <button class="primary-btn" onclick="startNewWorkflow('${gameNumber}')">Start New Request</button>
+      `;
+    }
+  } catch (err) {
+    statusEl.textContent = "Error loading game. Please try again.";
   }
 }
 
-async function createNewWorkflow(gameNumber) {
+async function startNewWorkflow(gameNumber) {
   const res = await apiCreateRow(gameNumber);
-  if (res.exists) {
-    currentRowData = res.data;
-    beginWorkflow();
-  } else {
+  if (!res || !res.success) {
     alert("Error creating workflow row.");
+    return;
   }
+  currentRowData = res.data || null;
+  beginWorkflow();
 }
 
 function beginWorkflow() {
   document.getElementById("lookupContainer").style.display = "none";
-
   document.getElementById("timelineContainer").style.display = "block";
   document.getElementById("panelContainer").style.display = "block";
-  document.getElementById("nextStepContainer").style.display = "block";   // ⭐ ADD THIS
+  document.getElementById("nextStepContainer").style.display = "block";
 
   currentStep = 1;
   setActiveTimelineStep(currentStep);
@@ -126,10 +128,31 @@ function beginWorkflow() {
 }
 
 
+// ===============================================
+// TIMELINE + NAVIGATION
+// ===============================================
+function initTimeline() {
+  document.querySelectorAll(".timeline-step").forEach(el => {
+    el.onclick = () => {
+      currentStep = Number(el.dataset.step);
+      setActiveTimelineStep(currentStep);
+      renderPanelForStep(currentStep);
+    };
+  });
 
-// ===============================================
-// TIMELINE + PANEL HELPERS
-// ===============================================
+  const nextBtn = document.getElementById("nextStepBtn");
+  if (nextBtn) {
+    nextBtn.onclick = async () => {
+      if (currentStep < 8) {
+        currentStep++;
+        await apiUpdateStep(currentGameNumber, currentStep);
+        setActiveTimelineStep(currentStep);
+        renderPanelForStep(currentStep);
+      }
+    };
+  }
+}
+
 function setActiveTimelineStep(step) {
   document.querySelectorAll(".timeline-step").forEach(el => {
     el.classList.toggle("active", Number(el.dataset.step) === step);
@@ -148,6 +171,7 @@ function renderPanelForStep(step) {
     case 5: renderStep5(panel); break;
     case 6: renderStep6(panel); break;
     case 7: renderStep7(panel); break;
+    case 8: renderStep8(panel); break;
     default:
       panel.innerHTML = "<p>Select a step above.</p>";
   }
@@ -155,22 +179,187 @@ function renderPanelForStep(step) {
 
 
 // ===============================================
-// STEP PANELS (YOUR EXISTING PANELS)
+// STEP PANELS
 // ===============================================
 
-// (Your Step 1–6 panels remain exactly as you wrote them)
-
-// STEP 7 — NOTIFY
-function renderStep7(panel) {
+// STEP 1 — Start Attempt (confirm intent)
+function renderStep1(panel) {
   panel.innerHTML = `
-    <h2>Step 7 — Notify Coaches</h2>
-    <p>Send final confirmation email.</p>
-
-    <button id="s7_email" class="primary-btn">Compose Email</button>
-    <button id="s7_done" class="secondary-btn">Mark Step Complete</button>
+    <h2>Step 1 — Start Reschedule Attempt</h2>
+    <p>You are beginning a reschedule workflow for game <strong>#${currentGameNumber}</strong>.</p>
+    <p>This will track all moves and approvals for this game.</p>
+    <button id="s1_continue" class="primary-btn">I want to proceed</button>
   `;
 
-  document.getElementById("s7_email").onclick = () => {
+  document.getElementById("s1_continue").onclick = async () => {
+    await apiUpdateStep(currentGameNumber, 1);
+    currentStep = 2;
+    setActiveTimelineStep(currentStep);
+    renderPanelForStep(currentStep);
+  };
+}
+
+// STEP 2 — Opponent Contact Info
+function renderStep2(panel) {
+  panel.innerHTML = `
+    <h2>Step 2 — Opponent Contact Information</h2>
+    <p>Enter or confirm the opposing coach's contact info.</p>
+
+    <label>Opponent Coach Name</label>
+    <input type="text" id="s2_opp_name">
+
+    <label>Opponent Coach Email</label>
+    <input type="email" id="s2_opp_email">
+
+    <label>Opponent Coach Phone</label>
+    <input type="tel" id="s2_opp_phone">
+
+    <button id="s2_save" class="primary-btn">Save Contact Info</button>
+  `;
+
+  document.getElementById("s2_save").onclick = async () => {
+    // You can wire this to an API later to persist opponent info
+    await apiUpdateStep(currentGameNumber, 2);
+    alert("Opponent contact info saved.");
+  };
+}
+
+// STEP 3 — Negotiation (up to 3 attempts)
+function renderStep3(panel) {
+  panel.innerHTML = `
+    <h2>Step 3 — Negotiation Attempts</h2>
+    <p>Track up to three proposed dates/times and outcomes.</p>
+
+    <div class="attempt-block">
+      <h3>Attempt 1</h3>
+      <label>Proposed Date</label>
+      <input type="date" id="s3_a1_date">
+      <label>Proposed Time</label>
+      <input type="time" id="s3_a1_time">
+      <label>Outcome / Notes</label>
+      <input type="text" id="s3_a1_notes">
+    </div>
+
+    <div class="attempt-block">
+      <h3>Attempt 2</h3>
+      <label>Proposed Date</label>
+      <input type="date" id="s3_a2_date">
+      <label>Proposed Time</label>
+      <input type="time" id="s3_a2_time">
+      <label>Outcome / Notes</label>
+      <input type="text" id="s3_a2_notes">
+    </div>
+
+    <div class="attempt-block">
+      <h3>Attempt 3</h3>
+      <label>Proposed Date</label>
+      <input type="date" id="s3_a3_date">
+      <label>Proposed Time</label>
+      <input type="time" id="s3_a3_time">
+      <label>Outcome / Notes</label>
+      <input type="text" id="s3_a3_notes">
+    </div>
+
+    <button id="s3_agreement" class="primary-btn">Agreement Reached</button>
+  `;
+
+  document.getElementById("s3_agreement").onclick = async () => {
+    await apiUpdateStep(currentGameNumber, 3);
+    alert("Agreement recorded. Proceed to Field Hold.");
+    currentStep = 4;
+    setActiveTimelineStep(currentStep);
+    renderPanelForStep(currentStep);
+  };
+}
+
+// STEP 4 — Field Hold (home game)
+function renderStep4(panel) {
+  panel.innerHTML = `
+    <h2>Step 4 — Field Hold</h2>
+    <p>If this is a home game, request a field hold for the agreed date/time.</p>
+
+    <label>Field Requested</label>
+    <input type="text" id="s4_field">
+
+    <label>Hold Confirmed?</label>
+    <select id="s4_confirmed">
+      <option value="no">No</option>
+      <option value="yes">Yes</option>
+    </select>
+
+    <button id="s4_save" class="primary-btn">Save Field Hold Status</button>
+  `;
+
+  document.getElementById("s4_save").onclick = async () => {
+    await apiUpdateStep(currentGameNumber, 4);
+    alert("Field hold status saved.");
+  };
+}
+
+// STEP 5 — HAYSA Approval
+function renderStep5(panel) {
+  panel.innerHTML = `
+    <h2>Step 5 — HAYSA Approval</h2>
+    <p>Request and record HAYSA approval for this reschedule.</p>
+
+    <label>Approval Status</label>
+    <select id="s5_status">
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="denied">Denied</option>
+    </select>
+
+    <label>Notes</label>
+    <input type="text" id="s5_notes">
+
+    <button id="s5_save" class="primary-btn">Save HAYSA Approval</button>
+  `;
+
+  document.getElementById("s5_save").onclick = async () => {
+    const status = document.getElementById("s5_status").value;
+    if (status !== "approved") {
+      alert("HAYSA has not approved this yet. You should not proceed to SSSL.");
+    }
+    await apiUpdateStep(currentGameNumber, 5);
+    alert("HAYSA approval status saved.");
+  };
+}
+
+// STEP 6 — SSSL Form (uses gameChangeForm + signature)
+function renderStep6(panel) {
+  panel.innerHTML = `
+    <h2>Step 6 — SSSL Form</h2>
+    <p>Complete the SSSL reschedule form with the agreed details and signature.</p>
+    <p>Use the Game Change Form section below to fill in all required fields.</p>
+  `;
+}
+
+// STEP 7 — Calendar Update
+function renderStep7(panel) {
+  panel.innerHTML = `
+    <h2>Step 7 — Calendar Update</h2>
+    <p>Update your team calendar and any league calendars with the new game date/time.</p>
+
+    <button id="s7_done" class="primary-btn">Mark Calendar Updated</button>
+  `;
+
+  document.getElementById("s7_done").onclick = async () => {
+    await apiUpdateStep(currentGameNumber, 7);
+    alert("Calendar update recorded.");
+  };
+}
+
+// STEP 8 — Notify Coaches
+function renderStep8(panel) {
+  panel.innerHTML = `
+    <h2>Step 8 — Notify Coaches</h2>
+    <p>Send final confirmation to both coaches with the new game details.</p>
+
+    <button id="s8_email" class="primary-btn">Compose Email</button>
+    <button id="s8_done" class="secondary-btn">Mark Notification Complete</button>
+  `;
+
+  document.getElementById("s8_email").onclick = () => {
     const subject = encodeURIComponent("Game Reschedule Confirmation");
     const body = encodeURIComponent(
 `Game Number: ${currentGameNumber}
@@ -182,15 +371,15 @@ Please contact us with any questions.`
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
 
-  document.getElementById("s7_done").onclick = async () => {
-    await apiUpdateStep(currentGameNumber, 7);
-    alert("Step 7 complete.");
+  document.getElementById("s8_done").onclick = async () => {
+    await apiUpdateStep(currentGameNumber, 8);
+    alert("Notification marked complete.");
   };
 }
 
 
 // ===============================================
-// FORM.HTML SIGNATURE + PDF
+// SIGNATURE PAD + PDF
 // ===============================================
 function initGameChangeForm() {
   const form = document.getElementById("gameChangeForm");
@@ -256,6 +445,7 @@ function initGameChangeForm() {
     const fd = new FormData(form);
     const signatureData = canvas.toDataURL();
 
+    // You already have generateReschedulePDF in your project
     await generateReschedulePDF({
       game_number: fd.get("game_number"),
       team_name: fd.get("team_name"),
@@ -290,7 +480,7 @@ function initGameChangeForm() {
 
 
 // ===============================================
-// INIT EVERYTHING
+// INIT
 // ===============================================
 document.addEventListener("DOMContentLoaded", () => {
   initTimeline();
