@@ -9,19 +9,13 @@
 
 <body>
 
-  <!-- ========================= -->
-  <!-- HEADER (YOUR ORIGINAL) -->
-  <!-- ========================= -->
+  <!-- HEADER -->
   <header class="header">
     <h1>HAYSA Game Reschedule</h1>
     <p class="subtitle">A guided workflow to move your SSSL game</p>
   </header>
 
-
-
-  <!-- ========================= -->
-  <!-- GAME NUMBER LOOKUP (NEW) -->
-  <!-- ========================= -->
+  <!-- GAME NUMBER LOOKUP -->
   <section id="lookupContainer" class="game-number-section card">
     <label for="lookupGameNumber">Enter SSSL Game Number</label>
     <input type="text" id="lookupGameNumber" placeholder="Example: 22920056">
@@ -31,49 +25,71 @@
     <p id="lookupStatus" class="info-text"></p>
   </section>
 
-
-
-  <!-- ========================= -->
-  <!-- TIMELINE (HIDDEN INITIALLY) -->
-  <!-- ========================= -->
+  <!-- TIMELINE -->
   <nav id="timelineContainer" class="timeline card" style="display:none;">
-    <div class="timeline-step" data-step="1">Original Game</div>
-    <div class="timeline-step" data-step="2">Opponent</div>
-    <div class="timeline-step" data-step="3">Field Hold</div>
-    <div class="timeline-step" data-step="4">SSSL Form</div>
-    <div class="timeline-step" data-step="5">Approval</div>
-    <div class="timeline-step" data-step="6">Calendar</div>
-    <div class="timeline-step" data-step="7">Notify</div>
+    <div class="timeline-step" data-step="1">Start Attempt</div>
+    <div class="timeline-step" data-step="2">Opponent Contact</div>
+    <div class="timeline-step" data-step="3">Negotiation</div>
+    <div class="timeline-step" data-step="4">Field Hold</div>
+    <div class="timeline-step" data-step="5">HAYSA Approval</div>
+    <div class="timeline-step" data-step="6">SSSL Form</div>
+    <div class="timeline-step" data-step="7">Calendar</div>
+    <div class="timeline-step" data-step="8">Notify</div>
   </nav>
 
-
-
-  <!-- ========================= -->
-  <!-- DYNAMIC PANEL (HIDDEN INITIALLY) -->
-  <!-- ========================= -->
+  <!-- PANEL -->
   <section id="panelContainer" class="panel card" style="display:none;">
-    <!-- JS will inject content here -->
+    <!-- JS injects content -->
   </section>
 
-
-
-  <!-- ========================= -->
   <!-- NEXT STEP BUTTON -->
-  <!-- ========================= -->
   <div class="next-step-container" style="display:none;" id="nextStepContainer">
     <button id="nextStepBtn" class="primary-btn">Next Step →</button>
   </div>
 
-
-
-  <!-- ========================= -->
-  <!-- GAME CHANGE FORM + SIGNATURE -->
-  <!-- ========================= -->
+  <!-- GAME CHANGE FORM + SIGNATURE (used in SSSL step) -->
   <section class="card" id="formSection">
     <form id="gameChangeForm">
+      <h3>Game Change Form</h3>
 
-      <!-- Your existing form fields go here -->
-      <!-- (You already have these in form.html or embedded) -->
+      <label>Game Number</label>
+      <input type="text" name="game_number" id="form_game_number">
+
+      <label>Team Name</label>
+      <input type="text" name="team_name">
+
+      <label>Original Date</label>
+      <input type="date" name="orig_date">
+
+      <label>Original Time</label>
+      <input type="time" name="orig_time">
+
+      <label>Original Field</label>
+      <input type="text" name="orig_field">
+
+      <label>Final Date</label>
+      <input type="date" name="final_date">
+
+      <label>Final Time</label>
+      <input type="time" name="final_time">
+
+      <label>Final Field</label>
+      <input type="text" name="final_field">
+
+      <label>Coach Name</label>
+      <input type="text" name="coach_name">
+
+      <label>Coach Email</label>
+      <input type="email" name="coach_email">
+
+      <label>Coach Phone</label>
+      <input type="tel" name="coach_phone">
+
+      <label>Opposing Coach Name</label>
+      <input type="text" name="opp_coach_name">
+
+      <label>Opposing Coach Phone</label>
+      <input type="tel" name="opp_coach_phone">
 
       <h3>Coach Signature</h3>
       <canvas id="signaturePad" width="400" height="150" class="signature-pad"></canvas>
