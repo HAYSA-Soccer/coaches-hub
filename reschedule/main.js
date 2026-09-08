@@ -13,6 +13,9 @@ function apiGetRow(gameNumber) {
   return new Promise((resolve, reject) => {
     const callbackName = "haysaWorkflowCallback_" + gameNumber;
 
+    // Create script tag FIRST so callback cleanup works
+    const script = document.createElement("script");
+
     // Define callback on window
     window[callbackName] = function (data) {
       delete window[callbackName];
@@ -26,8 +29,41 @@ function apiGetRow(gameNumber) {
     const url =
       `${API_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}&callback=${encodeURIComponent(callbackName)}`;
 
-    // Create script tag
+    script.src = url;
+
+    script.onerror = function () {
+      delete window[callbackName];
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+      reject(new Error("Failed to load workflow data"));
+    };
+
+    document.body.appendChild(script);
+  });
+}
+
+// ⭐ NEW: JSONP lookup by Event ID
+function apiGetRowByEventId(eventId) {
+  return new Promise((resolve, reject) => {
+    const callbackName = "haysaWorkflowEventCallback_" + eventId;
+
+    // Create script tag FIRST so callback cleanup works
     const script = document.createElement("script");
+
+    // Define callback on window
+    window[callbackName] = function (data) {
+      delete window[callbackName];
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+      resolve(data);
+    };
+
+    // Build JSONP URL
+    const url =
+      `${API_URL}?action=getRowByEventId&event_id=${encodeURIComponent(eventId)}&callback=${encodeURIComponent(callbackName)}`;
+
     script.src = url;
 
     script.onerror = function () {
