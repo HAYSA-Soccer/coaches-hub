@@ -9,22 +9,34 @@
 
 <body>
 
+  <!-- ========================= -->
+  <!-- HEADER (YOUR ORIGINAL) -->
+  <!-- ========================= -->
   <header class="header">
     <h1>HAYSA Game Reschedule</h1>
     <p class="subtitle">A guided workflow to move your SSSL game</p>
   </header>
 
-  <!-- GAME NUMBER INPUT -->
-  <section class="game-number-section card">
-    <label for="gameNumberInput">Enter SSSL Game Number</label>
-    <input type="text" id="gameNumberInput" placeholder="Example: 22920056">
-    <button id="loadGameBtn" class="primary-btn">Load Game</button>
-    <button id="clearGameBtn" class="secondary-btn">Clear</button>
-    <p id="gameLoadMessage" class="info-text"></p>
+
+
+  <!-- ========================= -->
+  <!-- GAME NUMBER LOOKUP (NEW) -->
+  <!-- ========================= -->
+  <section id="lookupContainer" class="game-number-section card">
+    <label for="lookupGameNumber">Enter SSSL Game Number</label>
+    <input type="text" id="lookupGameNumber" placeholder="Example: 22920056">
+
+    <button class="primary-btn" onclick="lookupGameNumber()">Lookup</button>
+
+    <p id="lookupStatus" class="info-text"></p>
   </section>
 
-  <!-- TIMELINE -->
-  <nav class="timeline">
+
+
+  <!-- ========================= -->
+  <!-- TIMELINE (HIDDEN INITIALLY) -->
+  <!-- ========================= -->
+  <nav id="timelineContainer" class="timeline card" style="display:none;">
     <div class="timeline-step" data-step="1">Original Game</div>
     <div class="timeline-step" data-step="2">Opponent</div>
     <div class="timeline-step" data-step="3">Field Hold</div>
@@ -34,15 +46,42 @@
     <div class="timeline-step" data-step="7">Notify</div>
   </nav>
 
-  <!-- DYNAMIC PANEL -->
-  <section id="panelContainer" class="panel card">
+
+
+  <!-- ========================= -->
+  <!-- DYNAMIC PANEL (HIDDEN INITIALLY) -->
+  <!-- ========================= -->
+  <section id="panelContainer" class="panel card" style="display:none;">
     <!-- JS will inject content here -->
   </section>
 
+
+
+  <!-- ========================= -->
   <!-- NEXT STEP BUTTON -->
-  <div class="next-step-container">
+  <!-- ========================= -->
+  <div class="next-step-container" style="display:none;" id="nextStepContainer">
     <button id="nextStepBtn" class="primary-btn">Next Step →</button>
   </div>
+
+
+
+  <!-- ========================= -->
+  <!-- GAME CHANGE FORM + SIGNATURE -->
+  <!-- ========================= -->
+  <section class="card" id="formSection">
+    <form id="gameChangeForm">
+
+      <!-- Your existing form fields go here -->
+      <!-- (You already have these in form.html or embedded) -->
+
+      <h3>Coach Signature</h3>
+      <canvas id="signaturePad" width="400" height="150" class="signature-pad"></canvas>
+      <button type="button" id="clearSignature" class="secondary-btn">Clear Signature</button>
+
+      <button type="submit" class="primary-btn">Save Form</button>
+    </form>
+  </section>
 
 </body>
 </html>
