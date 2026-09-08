@@ -115,13 +115,16 @@ async function createNewWorkflow(gameNumber) {
 
 function beginWorkflow() {
   document.getElementById("lookupContainer").style.display = "none";
+
   document.getElementById("timelineContainer").style.display = "block";
   document.getElementById("panelContainer").style.display = "block";
+  document.getElementById("nextStepContainer").style.display = "block";   // ⭐ ADD THIS
 
   currentStep = 1;
   setActiveTimelineStep(currentStep);
   renderPanelForStep(currentStep);
 }
+
 
 
 // ===============================================
