@@ -134,7 +134,7 @@ async function lookupGameNumber() {
 
 async function startNewWorkflow(gameNumber) {
   const res = await apiCreateRow(gameNumber);
-  if (!res || !res.success) {
+  if (!res || (!res.success && !res.created)) {
     alert("Error creating workflow row.");
     return;
   }
@@ -154,7 +154,6 @@ function beginWorkflow() {
 
   hydrateTimelineFromRow(currentRowData);
 
-  // prefill Game Change Form from row data if available
   const form = document.getElementById("gameChangeForm");
   if (form && currentRowData) {
     const map = {
@@ -252,6 +251,12 @@ function renderPanelForStep(step) {
   }
 }
 
+function goToStep(step) {
+  currentStep = step;
+  setActiveTimelineStep(step);
+  renderPanelForStep(step);
+}
+
 
 // ===============================================
 // STEP PANELS
@@ -269,7 +274,7 @@ function renderStep1(panel) {
 
   document.getElementById("s1_proceed").onclick = async () => {
     await apiUpdateStep(currentGameNumber, 1);
-    currentRowData.step_1 = true;
+    currentRowData.step_1 = "completed";
     hydrateTimelineFromRow(currentRowData);
     goToStep(2);
   };
@@ -301,7 +306,7 @@ function renderStep2(panel) {
     await setField("orig_field", document.getElementById("orig_field").value);
 
     await apiUpdateStep(currentGameNumber, 2);
-    currentRowData.step_2 = true;
+    currentRowData.step_2 = "completed";
     hydrateTimelineFromRow(currentRowData);
 
     alert("Original details saved.");
@@ -334,13 +339,12 @@ function renderStep3(panel) {
     await setField("opp_coach_phone", document.getElementById("opp_coach_phone").value);
 
     await apiUpdateStep(currentGameNumber, 3);
-    currentRowData.step_3 = true;
+    currentRowData.step_3 = "completed";
     hydrateTimelineFromRow(currentRowData);
 
     alert("Opponent details saved.");
   };
 }
-
 
 
 
@@ -402,7 +406,6 @@ function renderStep4(panel) {
     <button id="s4_save" class="primary-btn">Save New Game Details</button>
   `;
 
-  // --- CHANGE HIGHLIGHT LOGIC ---
   function updateChangeHighlights() {
     const newDate = document.getElementById("final_date").value || finalDateDisplay;
     const newTime = document.getElementById("final_time").value || finalTimeDisplay;
@@ -427,7 +430,6 @@ function renderStep4(panel) {
 
   updateChangeHighlights();
 
-  // --- SAVE BUTTON ---
   document.getElementById("s4_save").onclick = async () => {
     const newDate = document.getElementById("final_date").value;
     const newTime = document.getElementById("final_time").value;
@@ -438,13 +440,15 @@ function renderStep4(panel) {
     await setField("final_field", newField);
 
     await apiUpdateStep(currentGameNumber, 4);
-    currentRowData.step_4 = true;
+    currentRowData.step_4 = "completed";
     hydrateTimelineFromRow(currentRowData);
 
     updateChangeHighlights();
     alert("New game details saved.");
   };
 }
+
+
 
 // STEP 5 — Field Hold (home game)
 function renderStep5(panel) {
@@ -466,14 +470,12 @@ function renderStep5(panel) {
     await setField("field_confirmed", document.getElementById("field_confirmed").value);
 
     await apiUpdateStep(currentGameNumber, 5);
-    currentRowData.step_5 = true;
+    currentRowData.step_5 = "completed";
     hydrateTimelineFromRow(currentRowData);
 
     alert("Field hold status saved.");
   };
 }
-
-
 
 
 
@@ -497,13 +499,12 @@ function renderStep6(panel) {
     await setField("haysa_notes", document.getElementById("haysa_notes").value);
 
     await apiUpdateStep(currentGameNumber, 6);
-    currentRowData.step_6 = true;
+    currentRowData.step_6 = "completed";
     hydrateTimelineFromRow(currentRowData);
 
     alert("HAYSA approval saved.");
   };
 }
-
 
 
 
@@ -517,7 +518,6 @@ function renderStep7(panel) {
   const fs = document.getElementById("formSection");
   if (fs) fs.style.display = "block";
 
-  // Safe auto-fill helper
   function fill(name, value) {
     const el = document.querySelector(`[name='${name}']`);
     if (el) el.value = value || "";
@@ -540,8 +540,63 @@ function renderStep7(panel) {
   fill("opp_coach_name", getField("opp_coach_name"));
   fill("opp_coach_phone", getField("opp_coach_phone"));
 
-  // Initialize signature pad ONLY now
   initGameChangeForm();
+}
+
+
+
+// STEP 8 — Calendar Update
+function renderStep8(panel) {
+  panel.innerHTML = `
+    <h2>Step 8 — Calendar Update</h2>
+    <p>Record whether the calendar has been updated.</p>
+
+    <label>Calendar Updated?</label>
+    <input type="text" id="calendar_updated" value="${getField("calendar_updated") || ""}">
+
+    <button id="s8_save" class="primary-btn">Save Calendar Update</button>
+  `;
+
+  document.getElementById("s8_save").onclick = async () => {
+    await setField("calendar_updated", document.getElementById("calendar_updated").value);
+
+    await apiUpdateStep(currentGameNumber, 8);
+    currentRowData.step_8 = "completed";
+    hydrateTimelineFromRow(currentRowData);
+
+    alert("Calendar update saved.");
+  };
+}
+
+
+
+// STEP 9 — Finalize Request
+function renderStep9(panel) {
+  panel.innerHTML = `
+    <h2>Step 9 — Finalize Request</h2>
+    <p>Download the completed form and record any final notes.</p>
+
+    <button id="s9_download" class="primary-btn">Download Completed Form</button>
+
+    <label>Board Notes (optional)</label>
+    <input type="text" id="notes" value="${getField("notes") || ""}">
+
+    <button id="s9_save" class="secondary-btn">Mark Request Complete</button>
+  `;
+
+  document.getElementById("s9_download").onclick = () => {
+    generateReschedulePDF(currentRowData);
+  };
+
+  document.getElementById("s9_save").onclick = async () => {
+    await setField("notes", document.getElementById("notes").value);
+
+    await apiUpdateStep(currentGameNumber, 9);
+    currentRowData.step_9 = "completed";
+    hydrateTimelineFromRow(currentRowData);
+
+    alert("Request marked complete.");
+  };
 }
 
 
@@ -554,7 +609,6 @@ function initGameChangeForm() {
   const canvas = document.getElementById("signaturePad");
   const clearBtn = document.getElementById("clearSignature");
 
-  // Safety: if any core element is missing, skip init
   if (!form || !canvas || !clearBtn) {
     console.warn("Game Change Form not fully present — skipping init.");
     return;
@@ -586,7 +640,7 @@ function initGameChangeForm() {
 
   canvas.onmousedown = e => {
     const r = canvas.getBoundingClientRect();
-    startDraw(e.clientX - r.left, e.clientY - r.top);
+    startDraw(e.clientX - r.left, e.clientX - r.top);
   };
   canvas.onmousemove = e => {
     const r = canvas.getBoundingClientRect();
@@ -664,201 +718,9 @@ function initGameChangeForm() {
 }
 
 
-
 // ===============================================
 // INIT
 // ===============================================
 document.addEventListener("DOMContentLoaded", () => {
   initTimeline();
 });
-
-
-
-
-// STEP 8 — Calendar Update
-function renderStep8(panel) {
-  panel.innerHTML = `
-    <h2>Step 8 — Calendar Update</h2>
-    <p>Record whether the calendar has been updated.</p>
-
-    <label>Calendar Updated?</label>
-    <input type="text" id="calendar_updated" value="${getField("calendar_updated") || ""}">
-
-    <button id="s8_save" class="primary-btn">Save Calendar Update</button>
-  `;
-
-  document.getElementById("s8_save").onclick = async () => {
-    await setField("calendar_updated", document.getElementById("calendar_updated").value);
-
-    await apiUpdateStep(currentGameNumber, 8);
-    currentRowData.step_8 = true;
-    hydrateTimelineFromRow(currentRowData);
-
-    alert("Calendar update saved.");
-  };
-}
-
-
-
-
-
-// STEP 9 — Notify Coaches
-function renderStep9(panel) {
-  panel.innerHTML = `
-    <h2>Step 9 — Finalize Request</h2>
-    <p>Download the completed form and record any final notes.</p>
-
-    <button id="s9_download" class="primary-btn">Download Completed Form</button>
-
-    <label>Board Notes (optional)</label>
-    <input type="text" id="notes" value="${getField("notes") || ""}">
-
-    <button id="s9_save" class="secondary-btn">Mark Request Complete</button>
-  `;
-
-  document.getElementById("s9_download").onclick = () => {
-    generateReschedulePDF(currentRowData);
-  };
-
-  document.getElementById("s9_save").onclick = async () => {
-    await setField("notes", document.getElementById("notes").value);
-
-    await apiUpdateStep(currentGameNumber, 9);
-    currentRowData.step_9 = true;
-    hydrateTimelineFromRow(currentRowData);
-
-    alert("Request marked complete.");
-  };
-}
-
-
-
-
-
-// ===============================================
-// SIGNATURE PAD + PDF + FORM SAVE
-// ===============================================
-function initGameChangeForm() {
-  const form = document.getElementById("gameChangeForm");
-  if (!form) return;
-
-  const canvas = document.getElementById("signaturePad");
-  const clearBtn = document.getElementById("clearSignature");
-  const ctx = canvas.getContext("2d");
-
-  let drawing = false;
-  let lastX = 0;
-  let lastY = 0;
-
-  function startDraw(x, y) {
-    drawing = true;
-    lastX = x;
-    lastY = y;
-  }
-
-  function drawLine(x, y) {
-    if (!drawing) return;
-    ctx.strokeStyle = "#000";
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(lastX, lastY);
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    lastX = x;
-    lastY = y;
-  }
-
-  canvas.onmousedown = e => {
-    const r = canvas.getBoundingClientRect();
-    startDraw(e.clientX - r.left, e.clientY - r.top);
-  };
-  canvas.onmousemove = e => {
-    const r = canvas.getBoundingClientRect();
-    drawLine(e.clientX - r.left, e.clientY - r.top);
-  };
-  canvas.onmouseup = () => drawing = false;
-  canvas.onmouseleave = () => drawing = false;
-
-  canvas.ontouchstart = e => {
-    e.preventDefault();
-    const r = canvas.getBoundingClientRect();
-    const t = e.touches[0];
-    startDraw(t.clientX - r.left, t.clientY - r.top);
-  };
-  canvas.ontouchmove = e => {
-    e.preventDefault();
-    const r = canvas.getBoundingClientRect();
-    const t = e.touches[0];
-    drawLine(t.clientX - r.left, t.clientY - r.top);
-  };
-  canvas.ontouchend = () => drawing = false;
-
-  clearBtn.onclick = () => ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  form.onsubmit = async e => {
-    e.preventDefault();
-
-    const fd = new FormData(form);
-    const signatureData = canvas.toDataURL();
-
-    await generateReschedulePDF({
-      game_number: fd.get("game_number"),
-      team_name: fd.get("team_name"),
-      orig_date: fd.get("orig_date"),
-      orig_time: fd.get("orig_time"),
-      orig_field: fd.get("orig_field"),
-      final_date: fd.get("final_date"),
-      final_time: fd.get("final_time"),
-      final_field: fd.get("final_field"),
-      coach_name: fd.get("coach_name"),
-      coach_email: fd.get("coach_email"),
-      coach_phone: fd.get("coach_phone"),
-      opp_coach_name: fd.get("opp_coach_name"),
-      opp_coach_phone: fd.get("opp_coach_phone"),
-      signature_data: signatureData
-    });
-
-    const fieldsToSave = [
-      "game_number",
-      "team_name",
-      "orig_date",
-      "orig_time",
-      "orig_field",
-      "final_date",
-      "final_time",
-      "final_field",
-      "coach_name",
-      "coach_email",
-      "coach_phone",
-      "opp_coach_name",
-      "opp_coach_phone"
-    ];
-
-    for (const name of fieldsToSave) {
-      const val = fd.get(name);
-      await setField(name, val);
-    }
-
-    await apiUpdateStep(currentGameNumber, 7); // SSSL Form step
-    currentRowData.step_7 = "completed";
-    hydrateTimelineFromRow(currentRowData);
-
-    alert("Form saved.");
-  };
-}
-
-
-// ===============================================
-// INIT
-// ===============================================
-document.addEventListener("DOMContentLoaded", () => {
-  initTimeline();
-
-  // Only initialize the form when the user reaches Step 7
-  const form = document.getElementById("gameChangeForm");
-  if (form) {
-    initGameChangeForm();
-  }
-});
-
