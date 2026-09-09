@@ -17,14 +17,15 @@
   <!-- LOOKUP CARD -->
   <section class="card" id="lookupContainer">
     <h2>Lookup Game</h2>
+
     <label>Enter SSSL Game Number</label>
     <input type="text" id="lookupGameNumber" placeholder="e.g., 22920056">
+
     <button class="primary-btn" onclick="lookupGameNumber()">Lookup</button>
 
     <div id="lookupStatus" class="info-text"></div>
   </section>
 
-  <!-- TIMELINE -->
   <!-- TIMELINE (Horizontal) -->
   <div id="timelineContainer" style="display:none;">
     <div class="timeline-step" data-step="1">Start</div>
@@ -35,13 +36,12 @@
     <div class="timeline-step" data-step="6">HAYSA</div>
     <div class="timeline-step" data-step="7">SSSL Form</div>
     <div class="timeline-step" data-step="8">Calendar</div>
-    <div class="timeline-step" data-step="9">Notify</div>
+    <div class="timeline-step" data-step="9">Finalize</div>
   </div>
 
-
   <!-- PANEL -->
-  <section class="card panel" id="panelContainer" style="display:none;">
-    <!-- JS will inject step content here -->
+  <section class="card panel fade-in" id="panelContainer" style="display:none;">
+    <!-- JS injects step content here -->
   </section>
 
   <!-- NEXT STEP BUTTON -->
@@ -49,7 +49,7 @@
     <button id="nextStepBtn" class="primary-btn">Next Step →</button>
   </div>
 
-  <!-- GAME CHANGE FORM (Step 6 only) -->
+  <!-- GAME CHANGE FORM (Step 7 only) -->
   <section class="card" id="formSection" style="display:none;">
     <h2>Game Change Form</h2>
 
@@ -61,20 +61,20 @@
       <label>Team Name</label>
       <input type="text" name="team_name">
 
-      <label>Original Date (mm/dd/yyyy)</label>
-      <input type="text" name="orig_date">
+      <label>Original Date</label>
+      <input type="date" name="orig_date">
 
       <label>Original Time</label>
-      <input type="text" name="orig_time">
+      <input type="time" name="orig_time">
 
       <label>Original Field</label>
       <input type="text" name="orig_field">
 
-      <label>Final Date (mm/dd/yyyy)</label>
-      <input type="text" name="final_date">
+      <label>Final Date</label>
+      <input type="date" name="final_date">
 
       <label>Final Time</label>
-      <input type="text" name="final_time">
+      <input type="time" name="final_time">
 
       <label>Final Field</label>
       <input type="text" name="final_field">
