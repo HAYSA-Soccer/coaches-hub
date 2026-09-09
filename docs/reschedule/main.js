@@ -539,6 +539,9 @@ function renderStep7(panel) {
 
   fill("opp_coach_name", getField("opp_coach_name"));
   fill("opp_coach_phone", getField("opp_coach_phone"));
+
+  // Initialize signature pad ONLY now
+  initGameChangeForm();
 }
 
 
@@ -652,7 +655,7 @@ function initGameChangeForm() {
       await setField(name, val);
     }
 
-    await apiUpdateStep(currentGameNumber, 7); // SSSL Form step
+    await apiUpdateStep(currentGameNumber, 7);
     currentRowData.step_7 = "completed";
     hydrateTimelineFromRow(currentRowData);
 
@@ -661,17 +664,12 @@ function initGameChangeForm() {
 }
 
 
+
 // ===============================================
 // INIT
 // ===============================================
 document.addEventListener("DOMContentLoaded", () => {
   initTimeline();
-
-  // Initialize the form only if it exists in DOM
-  const form = document.getElementById("gameChangeForm");
-  if (form) {
-    initGameChangeForm();
-  }
 });
 
 
