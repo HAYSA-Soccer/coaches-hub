@@ -354,83 +354,81 @@ function renderStep3(panel) {
     alert("Opponent contact info saved.");
   };
 }
-
-// STEP 4 — Final Game Details (New Schedule) + Change Highlight
+// STEP 4 — Final Game Details (New Schedule) + Clean Comparison + Auto-Fill
 function renderStep4(panel) {
+
+  const origDateDisplay = getField("orig_date") || "(none)";
+  const origTimeDisplay = getField("orig_time") || "(none)";
+  const origFieldDisplay = getField("orig_field") || "(none)";
+
+  const finalDateDisplay = getField("final_date") || "(none)";
+  const finalTimeDisplay = getField("final_time") || "(none)";
+  const finalFieldDisplay = getField("final_field") || "(none)";
+
+  const finalDateInput = getField("final_date_input") || "";
+  const finalTimeInput = getField("final_time_input") || "";
+  const finalFieldInput = getField("final_field") || "";
+
   panel.innerHTML = `
     <h2>Step 4 — Final Game Details (New Schedule)</h2>
     <p>Enter the agreed new game date, time, and field.</p>
 
-    <div class="comparison-block">
-      <h3>Original vs New</h3>
-      <div class="comparison-row">
-        <span>Original Date:</span>
-        <span id="cmp_orig_date"></span>
-        <span>New Date:</span>
-        <span id="cmp_final_date"></span>
-      </div>
-      <div class="comparison-row">
-        <span>Original Time:</span>
-        <span id="cmp_orig_time"></span>
-        <span>New Time:</span>
-        <span id="cmp_final_time"></span>
-      </div>
-      <div class="comparison-row">
-        <span>Original Field:</span>
-        <span id="cmp_orig_field"></span>
-        <span>New Field:</span>
-        <span id="cmp_final_field"></span>
-      </div>
-      <p class="comparison-note">Changes will be highlighted when different from the original.</p>
+    <h3>Original vs New</h3>
+
+    <div class="comparison-row">
+      <div>Original Date:</div>
+      <div>${origDateDisplay}</div>
+      <div>New Date:</div>
+      <div id="cmp_final_date">${finalDateDisplay}</div>
     </div>
 
+    <div class="comparison-row">
+      <div>Original Time:</div>
+      <div>${origTimeDisplay}</div>
+      <div>New Time:</div>
+      <div id="cmp_final_time">${finalTimeDisplay}</div>
+    </div>
+
+    <div class="comparison-row">
+      <div>Original Field:</div>
+      <div>${origFieldDisplay}</div>
+      <div>New Field:</div>
+      <div id="cmp_final_field">${finalFieldDisplay}</div>
+    </div>
+
+    <p class="comparison-note">Changes will be highlighted when different from the original.</p>
+
     <h3>New Game Details</h3>
+
     <label>New Date</label>
-    <input type="date" id="final_date">
+    <input type="date" id="final_date" value="${finalDateInput}">
 
     <label>New Time</label>
-    <input type="time" id="final_time">
+    <input type="time" id="final_time" value="${finalTimeInput}">
 
     <label>New Field</label>
-    <input type="text" id="final_field">
+    <input type="text" id="final_field" value="${finalFieldInput}">
 
     <button id="s4_save" class="primary-btn">Save New Game Details</button>
   `;
 
-  // Prefill new details
-  prefillInput("final_date", "final_date");
-  prefillInput("final_time", "final_time");
-  prefillInput("final_field", "final_field");
-
-  // Populate comparison
-  document.getElementById("cmp_orig_date").textContent = getField("orig_date") || "(none)";
-  document.getElementById("cmp_orig_time").textContent = getField("orig_time") || "(none)";
-  document.getElementById("cmp_orig_field").textContent = getField("orig_field") || "(none)";
-
-  document.getElementById("cmp_final_date").textContent = getField("final_date") || "(none)";
-  document.getElementById("cmp_final_time").textContent = getField("final_time") || "(none)";
-  document.getElementById("cmp_final_field").textContent = getField("final_field") || "(none)";
-
+  // --- CHANGE HIGHLIGHT LOGIC ---
   function updateChangeHighlights() {
-    const origDate = getField("orig_date") || "";
-    const origTime = getField("orig_time") || "";
-    const origField = getField("orig_field") || "";
-
-    const finalDate = document.getElementById("final_date").value || getField("final_date") || "";
-    const finalTime = document.getElementById("final_time").value || getField("final_time") || "";
-    const finalField = document.getElementById("final_field").value || getField("final_field") || "";
+    const newDate = document.getElementById("final_date").value || finalDateDisplay;
+    const newTime = document.getElementById("final_time").value || finalTimeDisplay;
+    const newField = document.getElementById("final_field").value || finalFieldDisplay;
 
     const fdSpan = document.getElementById("cmp_final_date");
     const ftSpan = document.getElementById("cmp_final_time");
     const ffSpan = document.getElementById("cmp_final_field");
 
-    fdSpan.textContent = finalDate || "(none)";
-    ftSpan.textContent = finalTime || "(none)";
-    ffSpan.textContent = finalField || "(none)";
+    fdSpan.textContent = newDate || "(none)";
+    ftSpan.textContent = newTime || "(none)";
+    ffSpan.textContent = newField || "(none)";
 
-    fdSpan.classList.toggle("changed", finalDate && finalDate !== origDate);
-    ftSpan.classList.toggle("changed", finalTime && finalTime !== origTime);
-    ffSpan.classList.toggle("changed", finalField && finalField !== origField);
+    fdSpan.classList.toggle("changed", newDate !== origDateDisplay);
+    ftSpan.classList.toggle("changed", newTime !== origTimeDisplay);
+    ffSpan.classList.toggle("changed", newField !== origFieldDisplay);
   }
 
   document.getElementById("final_date").addEventListener("input", updateChangeHighlights);
@@ -439,17 +437,18 @@ function renderStep4(panel) {
 
   updateChangeHighlights();
 
+  // --- SAVE BUTTON ---
   document.getElementById("s4_save").onclick = async () => {
-    const finalDate = document.getElementById("final_date").value;
-    const finalTime = document.getElementById("final_time").value;
-    const finalField = document.getElementById("final_field").value;
+    const newDate = document.getElementById("final_date").value;
+    const newTime = document.getElementById("final_time").value;
+    const newField = document.getElementById("final_field").value;
 
-    await setField("final_date", finalDate);
-    await setField("final_time", finalTime);
-    await setField("final_field", finalField);
+    await setField("final_date", newDate);
+    await setField("final_time", newTime);
+    await setField("final_field", newField);
 
     await apiUpdateStep(currentGameNumber, 4);
-    currentRowData.step_4 = "completed";
+    currentRowData.step_4 = true;
     hydrateTimelineFromRow(currentRowData);
 
     updateChangeHighlights();
