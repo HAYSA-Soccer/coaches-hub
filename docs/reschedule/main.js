@@ -1,96 +1,77 @@
-  // ===============================================
-  // CONFIG
-  // ===============================================
-  const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
-
-  
-  
-  // ===============================================
-  // API HELPERS
-  // ===============================================
-  function apiGetRow(gameNumber) {
-    return new Promise((resolve, reject) => {
-      const callbackName = "haysaWorkflowCallback_" + gameNumber;
-      const script = document.createElement("script");
-  
-      window[callbackName] = function (data) {
-        delete window[callbackName];
-        script.remove();
-        resolve(data);
-      };
-  
-      script.src = `${API_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}&callback=${encodeURIComponent(callbackName)}`;
-      script.onerror = () => {
-        delete window[callbackName];
-        script.remove();
-        reject(new Error("Failed to load workflow data"));
-      };
-  
-      document.body.appendChild(script);
-    });
-  }
-  
-  async function apiCreateRow(gameNumber) {
-    const form = new FormData();
-    form.append("action", "createRow");
-    form.append("game_number", gameNumber);
-    const res = await fetch(API_URL, { method: "POST", body: form });
-    return res.json();
-  }
-  
-  // UNIVERSAL FIELD UPDATE
-  async function apiUpdateField(gameNumber, field, value) {
-    const form = new FormData();
-    form.append("action", "updateField");
-    form.append("game_number", gameNumber);
-    form.append("field", field);
-    form.append("value", value == null ? "" : value);
-    const res = await fetch(API_URL, { method: "POST", body: form });
-    return res.json();
-  }
-  
-  // STEP_X UPDATE (maps to step_1..step_12)
-  async function apiUpdateStep(gameNumber, stepNumber) {
-    return apiUpdateField(gameNumber, `step_${stepNumber}`, "completed");
-  }
-  
+// ===============================================
+// CONFIG
+// ===============================================
+const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
 
 
+// ===============================================
+// API HELPERS
+// ===============================================
+function apiGetRow(gameNumber) {
+  return new Promise((resolve, reject) => {
+    const callbackName = "haysaWorkflowCallback_" + gameNumber;
+    const script = document.createElement("script");
 
-function hydrateTimelineFromRow(row) {
-  document.querySelectorAll(".timeline-step").forEach(el => {
-    const stepNum = Number(el.dataset.step);
-    const fieldName = `step_${stepNum}`;
+    window[callbackName] = function (data) {
+      delete window[callbackName];
+      script.remove();
+      resolve(data);
+    };
 
-    if (row[fieldName] === true || row[fieldName] === "true") {
-      el.classList.add("completed");
-    } else {
-      el.classList.remove("completed");
-    }
+    script.src = `${API_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}&callback=${encodeURIComponent(callbackName)}`;
+    script.onerror = () => {
+      delete window[callbackName];
+      script.remove();
+      reject(new Error("Failed to load workflow data"));
+    };
+
+    document.body.appendChild(script);
   });
 }
 
+async function apiCreateRow(gameNumber) {
+  const form = new FormData();
+  form.append("action", "createRow");
+  form.append("game_number", gameNumber);
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
+
+// UNIVERSAL FIELD UPDATE
+async function apiUpdateField(gameNumber, field, value) {
+  const form = new FormData();
+  form.append("action", "updateField");
+  form.append("game_number", gameNumber);
+  form.append("field", field);
+  form.append("value", value == null ? "" : value);
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
+
+// STEP_X UPDATE (maps to step_1..step_9)
+async function apiUpdateStep(gameNumber, stepNumber) {
+  return apiUpdateField(gameNumber, `step_${stepNumber}`, "completed");
+}
 
 
+// ===============================================
+// STATE + FIELD HELPERS
+// ===============================================
+let currentGameNumber = null;
+let currentRowData = null;
+let currentStep = 1;
 
-  // ===============================================
-  // STATE + FIELD HELPERS
-  // ===============================================
-  let currentGameNumber = null;
-  let currentRowData = null;
-  let currentStep = 1;
-  
-  function getField(field) {
-    if (!currentRowData) return "";
-    return currentRowData[field] == null ? "" : currentRowData[field];
-  }
-  
-  async function setField(field, value) {
-    if (!currentRowData) currentRowData = {};
-    currentRowData[field] = value;
-    return apiUpdateField(currentGameNumber, field, value);
-  }
-  
+function getField(field) {
+  if (!currentRowData) return "";
+  return currentRowData[field] == null ? "" : currentRowData[field];
+}
+
+async function setField(field, value) {
+  if (!currentRowData) currentRowData = {};
+  currentRowData[field] = value;
+  await apiUpdateField(currentGameNumber, field, value);
+}
+
 function prefillInput(id, field) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -98,26 +79,21 @@ function prefillInput(id, field) {
 }
 
 
+// ===============================================
+// TIMELINE HYDRATION
+// ===============================================
+function hydrateTimelineFromRow(row) {
+  document.querySelectorAll(".timeline-step").forEach(el => {
+    const stepNum = Number(el.dataset.step);
+    const fieldName = `step_${stepNum}`;
 
-
-async function updateField(gameNumber, fieldName, value) {
-  const formData = new FormData();
-  formData.append("action", "updateField");
-  formData.append("game_number", gameNumber);
-  formData.append("field", fieldName);
-  formData.append("value", value);
-
-  const response = await fetch(API_URL, {
-    method: "POST",
-    body: formData
+    if (row[fieldName] === true || row[fieldName] === "true" || row[fieldName] === "completed") {
+      el.classList.add("completed");
+    } else {
+      el.classList.remove("completed");
+    }
   });
-
-  const result = await response.json();
-  return result.updated;
 }
-
-
-
 
 
 // ===============================================
@@ -156,29 +132,6 @@ async function lookupGameNumber() {
   }
 }
 
-
-
-
-function hydrateTimelineFromRow(row) {
-  document.querySelectorAll(".timeline-step").forEach(el => {
-    const stepNum = Number(el.dataset.step);
-    const fieldName = `step_${stepNum}`;
-
-    if (row[fieldName] === true || row[fieldName] === "true") {
-      el.classList.add("completed");
-    } else {
-      el.classList.remove("completed");
-    }
-  });
-}
-
-
-
-
-
-
-
-
 async function startNewWorkflow(gameNumber) {
   const res = await apiCreateRow(gameNumber);
   if (!res || !res.success) {
@@ -194,12 +147,11 @@ function beginWorkflow() {
   document.getElementById("timelineContainer").style.display = "block";
   document.getElementById("panelContainer").style.display = "block";
   document.getElementById("nextStepContainer").style.display = "block";
-  
+
   currentStep = 1;
   setActiveTimelineStep(currentStep);
   renderPanelForStep(currentStep);
 
-  // ⭐ NEW: hydrate timeline from saved step flags
   hydrateTimelineFromRow(currentRowData);
 
   // prefill Game Change Form from row data if available
@@ -228,9 +180,8 @@ function beginWorkflow() {
 }
 
 
-
 // ===============================================
-// TIMELINE + NAVIGATION
+// TIMELINE + NAVIGATION (HORIZONTAL)
 // ===============================================
 function initTimeline() {
   document.querySelectorAll(".timeline-step").forEach(el => {
@@ -244,19 +195,13 @@ function initTimeline() {
   const nextBtn = document.getElementById("nextStepBtn");
   if (nextBtn) {
     nextBtn.onclick = async () => {
-      if (currentStep < 8) {
+      if (currentStep < 9) {
         currentStep++;
 
-        // Save step flag
-        await updateField(currentGameNumber, `step_${currentStep}`, true);
+        await apiUpdateStep(currentGameNumber, currentStep);
+        currentRowData[`step_${currentStep}`] = "completed";
 
-        // Update local row data
-        currentRowData[`step_${currentStep}`] = true;
-
-        // Hydrate timeline
         hydrateTimelineFromRow(currentRowData);
-
-        // Move UI forward
         setActiveTimelineStep(currentStep);
         renderPanelForStep(currentStep);
       }
@@ -278,39 +223,30 @@ function renderPanelForStep(step) {
     case 1:
       renderStep1(panel);
       break;
-
-    case 1.5:   // ← INSERT IT RIGHT HERE
-      renderStep15(panel);
-      break;
-
     case 2:
       renderStep2(panel);
       break;
-
     case 3:
       renderStep3(panel);
       break;
-
     case 4:
       renderStep4(panel);
       break;
-
     case 5:
       renderStep5(panel);
       break;
-
     case 6:
       renderStep6(panel);
       break;
-
     case 7:
       renderStep7(panel);
       break;
-
     case 8:
       renderStep8(panel);
       break;
-
+    case 9:
+      renderStep9(panel);
+      break;
     default:
       panel.innerHTML = "<p>Select a step above.</p>";
   }
@@ -321,7 +257,7 @@ function renderPanelForStep(step) {
 // STEP PANELS
 // ===============================================
 
-// STEP 1 — Start Attempt (confirm intent)
+// STEP 1 — Start Reschedule Attempt
 function renderStep1(panel) {
   panel.innerHTML = `
     <h2>Step 1 — Start Reschedule Attempt</h2>
@@ -331,21 +267,22 @@ function renderStep1(panel) {
   `;
 
   document.getElementById("s1_continue").onclick = async () => {
-    await updateField(currentGameNumber, "step_1", true);
-    currentStep = 1.5;   // ← CHANGED: Step 1 now leads to Step 1.5
+    await apiUpdateStep(currentGameNumber, 1);
+    currentRowData.step_1 = "completed";
+    hydrateTimelineFromRow(currentRowData);
+
+    currentStep = 2;
     setActiveTimelineStep(currentStep);
     renderPanelForStep(currentStep);
   };
 }
 
-
-// STEP 1.5 — Game Details
-function renderStep15(panel) {
+// STEP 2 — Original Game Details
+function renderStep2(panel) {
   panel.innerHTML = `
-    <h2>Step 1.5 — Game Details</h2>
-    <p>Enter the current/original game details and the final agreed reschedule details.</p>
+    <h2>Step 2 — Original Game Details</h2>
+    <p>Enter the current/original game details.</p>
 
-    <h3>Original Game Details</h3>
     <label>Original Date</label>
     <input type="date" id="orig_date">
 
@@ -355,286 +292,284 @@ function renderStep15(panel) {
     <label>Original Field</label>
     <input type="text" id="orig_field">
 
-    <h3>Final Agreed Details</h3>
-    <label>Final Date</label>
-    <input type="date" id="final_date">
-
-    <label>Final Time</label>
-    <input type="time" id="final_time">
-
-    <label>Final Field</label>
-    <input type="text" id="final_field">
-
-    <button id="gd_save" class="primary-btn">Save Game Details</button>
+    <button id="s2_save" class="primary-btn">Save Original Details</button>
   `;
 
-  // Hydrate from saved data
   prefillInput("orig_date", "orig_date");
   prefillInput("orig_time", "orig_time");
   prefillInput("orig_field", "orig_field");
 
-  prefillInput("final_date", "final_date");
-  prefillInput("final_time", "final_time");
-  prefillInput("final_field", "final_field");
-
-  document.getElementById("gd_save").onclick = async () => {
+  document.getElementById("s2_save").onclick = async () => {
     const origDate = document.getElementById("orig_date").value;
     const origTime = document.getElementById("orig_time").value;
     const origField = document.getElementById("orig_field").value;
 
-    const finalDate = document.getElementById("final_date").value;
-    const finalTime = document.getElementById("final_time").value;
-    const finalField = document.getElementById("final_field").value;
+    await setField("orig_date", origDate);
+    await setField("orig_time", origTime);
+    await setField("orig_field", origField);
 
-    // Save original details
-    await updateField(currentGameNumber, "orig_date", origDate);
-    await updateField(currentGameNumber, "orig_time", origTime);
-    await updateField(currentGameNumber, "orig_field", origField);
-
-    currentRowData.orig_date = origDate;
-    currentRowData.orig_time = origTime;
-    currentRowData.orig_field = origField;
-
-    // Save final details
-    await updateField(currentGameNumber, "final_date", finalDate);
-    await updateField(currentGameNumber, "final_time", finalTime);
-    await updateField(currentGameNumber, "final_field", finalField);
-
-    currentRowData.final_date = finalDate;
-    currentRowData.final_time = finalTime;
-    currentRowData.final_field = finalField;
-
-    // Mark step complete
-    await updateField(currentGameNumber, "step_15", true);
-    currentRowData.step_15 = true;
+    await apiUpdateStep(currentGameNumber, 2);
+    currentRowData.step_2 = "completed";
     hydrateTimelineFromRow(currentRowData);
 
-    alert("Game details saved.");
+    alert("Original game details saved.");
   };
 }
 
-
-
-
-// STEP 2 — Opponent Contact Info
-function renderStep2(panel) {
+// STEP 3 — Opponent Contact Info
+function renderStep3(panel) {
   panel.innerHTML = `
-    <h2>Step 2 — Opponent Contact Information</h2>
+    <h2>Step 3 — Opponent Contact Information</h2>
     <p>Enter or confirm the opposing coach's contact info.</p>
 
     <label>Opponent Coach Name</label>
-    <input type="text" id="s2_opp_name">
+    <input type="text" id="s3_opp_name">
 
     <label>Opponent Coach Email</label>
-    <input type="email" id="s2_opp_email">
+    <input type="email" id="s3_opp_email">
 
     <label>Opponent Coach Phone</label>
-    <input type="tel" id="s2_opp_phone">
+    <input type="tel" id="s3_opp_phone">
 
-    <button id="s2_save" class="primary-btn">Save Contact Info</button>
+    <button id="s3_save" class="primary-btn">Save Contact Info</button>
   `;
 
-  // prefill from sheet
-  prefillInput("s2_opp_name", "opp_coach_name");
-  prefillInput("s2_opp_email", "opp_coach_email");
-  prefillInput("s2_opp_phone", "opp_coach_phone");
+  prefillInput("s3_opp_name", "opp_coach_name");
+  prefillInput("s3_opp_email", "opp_coach_email");
+  prefillInput("s3_opp_phone", "opp_coach_phone");
 
-  document.getElementById("s2_save").onclick = async () => {
-    const name = document.getElementById("s2_opp_name").value;
-    const email = document.getElementById("s2_opp_email").value;
-    const phone = document.getElementById("s2_opp_phone").value;
-    
-    await updateField(currentGameNumber, "opp_coach_name", name);
-    await updateField(currentGameNumber, "opp_coach_email", email);
-    await updateField(currentGameNumber, "opp_coach_phone", phone);
+  document.getElementById("s3_save").onclick = async () => {
+    const name = document.getElementById("s3_opp_name").value;
+    const email = document.getElementById("s3_opp_email").value;
+    const phone = document.getElementById("s3_opp_phone").value;
 
-currentRowData.opp_coach_name = name;
-currentRowData.opp_coach_email = email;
-currentRowData.opp_coach_phone = phone;
+    await setField("opp_coach_name", name);
+    await setField("opp_coach_email", email);
+    await setField("opp_coach_phone", phone);
 
-    await updateField(currentGameNumber, "step_2", true);
-    currentRowData.step_2 = true;
+    await apiUpdateStep(currentGameNumber, 3);
+    currentRowData.step_3 = "completed";
     hydrateTimelineFromRow(currentRowData);
 
     alert("Opponent contact info saved.");
   };
 }
 
-// STEP 3 — Negotiation (up to 3 attempts)
-function renderStep3(panel) {
+// STEP 4 — Final Game Details (New Schedule) + Change Highlight
+function renderStep4(panel) {
   panel.innerHTML = `
-    <h2>Step 3 — Negotiation Attempts</h2>
-    <p>Track up to three proposed dates/times and outcomes.</p>
+    <h2>Step 4 — Final Game Details (New Schedule)</h2>
+    <p>Enter the agreed new game date, time, and field.</p>
 
-    <div class="attempt-block">
-      <h3>Attempt 1</h3>
-      <label>Proposed Date</label>
-      <input type="date" id="s3_a1_date">
-      <label>Proposed Time</label>
-      <input type="time" id="s3_a1_time">
-      <label>Outcome / Notes</label>
-      <input type="text" id="s3_a1_notes">
+    <div class="comparison-block">
+      <h3>Original vs New</h3>
+      <div class="comparison-row">
+        <span>Original Date:</span>
+        <span id="cmp_orig_date"></span>
+        <span>New Date:</span>
+        <span id="cmp_final_date"></span>
+      </div>
+      <div class="comparison-row">
+        <span>Original Time:</span>
+        <span id="cmp_orig_time"></span>
+        <span>New Time:</span>
+        <span id="cmp_final_time"></span>
+      </div>
+      <div class="comparison-row">
+        <span>Original Field:</span>
+        <span id="cmp_orig_field"></span>
+        <span>New Field:</span>
+        <span id="cmp_final_field"></span>
+      </div>
+      <p class="comparison-note">Changes will be highlighted when different from the original.</p>
     </div>
 
-    <div class="attempt-block">
-      <h3>Attempt 2</h3>
-      <label>Proposed Date</label>
-      <input type="date" id="s3_a2_date">
-      <label>Proposed Time</label>
-      <input type="time" id="s3_a2_time">
-      <label>Outcome / Notes</label>
-      <input type="text" id="s3_a2_notes">
-    </div>
+    <h3>New Game Details</h3>
+    <label>New Date</label>
+    <input type="date" id="final_date">
 
-    <div class="attempt-block">
-      <h3>Attempt 3</h3>
-      <label>Proposed Date</label>
-      <input type="date" id="s3_a3_date">
-      <label>Proposed Time</label>
-      <input type="time" id="s3_a3_time">
-      <label>Outcome / Notes</label>
-      <input type="text" id="s3_a3_notes">
-    </div>
+    <label>New Time</label>
+    <input type="time" id="final_time">
 
-    <button id="s3_agreement" class="primary-btn">Agreement Reached</button>
+    <label>New Field</label>
+    <input type="text" id="final_field">
+
+    <button id="s4_save" class="primary-btn">Save New Game Details</button>
   `;
 
-  // prefill from sheet
-  prefillInput("s3_a1_date", "opt1_date");
-  prefillInput("s3_a1_time", "opt1_time");
-  prefillInput("s3_a1_notes", "opt1_notes");
+  // Prefill new details
+  prefillInput("final_date", "final_date");
+  prefillInput("final_time", "final_time");
+  prefillInput("final_field", "final_field");
 
-  prefillInput("s3_a2_date", "opt2_date");
-  prefillInput("s3_a2_time", "opt2_time");
-  prefillInput("s3_a2_notes", "opt2_notes");
+  // Populate comparison
+  document.getElementById("cmp_orig_date").textContent = getField("orig_date") || "(none)";
+  document.getElementById("cmp_orig_time").textContent = getField("orig_time") || "(none)";
+  document.getElementById("cmp_orig_field").textContent = getField("orig_field") || "(none)";
 
-  prefillInput("s3_a3_date", "opt3_date");
-  prefillInput("s3_a3_time", "opt3_time");
-  prefillInput("s3_a3_notes", "opt3_notes");
+  document.getElementById("cmp_final_date").textContent = getField("final_date") || "(none)";
+  document.getElementById("cmp_final_time").textContent = getField("final_time") || "(none)";
+  document.getElementById("cmp_final_field").textContent = getField("final_field") || "(none)";
 
-  document.getElementById("s3_agreement").onclick = async () => {
-    await setField("opt1_date", document.getElementById("s3_a1_date").value);
-    await setField("opt1_time", document.getElementById("s3_a1_time").value);
-    await setField("opt1_notes", document.getElementById("s3_a1_notes").value);
+  function updateChangeHighlights() {
+    const origDate = getField("orig_date") || "";
+    const origTime = getField("orig_time") || "";
+    const origField = getField("orig_field") || "";
 
-    await setField("opt2_date", document.getElementById("s3_a2_date").value);
-    await setField("opt2_time", document.getElementById("s3_a2_time").value);
-    await setField("opt2_notes", document.getElementById("s3_a2_notes").value);
+    const finalDate = document.getElementById("final_date").value || getField("final_date") || "";
+    const finalTime = document.getElementById("final_time").value || getField("final_time") || "";
+    const finalField = document.getElementById("final_field").value || getField("final_field") || "";
 
-    await setField("opt3_date", document.getElementById("s3_a3_date").value);
-    await setField("opt3_time", document.getElementById("s3_a3_time").value);
-    await setField("opt3_notes", document.getElementById("s3_a3_notes").value);
+    const fdSpan = document.getElementById("cmp_final_date");
+    const ftSpan = document.getElementById("cmp_final_time");
+    const ffSpan = document.getElementById("cmp_final_field");
 
-    await updateField(currentGameNumber, "step_3", true);
-    alert("Agreement recorded. Proceed to Field Hold.");
-    currentStep = 4;
-    setActiveTimelineStep(currentStep);
-    renderPanelForStep(currentStep);
+    fdSpan.textContent = finalDate || "(none)";
+    ftSpan.textContent = finalTime || "(none)";
+    ffSpan.textContent = finalField || "(none)";
+
+    fdSpan.classList.toggle("changed", finalDate && finalDate !== origDate);
+    ftSpan.classList.toggle("changed", finalTime && finalTime !== origTime);
+    ffSpan.classList.toggle("changed", finalField && finalField !== origField);
+  }
+
+  document.getElementById("final_date").addEventListener("input", updateChangeHighlights);
+  document.getElementById("final_time").addEventListener("input", updateChangeHighlights);
+  document.getElementById("final_field").addEventListener("input", updateChangeHighlights);
+
+  updateChangeHighlights();
+
+  document.getElementById("s4_save").onclick = async () => {
+    const finalDate = document.getElementById("final_date").value;
+    const finalTime = document.getElementById("final_time").value;
+    const finalField = document.getElementById("final_field").value;
+
+    await setField("final_date", finalDate);
+    await setField("final_time", finalTime);
+    await setField("final_field", finalField);
+
+    await apiUpdateStep(currentGameNumber, 4);
+    currentRowData.step_4 = "completed";
+    hydrateTimelineFromRow(currentRowData);
+
+    updateChangeHighlights();
+    alert("New game details saved.");
   };
 }
 
-// STEP 4 — Field Hold (home game)
-function renderStep4(panel) {
+// STEP 5 — Field Hold (home game)
+function renderStep5(panel) {
   panel.innerHTML = `
-    <h2>Step 4 — Field Hold</h2>
+    <h2>Step 5 — Field Hold</h2>
     <p>If this is a home game, request a field hold for the agreed date/time.</p>
 
     <label>Field Requested</label>
-    <input type="text" id="s4_field">
+    <input type="text" id="s5_field">
 
     <label>Hold Confirmed?</label>
-    <select id="s4_confirmed">
+    <select id="s5_confirmed">
       <option value="no">No</option>
       <option value="yes">Yes</option>
     </select>
 
-    <button id="s4_save" class="primary-btn">Save Field Hold Status</button>
+    <button id="s5_save" class="primary-btn">Save Field Hold Status</button>
   `;
 
-  prefillInput("s4_field", "field_requested");
-  const confirmedEl = document.getElementById("s4_confirmed");
+  prefillInput("s5_field", "field_requested");
+  const confirmedEl = document.getElementById("s5_confirmed");
   confirmedEl.value = getField("field_confirmed") || "no";
 
-  document.getElementById("s4_save").onclick = async () => {
-    await setField("field_requested", document.getElementById("s4_field").value);
-    await setField("field_confirmed", document.getElementById("s4_confirmed").value);
-    await updateField(currentGameNumber, "step_4", true);
+  document.getElementById("s5_save").onclick = async () => {
+    await setField("field_requested", document.getElementById("s5_field").value);
+    await setField("field_confirmed", document.getElementById("s5_confirmed").value);
+
+    await apiUpdateStep(currentGameNumber, 5);
+    currentRowData.step_5 = "completed";
+    hydrateTimelineFromRow(currentRowData);
+
     alert("Field hold status saved.");
   };
 }
 
-// STEP 5 — HAYSA Approval
-function renderStep5(panel) {
+// STEP 6 — HAYSA Approval
+function renderStep6(panel) {
   panel.innerHTML = `
-    <h2>Step 5 — HAYSA Approval</h2>
+    <h2>Step 6 — HAYSA Approval</h2>
     <p>Request and record HAYSA approval for this reschedule.</p>
 
     <label>Approval Status</label>
-    <select id="s5_status">
+    <select id="s6_status">
       <option value="pending">Pending</option>
       <option value="approved">Approved</option>
       <option value="denied">Denied</option>
     </select>
 
     <label>Notes</label>
-    <input type="text" id="s5_notes">
+    <input type="text" id="s6_notes">
 
-    <button id="s5_save" class="primary-btn">Save HAYSA Approval</button>
+    <button id="s6_save" class="primary-btn">Save HAYSA Approval</button>
   `;
 
-  const statusEl = document.getElementById("s5_status");
+  const statusEl = document.getElementById("s6_status");
   statusEl.value = getField("haysa_status") || "pending";
-  prefillInput("s5_notes", "haysa_notes");
+  prefillInput("s6_notes", "haysa_notes");
 
-  document.getElementById("s5_save").onclick = async () => {
-    const status = document.getElementById("s5_status").value;
+  document.getElementById("s6_save").onclick = async () => {
+    const status = document.getElementById("s6_status").value;
     await setField("haysa_status", status);
-    await setField("haysa_notes", document.getElementById("s5_notes").value);
+    await setField("haysa_notes", document.getElementById("s6_notes").value);
 
     if (status !== "approved") {
       alert("HAYSA has not approved this yet. You should not proceed to SSSL.");
     }
-    await updateField(currentGameNumber, "step_5", true);
+
+    await apiUpdateStep(currentGameNumber, 6);
+    currentRowData.step_6 = "completed";
+    hydrateTimelineFromRow(currentRowData);
+
     alert("HAYSA approval status saved.");
   };
 }
 
-// STEP 6 — SSSL Form (uses gameChangeForm + signature)
-function renderStep6(panel) {
+// STEP 7 — SSSL Form (uses gameChangeForm + signature)
+function renderStep7(panel) {
   panel.innerHTML = `
-    <h2>Step 6 — SSSL Form</h2>
+    <h2>Step 7 — SSSL Form</h2>
     <p>Complete the SSSL reschedule form with the agreed details and signature.</p>
     <p>Use the Game Change Form section below to fill in all required fields.</p>
   `;
 }
 
-// STEP 7 — Calendar Update
-function renderStep7(panel) {
+// STEP 8 — Calendar Update
+function renderStep8(panel) {
   panel.innerHTML = `
-    <h2>Step 7 — Calendar Update</h2>
+    <h2>Step 8 — Calendar Update</h2>
     <p>Update your team calendar and any league calendars with the new game date/time.</p>
 
-    <button id="s7_done" class="primary-btn">Mark Calendar Updated</button>
+    <button id="s8_done" class="primary-btn">Mark Calendar Updated</button>
   `;
 
-  document.getElementById("s7_done").onclick = async () => {
+  document.getElementById("s8_done").onclick = async () => {
     await setField("calendar_updated", "yes");
-    await updateField(currentGameNumber, "step_7", true);
+    await apiUpdateStep(currentGameNumber, 8);
+    currentRowData.step_8 = "completed";
+    hydrateTimelineFromRow(currentRowData);
+
     alert("Calendar update recorded.");
   };
 }
 
-// STEP 8 — Notify Coaches
-function renderStep8(panel) {
+// STEP 9 — Notify Coaches
+function renderStep9(panel) {
   panel.innerHTML = `
-    <h2>Step 8 — Notify Coaches</h2>
+    <h2>Step 9 — Notify Coaches</h2>
     <p>Send final confirmation to both coaches with the new game details.</p>
 
-    <button id="s8_email" class="primary-btn">Compose Email</button>
-    <button id="s8_done" class="secondary-btn">Mark Notification Complete</button>
+    <button id="s9_email" class="primary-btn">Compose Email</button>
+    <button id="s9_done" class="secondary-btn">Mark Notification Complete</button>
   `;
 
-  document.getElementById("s8_email").onclick = () => {
+  document.getElementById("s9_email").onclick = () => {
     const subject = encodeURIComponent("Game Reschedule Confirmation");
     const body = encodeURIComponent(
 `Game Number: ${currentGameNumber}
@@ -646,9 +581,12 @@ Please contact us with any questions.`
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
 
-  document.getElementById("s8_done").onclick = async () => {
+  document.getElementById("s9_done").onclick = async () => {
     await setField("notify_status", "completed");
-    await updateField(currentGameNumber, "step_8", true);
+    await apiUpdateStep(currentGameNumber, 9);
+    currentRowData.step_9 = "completed";
+    hydrateTimelineFromRow(currentRowData);
+
     alert("Notification marked complete.");
   };
 }
@@ -738,7 +676,6 @@ function initGameChangeForm() {
       signature_data: signatureData
     });
 
-    // save form fields via updateField
     const fieldsToSave = [
       "game_number",
       "team_name",
@@ -760,7 +697,10 @@ function initGameChangeForm() {
       await setField(name, val);
     }
 
-    await apiUpdateStep(currentGameNumber, 6);
+    await apiUpdateStep(currentGameNumber, 7); // SSSL Form step
+    currentRowData.step_7 = "completed";
+    hydrateTimelineFromRow(currentRowData);
+
     alert("Form saved.");
   };
 }
@@ -773,4 +713,3 @@ document.addEventListener("DOMContentLoaded", () => {
   initTimeline();
   initGameChangeForm();
 });
-
