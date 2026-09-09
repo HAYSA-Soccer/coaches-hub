@@ -160,6 +160,14 @@ h1 {
   font-size: 1rem;
 }
 
+
+.timeline-step.completed {
+  background-color: #4caf50;
+  color: white;
+  border-color: #4caf50;
+}
+
+
 /* ---------------------------------------------------------
    SIGNATURE PAD (modern)
 --------------------------------------------------------- */
