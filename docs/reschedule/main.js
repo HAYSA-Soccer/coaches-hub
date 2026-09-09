@@ -261,21 +261,21 @@ function renderPanelForStep(step) {
 function renderStep1(panel) {
   panel.innerHTML = `
     <h2>Step 1 — Start Reschedule Attempt</h2>
-    <p>You are beginning a reschedule workflow for game <strong>#${currentGameNumber}</strong>.</p>
+    <p>You are beginning a reschedule workflow for game #${currentGameNumber}.</p>
     <p>This will track all moves and approvals for this game.</p>
-    <button id="s1_continue" class="primary-btn">I want to proceed</button>
+
+    <button id="s1_proceed" class="primary-btn">I want to proceed</button>
   `;
 
-  document.getElementById("s1_continue").onclick = async () => {
+  document.getElementById("s1_proceed").onclick = async () => {
     await apiUpdateStep(currentGameNumber, 1);
-    currentRowData.step_1 = "completed";
+    currentRowData.step_1 = true;
     hydrateTimelineFromRow(currentRowData);
-
-    currentStep = 2;
-    setActiveTimelineStep(currentStep);
-    renderPanelForStep(currentStep);
+    goToStep(2);
   };
 }
+
+
 
 // STEP 2 — Original Game Details
 function renderStep2(panel) {
@@ -284,76 +284,66 @@ function renderStep2(panel) {
     <p>Enter the current/original game details.</p>
 
     <label>Original Date</label>
-    <input type="date" id="orig_date">
+    <input type="date" id="orig_date" value="${getField("orig_date_input") || ""}">
 
     <label>Original Time</label>
-    <input type="time" id="orig_time">
+    <input type="time" id="orig_time" value="${getField("orig_time_input") || ""}">
 
     <label>Original Field</label>
-    <input type="text" id="orig_field">
+    <input type="text" id="orig_field" value="${getField("orig_field") || ""}">
 
     <button id="s2_save" class="primary-btn">Save Original Details</button>
   `;
 
-  prefillInput("orig_date", "orig_date");
-  prefillInput("orig_time", "orig_time");
-  prefillInput("orig_field", "orig_field");
-
   document.getElementById("s2_save").onclick = async () => {
-    const origDate = document.getElementById("orig_date").value;
-    const origTime = document.getElementById("orig_time").value;
-    const origField = document.getElementById("orig_field").value;
-
-    await setField("orig_date", origDate);
-    await setField("orig_time", origTime);
-    await setField("orig_field", origField);
+    await setField("orig_date", document.getElementById("orig_date").value);
+    await setField("orig_time", document.getElementById("orig_time").value);
+    await setField("orig_field", document.getElementById("orig_field").value);
 
     await apiUpdateStep(currentGameNumber, 2);
-    currentRowData.step_2 = "completed";
+    currentRowData.step_2 = true;
     hydrateTimelineFromRow(currentRowData);
 
-    alert("Original game details saved.");
+    alert("Original details saved.");
   };
 }
+
+
 
 // STEP 3 — Opponent Contact Info
 function renderStep3(panel) {
   panel.innerHTML = `
-    <h2>Step 3 — Opponent Contact Information</h2>
-    <p>Enter or confirm the opposing coach's contact info.</p>
+    <h2>Step 3 — Opponent Contact</h2>
+    <p>Record the opponent coach details.</p>
 
-    <label>Opponent Coach Name</label>
-    <input type="text" id="s3_opp_name">
+    <label>Opposing Coach Name</label>
+    <input type="text" id="opp_coach_name" value="${getField("opp_coach_name") || ""}">
 
-    <label>Opponent Coach Email</label>
-    <input type="email" id="s3_opp_email">
+    <label>Opposing Coach Email</label>
+    <input type="email" id="opp_coach_email" value="${getField("opp_coach_email") || ""}">
 
-    <label>Opponent Coach Phone</label>
-    <input type="tel" id="s3_opp_phone">
+    <label>Opposing Coach Phone</label>
+    <input type="tel" id="opp_coach_phone" value="${getField("opp_coach_phone") || ""}">
 
-    <button id="s3_save" class="primary-btn">Save Contact Info</button>
+    <button id="s3_save" class="primary-btn">Save Opponent Details</button>
   `;
 
-  prefillInput("s3_opp_name", "opp_coach_name");
-  prefillInput("s3_opp_email", "opp_coach_email");
-  prefillInput("s3_opp_phone", "opp_coach_phone");
-
   document.getElementById("s3_save").onclick = async () => {
-    const name = document.getElementById("s3_opp_name").value;
-    const email = document.getElementById("s3_opp_email").value;
-    const phone = document.getElementById("s3_opp_phone").value;
-
-    await setField("opp_coach_name", name);
-    await setField("opp_coach_email", email);
-    await setField("opp_coach_phone", phone);
+    await setField("opp_coach_name", document.getElementById("opp_coach_name").value);
+    await setField("opp_coach_email", document.getElementById("opp_coach_email").value);
+    await setField("opp_coach_phone", document.getElementById("opp_coach_phone").value);
 
     await apiUpdateStep(currentGameNumber, 3);
-    currentRowData.step_3 = "completed";
+    currentRowData.step_3 = true;
     hydrateTimelineFromRow(currentRowData);
 
-    alert("Opponent contact info saved.");
+    alert("Opponent details saved.");
   };
 }
+
+
+
+
 // STEP 4 — Final Game Details (New Schedule) + Clean Comparison + Auto-Fill
 function renderStep4(panel) {
 
@@ -460,135 +450,156 @@ function renderStep4(panel) {
 function renderStep5(panel) {
   panel.innerHTML = `
     <h2>Step 5 — Field Hold</h2>
-    <p>If this is a home game, request a field hold for the agreed date/time.</p>
+    <p>Record whether the field has been requested and confirmed.</p>
 
-    <label>Field Requested</label>
-    <input type="text" id="s5_field">
+    <label>Field Requested?</label>
+    <input type="text" id="field_requested" value="${getField("field_requested") || ""}">
 
-    <label>Hold Confirmed?</label>
-    <select id="s5_confirmed">
-      <option value="no">No</option>
-      <option value="yes">Yes</option>
-    </select>
+    <label>Field Confirmed?</label>
+    <input type="text" id="field_confirmed" value="${getField("field_confirmed") || ""}">
 
     <button id="s5_save" class="primary-btn">Save Field Hold Status</button>
   `;
 
-  prefillInput("s5_field", "field_requested");
-  const confirmedEl = document.getElementById("s5_confirmed");
-  confirmedEl.value = getField("field_confirmed") || "no";
-
   document.getElementById("s5_save").onclick = async () => {
-    await setField("field_requested", document.getElementById("s5_field").value);
-    await setField("field_confirmed", document.getElementById("s5_confirmed").value);
+    await setField("field_requested", document.getElementById("field_requested").value);
+    await setField("field_confirmed", document.getElementById("field_confirmed").value);
 
     await apiUpdateStep(currentGameNumber, 5);
-    currentRowData.step_5 = "completed";
+    currentRowData.step_5 = true;
     hydrateTimelineFromRow(currentRowData);
 
     alert("Field hold status saved.");
   };
 }
 
+
+
+
+
 // STEP 6 — HAYSA Approval
 function renderStep6(panel) {
   panel.innerHTML = `
     <h2>Step 6 — HAYSA Approval</h2>
-    <p>Request and record HAYSA approval for this reschedule.</p>
+    <p>Record the HAYSA approval status.</p>
 
-    <label>Approval Status</label>
-    <select id="s6_status">
-      <option value="pending">Pending</option>
-      <option value="approved">Approved</option>
-      <option value="denied">Denied</option>
-    </select>
+    <label>HAYSA Status</label>
+    <input type="text" id="haysa_status" value="${getField("haysa_status") || ""}">
 
-    <label>Notes</label>
-    <input type="text" id="s6_notes">
+    <label>HAYSA Notes</label>
+    <input type="text" id="haysa_notes" value="${getField("haysa_notes") || ""}">
 
     <button id="s6_save" class="primary-btn">Save HAYSA Approval</button>
   `;
 
-  const statusEl = document.getElementById("s6_status");
-  statusEl.value = getField("haysa_status") || "pending";
-  prefillInput("s6_notes", "haysa_notes");
-
   document.getElementById("s6_save").onclick = async () => {
-    const status = document.getElementById("s6_status").value;
-    await setField("haysa_status", status);
-    await setField("haysa_notes", document.getElementById("s6_notes").value);
-
-    if (status !== "approved") {
-      alert("HAYSA has not approved this yet. You should not proceed to SSSL.");
-    }
+    await setField("haysa_status", document.getElementById("haysa_status").value);
+    await setField("haysa_notes", document.getElementById("haysa_notes").value);
 
     await apiUpdateStep(currentGameNumber, 6);
-    currentRowData.step_6 = "completed";
+    currentRowData.step_6 = true;
     hydrateTimelineFromRow(currentRowData);
 
-    alert("HAYSA approval status saved.");
+    alert("HAYSA approval saved.");
   };
 }
+
+
+
 
 // STEP 7 — SSSL Form (uses gameChangeForm + signature)
 function renderStep7(panel) {
   panel.innerHTML = `
     <h2>Step 7 — SSSL Form</h2>
-    <p>Complete the SSSL reschedule form with the agreed details and signature.</p>
-    <p>Use the Game Change Form section below to fill in all required fields.</p>
+    <p>Complete the SSSL reschedule form below.</p>
   `;
+
+  document.getElementById("formSection").style.display = "block";
+
+  // Auto-fill form fields
+  document.querySelector("[name='game_number']").value = currentGameNumber;
+  document.querySelector("[name='team_name']").value = getField("team_name") || "";
+  document.querySelector("[name='orig_date']").value = getField("orig_date_input") || "";
+  document.querySelector("[name='orig_time']").value = getField("orig_time_input") || "";
+  document.querySelector("[name='orig_field']").value = getField("orig_field") || "";
+
+  document.querySelector("[name='final_date']").value = getField("final_date_input") || "";
+  document.querySelector("[name='final_time']").value = getField("final_time_input") || "";
+  document.querySelector("[name='final_field']").value = getField("final_field") || "";
+
+  document.querySelector("[name='coach_name']").value = getField("coach_name") || "";
+  document.querySelector("[name='coach_email']").value = getField("coach_email") || "";
+  document.querySelector("[name='coach_phone']").value = getField("coach_phone") || "";
+
+  document.querySelector("[name='opp_coach_name']").value = getField("opp_coach_name") || "";
+  document.querySelector("[name='opp_coach_phone']").value = getField("opp_coach_phone") || "";
+
+  await apiUpdateStep(currentGameNumber, 7);
+  currentRowData.step_7 = true;
+  hydrateTimelineFromRow(currentRowData);
 }
+
+
+
 
 // STEP 8 — Calendar Update
 function renderStep8(panel) {
   panel.innerHTML = `
     <h2>Step 8 — Calendar Update</h2>
-    <p>Update your team calendar and any league calendars with the new game date/time.</p>
+    <p>Record whether the calendar has been updated.</p>
 
-    <button id="s8_done" class="primary-btn">Mark Calendar Updated</button>
+    <label>Calendar Updated?</label>
+    <input type="text" id="calendar_updated" value="${getField("calendar_updated") || ""}">
+
+    <button id="s8_save" class="primary-btn">Save Calendar Update</button>
   `;
 
-  document.getElementById("s8_done").onclick = async () => {
-    await setField("calendar_updated", "yes");
+  document.getElementById("s8_save").onclick = async () => {
+    await setField("calendar_updated", document.getElementById("calendar_updated").value);
+
     await apiUpdateStep(currentGameNumber, 8);
-    currentRowData.step_8 = "completed";
+    currentRowData.step_8 = true;
     hydrateTimelineFromRow(currentRowData);
 
-    alert("Calendar update recorded.");
+    alert("Calendar update saved.");
   };
 }
+
+
+
+
 
 // STEP 9 — Notify Coaches
 function renderStep9(panel) {
   panel.innerHTML = `
-    <h2>Step 9 — Notify Coaches</h2>
-    <p>Send final confirmation to both coaches with the new game details.</p>
+    <h2>Step 9 — Finalize Request</h2>
+    <p>Download the completed form and record any final notes.</p>
 
-    <button id="s9_email" class="primary-btn">Compose Email</button>
-    <button id="s9_done" class="secondary-btn">Mark Notification Complete</button>
+    <button id="s9_download" class="primary-btn">Download Completed Form</button>
+
+    <label>Board Notes (optional)</label>
+    <input type="text" id="notes" value="${getField("notes") || ""}">
+
+    <button id="s9_save" class="secondary-btn">Mark Request Complete</button>
   `;
 
-  document.getElementById("s9_email").onclick = () => {
-    const subject = encodeURIComponent("Game Reschedule Confirmation");
-    const body = encodeURIComponent(
-`Game Number: ${currentGameNumber}
-
-Your game has been rescheduled.
-
-Please contact us with any questions.`
-    );
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  document.getElementById("s9_download").onclick = () => {
+    generateReschedulePDF(currentRowData);
   };
 
-  document.getElementById("s9_done").onclick = async () => {
-    await setField("notify_status", "completed");
+  document.getElementById("s9_save").onclick = async () => {
+    await setField("notes", document.getElementById("notes").value);
+
     await apiUpdateStep(currentGameNumber, 9);
-    currentRowData.step_9 = "completed";
+    currentRowData.step_9 = true;
     hydrateTimelineFromRow(currentRowData);
 
-    alert("Notification marked complete.");
+    alert("Request marked complete.");
   };
 }
+
+
+
 
 
 // ===============================================
