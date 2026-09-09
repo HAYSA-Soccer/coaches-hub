@@ -78,7 +78,30 @@
     if (!el) return;
     el.value = getField(field);
   }
-  
+
+
+
+
+
+async function updateField(gameNumber, fieldName, value) {
+  const formData = new FormData();
+  formData.append("action", "updateField");
+  formData.append("game_number", gameNumber);
+  formData.append("field", fieldName);
+  formData.append("value", value);
+
+  const response = await fetch(API_URL, {
+    method: "POST",
+    body: formData
+  });
+
+  const result = await response.json();
+  return result.updated;
+}
+
+
+
+
 
 // ===============================================
 // LOOKUP FLOW (ONE GAME NUMBER PER ROW)
@@ -179,7 +202,7 @@ function initTimeline() {
     nextBtn.onclick = async () => {
       if (currentStep < 8) {
         currentStep++;
-        await apiUpdateStep(currentGameNumber, currentStep);
+        await updateField(currentGameNumber, `step_${currentStep}`, true);
         setActiveTimelineStep(currentStep);
         renderPanelForStep(currentStep);
       }
@@ -226,7 +249,7 @@ function renderStep1(panel) {
   `;
 
   document.getElementById("s1_continue").onclick = async () => {
-    await apiUpdateStep(currentGameNumber, 1);
+    await updateField(currentGameNumber, "step_1", true);
     currentStep = 2;
     setActiveTimelineStep(currentStep);
     renderPanelForStep(currentStep);
@@ -260,7 +283,7 @@ function renderStep2(panel) {
     await setField("opp_coach_name", document.getElementById("s2_opp_name").value);
     await setField("opp_coach_email", document.getElementById("s2_opp_email").value);
     await setField("opp_coach_phone", document.getElementById("s2_opp_phone").value);
-    await apiUpdateStep(currentGameNumber, 2);
+    await updateField(currentGameNumber, "step_2", true);
     alert("Opponent contact info saved.");
   };
 }
@@ -330,7 +353,7 @@ function renderStep3(panel) {
     await setField("opt3_time", document.getElementById("s3_a3_time").value);
     await setField("opt3_notes", document.getElementById("s3_a3_notes").value);
 
-    await apiUpdateStep(currentGameNumber, 3);
+    await updateField(currentGameNumber, "step_3", true);
     alert("Agreement recorded. Proceed to Field Hold.");
     currentStep = 4;
     setActiveTimelineStep(currentStep);
@@ -363,7 +386,7 @@ function renderStep4(panel) {
   document.getElementById("s4_save").onclick = async () => {
     await setField("field_requested", document.getElementById("s4_field").value);
     await setField("field_confirmed", document.getElementById("s4_confirmed").value);
-    await apiUpdateStep(currentGameNumber, 4);
+    await updateField(currentGameNumber, "step_4", true);
     alert("Field hold status saved.");
   };
 }
@@ -399,7 +422,7 @@ function renderStep5(panel) {
     if (status !== "approved") {
       alert("HAYSA has not approved this yet. You should not proceed to SSSL.");
     }
-    await apiUpdateStep(currentGameNumber, 5);
+    await updateField(currentGameNumber, "step_5", true);
     alert("HAYSA approval status saved.");
   };
 }
@@ -424,7 +447,7 @@ function renderStep7(panel) {
 
   document.getElementById("s7_done").onclick = async () => {
     await setField("calendar_updated", "yes");
-    await apiUpdateStep(currentGameNumber, 7);
+    await updateField(currentGameNumber, "step_7", true);
     alert("Calendar update recorded.");
   };
 }
@@ -453,7 +476,7 @@ Please contact us with any questions.`
 
   document.getElementById("s8_done").onclick = async () => {
     await setField("notify_status", "completed");
-    await apiUpdateStep(currentGameNumber, 8);
+    await updateField(currentGameNumber, "step_8", true);
     alert("Notification marked complete.");
   };
 }
