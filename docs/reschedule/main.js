@@ -334,9 +334,18 @@ function renderStep2(panel) {
   prefillInput("s2_opp_phone", "opp_coach_phone");
 
   document.getElementById("s2_save").onclick = async () => {
-    await setField("opp_coach_name", document.getElementById("s2_opp_name").value);
-    await setField("opp_coach_email", document.getElementById("s2_opp_email").value);
-    await setField("opp_coach_phone", document.getElementById("s2_opp_phone").value);
+    const name = document.getElementById("s2_opp_name").value;
+    const email = document.getElementById("s2_opp_email").value;
+    const phone = document.getElementById("s2_opp_phone").value;
+    
+    await updateField(currentGameNumber, "opp_coach_name", name);
+    await updateField(currentGameNumber, "opp_coach_email", email);
+    await updateField(currentGameNumber, "opp_coach_phone", phone);
+
+currentRowData.opp_coach_name = name;
+currentRowData.opp_coach_email = email;
+currentRowData.opp_coach_phone = phone;
+
     await updateField(currentGameNumber, "step_2", true);
     currentRowData.step_2 = true;
     hydrateTimelineFromRow(currentRowData);
