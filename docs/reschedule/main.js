@@ -54,7 +54,25 @@
     return apiUpdateField(gameNumber, `step_${stepNumber}`, "completed");
   }
   
-  
+
+
+
+function hydrateTimelineFromRow(row) {
+  document.querySelectorAll(".timeline-step").forEach(el => {
+    const stepNum = Number(el.dataset.step);
+    const fieldName = `step_${stepNum}`;
+
+    if (row[fieldName] === true || row[fieldName] === "true") {
+      el.classList.add("completed");
+    } else {
+      el.classList.remove("completed");
+    }
+  });
+}
+
+
+
+
   // ===============================================
   // STATE + FIELD HELPERS
   // ===============================================
@@ -139,6 +157,26 @@ async function lookupGameNumber() {
   }
 }
 
+
+
+
+function hydrateTimelineFromRow(row) {
+  document.querySelectorAll(".timeline-step").forEach(el => {
+    const stepNum = Number(el.dataset.step);
+    const fieldName = `step_${stepNum}`;
+
+    if (row[fieldName] === true || row[fieldName] === "true") {
+      el.classList.add("completed");
+    } else {
+      el.classList.remove("completed");
+    }
+  });
+}
+
+
+
+
+
 async function startNewWorkflow(gameNumber) {
   const res = await apiCreateRow(gameNumber);
   if (!res || !res.success) {
@@ -158,6 +196,9 @@ function beginWorkflow() {
   currentStep = 1;
   setActiveTimelineStep(currentStep);
   renderPanelForStep(currentStep);
+
+  // ⭐ NEW: hydrate timeline from saved step flags
+  hydrateTimelineFromRow(currentRowData);
 
   // prefill Game Change Form from row data if available
   const form = document.getElementById("gameChangeForm");
@@ -183,6 +224,7 @@ function beginWorkflow() {
     });
   }
 }
+
 
 
 // ===============================================
