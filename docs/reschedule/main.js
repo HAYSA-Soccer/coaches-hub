@@ -275,14 +275,42 @@ function renderPanelForStep(step) {
   if (!panel) return;
 
   switch (step) {
-    case 1: renderStep1(panel); break;
-    case 2: renderStep2(panel); break;
-    case 3: renderStep3(panel); break;
-    case 4: renderStep4(panel); break;
-    case 5: renderStep5(panel); break;
-    case 6: renderStep6(panel); break;
-    case 7: renderStep7(panel); break;
-    case 8: renderStep8(panel); break;
+    case 1:
+      renderStep1(panel);
+      break;
+
+    case 1.5:   // ← INSERT IT RIGHT HERE
+      renderStep15(panel);
+      break;
+
+    case 2:
+      renderStep2(panel);
+      break;
+
+    case 3:
+      renderStep3(panel);
+      break;
+
+    case 4:
+      renderStep4(panel);
+      break;
+
+    case 5:
+      renderStep5(panel);
+      break;
+
+    case 6:
+      renderStep6(panel);
+      break;
+
+    case 7:
+      renderStep7(panel);
+      break;
+
+    case 8:
+      renderStep8(panel);
+      break;
+
     default:
       panel.innerHTML = "<p>Select a step above.</p>";
   }
@@ -304,11 +332,89 @@ function renderStep1(panel) {
 
   document.getElementById("s1_continue").onclick = async () => {
     await updateField(currentGameNumber, "step_1", true);
-    currentStep = 2;
+    currentStep = 1.5;   // ← CHANGED: Step 1 now leads to Step 1.5
     setActiveTimelineStep(currentStep);
     renderPanelForStep(currentStep);
   };
 }
+
+
+// STEP 1.5 — Game Details
+function renderStep15(panel) {
+  panel.innerHTML = `
+    <h2>Step 1.5 — Game Details</h2>
+    <p>Enter the current/original game details and the final agreed reschedule details.</p>
+
+    <h3>Original Game Details</h3>
+    <label>Original Date</label>
+    <input type="date" id="orig_date">
+
+    <label>Original Time</label>
+    <input type="time" id="orig_time">
+
+    <label>Original Field</label>
+    <input type="text" id="orig_field">
+
+    <h3>Final Agreed Details</h3>
+    <label>Final Date</label>
+    <input type="date" id="final_date">
+
+    <label>Final Time</label>
+    <input type="time" id="final_time">
+
+    <label>Final Field</label>
+    <input type="text" id="final_field">
+
+    <button id="gd_save" class="primary-btn">Save Game Details</button>
+  `;
+
+  // Hydrate from saved data
+  prefillInput("orig_date", "orig_date");
+  prefillInput("orig_time", "orig_time");
+  prefillInput("orig_field", "orig_field");
+
+  prefillInput("final_date", "final_date");
+  prefillInput("final_time", "final_time");
+  prefillInput("final_field", "final_field");
+
+  document.getElementById("gd_save").onclick = async () => {
+    const origDate = document.getElementById("orig_date").value;
+    const origTime = document.getElementById("orig_time").value;
+    const origField = document.getElementById("orig_field").value;
+
+    const finalDate = document.getElementById("final_date").value;
+    const finalTime = document.getElementById("final_time").value;
+    const finalField = document.getElementById("final_field").value;
+
+    // Save original details
+    await updateField(currentGameNumber, "orig_date", origDate);
+    await updateField(currentGameNumber, "orig_time", origTime);
+    await updateField(currentGameNumber, "orig_field", origField);
+
+    currentRowData.orig_date = origDate;
+    currentRowData.orig_time = origTime;
+    currentRowData.orig_field = origField;
+
+    // Save final details
+    await updateField(currentGameNumber, "final_date", finalDate);
+    await updateField(currentGameNumber, "final_time", finalTime);
+    await updateField(currentGameNumber, "final_field", finalField);
+
+    currentRowData.final_date = finalDate;
+    currentRowData.final_time = finalTime;
+    currentRowData.final_field = finalField;
+
+    // Mark step complete
+    await updateField(currentGameNumber, "step_15", true);
+    currentRowData.step_15 = true;
+    hydrateTimelineFromRow(currentRowData);
+
+    alert("Game details saved.");
+  };
+}
+
+
+
 
 // STEP 2 — Opponent Contact Info
 function renderStep2(panel) {
