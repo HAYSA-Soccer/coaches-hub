@@ -579,3 +579,280 @@ document.addEventListener("DOMContentLoaded", () => {
   initTimeline();
   initGameChangeForm();
 });
+
+
+
+// NEW CODE FOR MORE ROBUST INTERACTION
+
+
+
+
+/* ---------------------------------------------------------
+   WORKFLOW ENGINE — ADD BELOW YOUR EXISTING CODE
+--------------------------------------------------------- */
+
+let currentStep = 1;     // Tracks which step you're on
+let rowData = null;      // You already set this in your lookup code
+
+/* ---------------------------------------------------------
+   START WORKFLOW (Step 1 button)
+--------------------------------------------------------- */
+function startWorkflow() {
+  currentStep = 1;
+  renderStep(currentStep);
+}
+
+/* ---------------------------------------------------------
+   NEXT STEP BUTTON
+--------------------------------------------------------- */
+document.addEventListener("DOMContentLoaded", () => {
+  const nextBtn = document.getElementById("nextStepBtn");
+  if (nextBtn) {
+    nextBtn.addEventListener("click", () => {
+      if (currentStep < 8) {
+        currentStep++;
+        renderStep(currentStep);
+      }
+    });
+  }
+
+  initSignaturePad();
+  initFormSubmit();
+});
+
+/* ---------------------------------------------------------
+   MAIN STEP RENDERER
+--------------------------------------------------------- */
+function renderStep(step) {
+  highlightTimeline(step);
+  renderPanel(step);
+  hydrateForm(step);
+  animatePanel();
+}
+
+/* ---------------------------------------------------------
+   TIMELINE HIGHLIGHTING
+--------------------------------------------------------- */
+function highlightTimeline(step) {
+  document.querySelectorAll(".timeline-step").forEach(el => {
+    el.classList.remove("active");
+    if (parseInt(el.dataset.step, 10) === step) {
+      el.classList.add("active");
+    }
+  });
+}
+
+/* ---------------------------------------------------------
+   PANEL CONTENT FOR EACH STEP
+--------------------------------------------------------- */
+function renderPanel(step) {
+  const panel = document.getElementById("panelContainer");
+  if (!panel || !rowData) return;
+
+  const steps = {
+    1: `
+      <h2>Step 1 — Start Reschedule Attempt</h2>
+      <p>You are beginning a reschedule workflow for game <strong>#${rowData.game_number}</strong>.</p>
+      <button class="primary-btn" onclick="startWorkflow()">I want to proceed</button>
+    `,
+    2: `
+      <h2>Step 2 — Opponent Contact</h2>
+      <p>Contact the opposing coach:</p>
+      <div class="contact-card">
+        <strong>${rowData.opp_coach_name || "Opposing Coach"}</strong><br>
+        ${rowData.opp_coach_phone || "Phone not available"}
+      </div>
+    `,
+    3: `
+      <h2>Step 3 — Negotiation</h2>
+      <p>Work with the opposing coach to agree on a new date/time.</p>
+    `,
+    4: `
+      <h2>Step 4 — Field Hold</h2>
+      <p>Hold the field with HAYSA for the agreed date/time.</p>
+    `,
+    5: `
+      <h2>Step 5 — HAYSA Approval</h2>
+      <p>Submit the new game details to HAYSA for approval.</p>
+    `,
+    6: `
+      <h2>Step 6 — SSSL Form</h2>
+      <p>Complete the official SSSL Game Change Form below.</p>
+    `,
+    7: `
+      <h2>Step 7 — Calendar</h2>
+      <p>Add the new game date/time to your calendar.</p>
+    `,
+    8: `
+      <h2>Step 8 — Notify</h2>
+      <p>Notify your team of the rescheduled game.</p>
+    `
+  };
+
+  panel.innerHTML = steps[step] || "";
+  panel.style.display = "block";
+
+  // Show next-step button except on final step
+  const nextContainer = document.getElementById("nextStepContainer");
+  if (nextContainer) {
+    nextContainer.style.display = step < 8 ? "block" : "none";
+  }
+
+  // Show form only on step 6
+  const formSection = document.getElementById("formSection");
+  if (formSection) {
+    formSection.style.display = step === 6 ? "block" : "none";
+  }
+}
+
+/* ---------------------------------------------------------
+   HYDRATE FORM (Step 6)
+--------------------------------------------------------- */
+function hydrateForm(step) {
+  if (step !== 6 || !rowData) return;
+
+  document.getElementById("form_game_number").value = rowData.game_number || "";
+  document.querySelector("input[name='team_name']").value = rowData.team_name || "";
+  document.querySelector("input[name='orig_date']").value = rowData.orig_date || "";
+  document.querySelector("input[name='orig_time']").value = rowData.orig_time || "";
+  document.querySelector("input[name='orig_field']").value = rowData.orig_field || "";
+  document.querySelector("input[name='coach_name']").value = rowData.coach_name || "";
+  document.querySelector("input[name='coach_email']").value = rowData.coach_email || "";
+  document.querySelector("input[name='coach_phone']").value = rowData.coach_phone || "";
+  document.querySelector("input[name='opp_coach_name']").value = rowData.opp_coach_name || "";
+  document.querySelector("input[name='opp_coach_phone']").value = rowData.opp_coach_phone || "";
+}
+
+/* ---------------------------------------------------------
+   PANEL ANIMATION (POLISH)
+--------------------------------------------------------- */
+function animatePanel() {
+  const panel = document.getElementById("panelContainer");
+  if (!panel) return;
+  panel.classList.remove("fade-in");
+  void panel.offsetWidth; // force reflow
+  panel.classList.add("fade-in");
+}
+
+/* ---------------------------------------------------------
+   SIGNATURE PAD
+--------------------------------------------------------- */
+let signaturePadCanvas;
+let signatureCtx;
+let drawing = false;
+
+function initSignaturePad() {
+  signaturePadCanvas = document.getElementById("signaturePad");
+  if (!signaturePadCanvas) return;
+
+  signatureCtx = signaturePadCanvas.getContext("2d");
+  signatureCtx.strokeStyle = "#000";
+  signatureCtx.lineWidth = 2;
+  signatureCtx.lineCap = "round";
+
+  function getPos(e) {
+    const rect = signaturePadCanvas.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    return { x, y };
+  }
+
+  function startDraw(e) {
+    drawing = true;
+    const { x, y } = getPos(e);
+    signatureCtx.beginPath();
+    signatureCtx.moveTo(x, y);
+  }
+
+  function draw(e) {
+    if (!drawing) return;
+    const { x, y } = getPos(e);
+    signatureCtx.lineTo(x, y);
+    signatureCtx.stroke();
+  }
+
+  function endDraw() {
+    drawing = false;
+  }
+
+  signaturePadCanvas.addEventListener("mousedown", startDraw);
+  signaturePadCanvas.addEventListener("mousemove", draw);
+  signaturePadCanvas.addEventListener("mouseup", endDraw);
+  signaturePadCanvas.addEventListener("mouseleave", endDraw);
+
+  signaturePadCanvas.addEventListener("touchstart", e => {
+    e.preventDefault();
+    startDraw(e);
+  }, { passive: false });
+
+  signaturePadCanvas.addEventListener("touchmove", e => {
+    e.preventDefault();
+    draw(e);
+  }, { passive: false });
+
+  signaturePadCanvas.addEventListener("touchend", e => {
+    e.preventDefault();
+    endDraw();
+  }, { passive: false });
+
+  const clearBtn = document.getElementById("clearSignature");
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      signatureCtx.clearRect(0, 0, signaturePadCanvas.width, signaturePadCanvas.height);
+    });
+  }
+}
+
+/* ---------------------------------------------------------
+   FORM SUBMIT (POST TO YOUR SCRIPT_URL)
+--------------------------------------------------------- */
+function initFormSubmit() {
+  const form = document.getElementById("gameChangeForm");
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+
+    let signatureDataUrl = "";
+    if (signaturePadCanvas) {
+      signatureDataUrl = signaturePadCanvas.toDataURL("image/png");
+    }
+
+    // You already have lookupStatus in your HTML
+    const status = document.getElementById("lookupStatus");
+    if (status) {
+      status.textContent = "Saving form...";
+      status.className = "info-text";
+    }
+
+    try {
+      const resp = await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "saveForm",
+          gameNumber: rowData ? rowData.game_number : "",
+          form: payload,
+          signature: signatureDataUrl
+        })
+      });
+
+      const result = await resp.json();
+
+      if (status) {
+        status.textContent = result.message || "Form saved successfully.";
+        status.className = "info-text success";
+      }
+    } catch (err) {
+      console.error(err);
+      if (status) {
+        status.textContent = "Error saving form. Please try again.";
+        status.className = "info-text error";
+      }
+    }
+  });
+}
+
