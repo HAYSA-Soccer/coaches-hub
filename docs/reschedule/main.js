@@ -534,11 +534,11 @@ function renderStep7(panel) {
   fill("final_field", getField("final_field"));
 
   fill("coach_name", getField("coach_name"));
-  fill("coach_email", ""));
-  fill("coach_phone", ""));
+  fill("coach_email", "");
+  fill("coach_phone", "");
 
   fill("opp_coach_name", getField("opp_coach_name"));
-  fill("opp_coach_phone", ""));
+  fill("opp_coach_phone", "");
 
   initGameChangeForm();
 }
