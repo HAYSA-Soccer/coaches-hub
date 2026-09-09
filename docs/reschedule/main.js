@@ -688,21 +688,20 @@ function initGameChangeForm() {
       signature_data: signatureData
     });
 
-    const fieldsToSave = [
-      "game_number",
-      "team_name",
-      "orig_date",
-      "orig_time",
-      "orig_field",
-      "final_date",
-      "final_time",
-      "final_field",
-      "coach_name",
-      "coach_email",
-      "coach_phone",
-      "opp_coach_name",
-      "opp_coach_phone"
-    ];
+const fieldsToSave = [
+  "team_name",
+  "orig_date",
+  "orig_time",
+  "orig_field",
+  "final_date",
+  "final_time",
+  "final_field",
+  "coach_name",
+  "coach_email",
+  "coach_phone",
+  "opp_coach_name",
+  "opp_coach_phone"
+];
 
     for (const name of fieldsToSave) {
       const val = fd.get(name);
