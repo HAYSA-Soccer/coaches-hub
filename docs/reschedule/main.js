@@ -640,7 +640,7 @@ function initGameChangeForm() {
 
   canvas.onmousedown = e => {
     const r = canvas.getBoundingClientRect();
-    startDraw(e.clientX - r.left, e.clientX - r.top);
+    startDraw(e.clientX - r.left, e.clientY - r.top);
   };
   canvas.onmousemove = e => {
     const r = canvas.getBoundingClientRect();
