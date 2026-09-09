@@ -2,55 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>HAYSA Game Reschedule Workflow</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="main.js" defer></script>
+  <title>HAYSA Game Reschedule</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
   <!-- HEADER -->
-  <header class="header">
+  <div class="header">
     <h1>HAYSA Game Reschedule</h1>
-    <p class="subtitle">A guided workflow to move your SSSL game - TESTING!!!</p>
-  </header>
+    <div class="subtitle">A guided workflow to move your SSSL game</div>
+  </div>
 
-  <!-- GAME NUMBER LOOKUP -->
-  <section id="lookupContainer" class="game-number-section card">
-    <label for="lookupGameNumber">Enter SSSL Game Number</label>
-    <input type="text" id="lookupGameNumber" placeholder="Example: 22920056">
-
+  <!-- LOOKUP CARD -->
+  <section class="card" id="lookupContainer">
+    <h2>Lookup Game</h2>
+    <label>Enter SSSL Game Number</label>
+    <input type="text" id="lookupGameNumber" placeholder="e.g., 22920056">
     <button class="primary-btn" onclick="lookupGameNumber()">Lookup</button>
 
-    <p id="lookupStatus" class="info-text"></p>
+    <div id="lookupStatus" class="info-text"></div>
   </section>
 
   <!-- TIMELINE -->
-  <nav id="timelineContainer" class="timeline card" style="display:none;">
-    <div class="timeline-step" data-step="1">Start Attempt</div>
-    <div class="timeline-step" data-step="2">Opponent Contact</div>
-    <div class="timeline-step" data-step="3">Negotiation</div>
-    <div class="timeline-step" data-step="4">Field Hold</div>
-    <div class="timeline-step" data-step="5">HAYSA Approval</div>
-    <div class="timeline-step" data-step="6">SSSL Form</div>
-    <div class="timeline-step" data-step="7">Calendar</div>
-    <div class="timeline-step" data-step="8">Notify</div>
-  </nav>
+  <div id="timelineContainer" style="display:none;">
+    <div class="timeline-step" data-step="1">Step 1 — Start</div>
+    <div class="timeline-step" data-step="2">Step 2 — Opponent Contact</div>
+    <div class="timeline-step" data-step="3">Step 3 — Negotiation</div>
+    <div class="timeline-step" data-step="4">Step 4 — Field Hold</div>
+    <div class="timeline-step" data-step="5">Step 5 — HAYSA Approval</div>
+    <div class="timeline-step" data-step="6">Step 6 — SSSL Form</div>
+    <div class="timeline-step" data-step="7">Step 7 — Calendar</div>
+    <div class="timeline-step" data-step="8">Step 8 — Notify</div>
+  </div>
 
   <!-- PANEL -->
-  <section id="panelContainer" class="panel card" style="display:none;">
-    <!-- JS injects content -->
+  <section class="card panel" id="panelContainer" style="display:none;">
+    <!-- JS will inject step content here -->
   </section>
 
   <!-- NEXT STEP BUTTON -->
-  <div class="next-step-container" style="display:none;" id="nextStepContainer">
+  <div id="nextStepContainer" class="next-step-container" style="display:none;">
     <button id="nextStepBtn" class="primary-btn">Next Step →</button>
   </div>
 
-  <!-- GAME CHANGE FORM + SIGNATURE (used in SSSL step) -->
-  <section class="card" id="formSection">
+  <!-- GAME CHANGE FORM (Step 6 only) -->
+  <section class="card" id="formSection" style="display:none;">
+    <h2>Game Change Form</h2>
+
     <form id="gameChangeForm">
-      <h3>Game Change Form</h3>
 
       <label>Game Number</label>
       <input type="text" name="game_number" id="form_game_number">
@@ -58,20 +58,20 @@
       <label>Team Name</label>
       <input type="text" name="team_name">
 
-      <label>Original Date</label>
-      <input type="date" name="orig_date">
+      <label>Original Date (mm/dd/yyyy)</label>
+      <input type="text" name="orig_date">
 
       <label>Original Time</label>
-      <input type="time" name="orig_time">
+      <input type="text" name="orig_time">
 
       <label>Original Field</label>
       <input type="text" name="orig_field">
 
-      <label>Final Date</label>
-      <input type="date" name="final_date">
+      <label>Final Date (mm/dd/yyyy)</label>
+      <input type="text" name="final_date">
 
       <label>Final Time</label>
-      <input type="time" name="final_time">
+      <input type="text" name="final_time">
 
       <label>Final Field</label>
       <input type="text" name="final_field">
@@ -92,12 +92,15 @@
       <input type="tel" name="opp_coach_phone">
 
       <h3>Coach Signature</h3>
-      <canvas id="signaturePad" width="400" height="150" class="signature-pad"></canvas>
+      <canvas id="signaturePad"></canvas>
       <button type="button" id="clearSignature" class="secondary-btn">Clear Signature</button>
 
+      <br><br>
       <button type="submit" class="primary-btn">Save Form</button>
+
     </form>
   </section>
 
+  <script src="main.js"></script>
 </body>
 </html>
