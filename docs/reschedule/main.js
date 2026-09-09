@@ -244,7 +244,17 @@ function initTimeline() {
     nextBtn.onclick = async () => {
       if (currentStep < 8) {
         currentStep++;
+
+        // Save step flag
         await updateField(currentGameNumber, `step_${currentStep}`, true);
+
+        // Update local row data
+        currentRowData[`step_${currentStep}`] = true;
+
+        // Hydrate timeline
+        hydrateTimelineFromRow(currentRowData);
+
+        // Move UI forward
         setActiveTimelineStep(currentStep);
         renderPanelForStep(currentStep);
       }
