@@ -26,7 +26,7 @@
     <div id="lookupStatus" class="info-text"></div>
   </section>
 
-  <!-- TIMELINE (Horizontal) -->
+  <!-- TIMELINE -->
   <div id="timelineContainer" style="display:none;">
     <div class="timeline-step" data-step="1">Start</div>
     <div class="timeline-step" data-step="2">Original</div>
@@ -41,7 +41,6 @@
 
   <!-- PANEL -->
   <section class="card panel fade-in" id="panelContainer" style="display:none;">
-    <!-- JS injects step content here -->
   </section>
 
   <!-- NEXT STEP BUTTON -->
@@ -49,7 +48,7 @@
     <button id="nextStepBtn" class="primary-btn">Next Step →</button>
   </div>
 
-  <!-- GAME CHANGE FORM (Step 7 only) -->
+  <!-- GAME CHANGE FORM -->
   <section class="card" id="formSection" style="display:none;">
     <h2>Game Change Form</h2>
 
@@ -104,6 +103,8 @@
     </form>
   </section>
 
+  <!-- FIXED: Load pdf.js BEFORE main.js -->
+  <script src="pdf.js"></script>
   <script src="main.js"></script>
 </body>
 </html>
