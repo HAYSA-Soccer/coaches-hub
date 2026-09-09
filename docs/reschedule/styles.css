@@ -1,7 +1,9 @@
-/* GLOBAL */
+/* ---------------------------------------------------------
+   GLOBAL
+--------------------------------------------------------- */
 body {
-  font-family: Arial, sans-serif;
-  background: #f7f9fc;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background: #f5f7fa;
   margin: 0;
   padding: 0;
   color: #333;
@@ -25,26 +27,36 @@ h1 {
   box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
-/* CARDS */
+/* ---------------------------------------------------------
+   CARD STYLE (modern)
+--------------------------------------------------------- */
 .card {
-  background: white;
-  padding: 20px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 24px;
   margin: 20px auto;
-  width: 90%;
   max-width: 900px;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* BUTTONS */
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.12);
+}
+
+/* ---------------------------------------------------------
+   BUTTONS (modern)
+--------------------------------------------------------- */
 .primary-btn {
   background: #1e88e5;
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
+  padding: 12px 20px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
+  transition: background 0.2s ease;
 }
 
 .primary-btn:hover {
@@ -55,51 +67,65 @@ h1 {
   background: #e0e0e0;
   color: #333;
   border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
+  padding: 12px 20px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   margin-left: 10px;
+  transition: background 0.2s ease;
 }
 
 .secondary-btn:hover {
   background: #bdbdbd;
 }
 
-/* TIMELINE */
-.timeline {
+/* ---------------------------------------------------------
+   TIMELINE (modern vertical workflow)
+--------------------------------------------------------- */
+#timelineContainer {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
   margin: 20px auto;
-  width: 90%;
   max-width: 900px;
 }
 
 .timeline-step {
-  flex: 1;
-  text-align: center;
-  padding: 12px;
-  margin: 0 5px;
-  background: #e3f2fd;
-  border-radius: 6px;
+  background: #fff;
+  padding: 14px 18px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
   font-weight: bold;
   color: #1e88e5;
-  transition: background 0.2s;
+}
+
+.timeline-step:hover {
+  background: #e3f2fd;
+  transform: translateX(4px);
 }
 
 .timeline-step.active {
   background: #1e88e5;
   color: white;
+  transform: translateX(6px);
 }
 
-.timeline-step:hover {
-  background: #bbdefb;
-}
-
-/* PANEL */
+/* ---------------------------------------------------------
+   PANEL + ANIMATION
+--------------------------------------------------------- */
 .panel {
   min-height: 200px;
+}
+
+.fade-in {
+  animation: fadeIn 0.35s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .next-step-container {
@@ -110,4 +136,38 @@ h1 {
 .info-text {
   margin-top: 10px;
   color: #666;
+}
+
+/* ---------------------------------------------------------
+   FORM SECTION (modern)
+--------------------------------------------------------- */
+#formSection {
+  display: none; /* Only shown on Step 6 */
+}
+
+#gameChangeForm label {
+  display: block;
+  margin-top: 12px;
+  font-weight: 500;
+}
+
+#gameChangeForm input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+/* ---------------------------------------------------------
+   SIGNATURE PAD (modern)
+--------------------------------------------------------- */
+#signaturePad {
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  width: 100%;
+  height: 200px;
+  background: #fff;
+  margin-top: 12px;
 }
