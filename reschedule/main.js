@@ -37,37 +37,46 @@ async function apiCreateRow(gameNumber) {
   return res.json();
 }
 
-async function apiUpdateStep(gameNumber, step) {
+// UNIVERSAL FIELD UPDATE
+async function apiUpdateField(gameNumber, field, value) {
   const form = new FormData();
-  form.append("action", "updateStep");
+  form.append("action", "updateField");
   form.append("game_number", gameNumber);
-  form.append("step", step);
+  form.append("field", field);
+  form.append("value", value == null ? "" : value);
   const res = await fetch(API_URL, { method: "POST", body: form });
   return res.json();
 }
 
-async function apiUpdateGameChangeForm(payload) {
-  const form = new FormData();
-  form.append("action", "updateGameChangeForm");
-  form.append("game_number", payload.game_number);
-  form.append("team_name", payload.team_name || "");
-  form.append("orig_date", payload.orig_date || "");
-  form.append("orig_time", payload.orig_time || "");
-  form.append("orig_field", payload.orig_field || "");
-  form.append("final_date", payload.final_date || "");
-  form.append("final_time", payload.final_time || "");
-  form.append("final_field", payload.final_field || "");
-  const res = await fetch(API_URL, { method: "POST", body: form });
-  return res.json();
+// STEP_X UPDATE (maps to step_1..step_12)
+async function apiUpdateStep(gameNumber, stepNumber) {
+  return apiUpdateField(gameNumber, `step_${stepNumber}`, "completed");
 }
 
 
 // ===============================================
-// STATE
+// STATE + FIELD HELPERS
 // ===============================================
 let currentGameNumber = null;
 let currentRowData = null;
 let currentStep = 1;
+
+function getField(field) {
+  if (!currentRowData) return "";
+  return currentRowData[field] == null ? "" : currentRowData[field];
+}
+
+async function setField(field, value) {
+  if (!currentRowData) currentRowData = {};
+  currentRowData[field] = value;
+  return apiUpdateField(currentGameNumber, field, value);
+}
+
+function prefillInput(id, field) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = getField(field);
+}
 
 
 // ===============================================
@@ -90,7 +99,7 @@ async function lookupGameNumber() {
     document.getElementById("form_game_number").value = gameNumber;
 
     if (row.exists) {
-      currentRowData = row.data;
+      currentRowData = row.data || {};
       statusEl.innerHTML = `
         <p>Existing request found for Game #${gameNumber}.</p>
         <button class="primary-btn" onclick="beginWorkflow()">Continue Request</button>
@@ -112,7 +121,7 @@ async function startNewWorkflow(gameNumber) {
     alert("Error creating workflow row.");
     return;
   }
-  currentRowData = res.data || null;
+  currentRowData = res.data || {};
   beginWorkflow();
 }
 
@@ -125,6 +134,30 @@ function beginWorkflow() {
   currentStep = 1;
   setActiveTimelineStep(currentStep);
   renderPanelForStep(currentStep);
+
+  // prefill Game Change Form from row data if available
+  const form = document.getElementById("gameChangeForm");
+  if (form && currentRowData) {
+    const map = {
+      game_number: "game_number",
+      team_name: "team_name",
+      orig_date: "orig_date",
+      orig_time: "orig_time",
+      orig_field: "orig_field",
+      final_date: "final_date",
+      final_time: "final_time",
+      final_field: "final_field",
+      coach_name: "coach_name",
+      coach_email: "coach_email",
+      coach_phone: "coach_phone",
+      opp_coach_name: "opp_coach_name",
+      opp_coach_phone: "opp_coach_phone"
+    };
+    Object.keys(map).forEach(name => {
+      const el = form.querySelector(`[name='${name}']`);
+      if (el) el.value = getField(map[name]);
+    });
+  }
 }
 
 
@@ -217,8 +250,15 @@ function renderStep2(panel) {
     <button id="s2_save" class="primary-btn">Save Contact Info</button>
   `;
 
+  // prefill from sheet
+  prefillInput("s2_opp_name", "opp_coach_name");
+  prefillInput("s2_opp_email", "opp_coach_email");
+  prefillInput("s2_opp_phone", "opp_coach_phone");
+
   document.getElementById("s2_save").onclick = async () => {
-    // You can wire this to an API later to persist opponent info
+    await setField("opp_coach_name", document.getElementById("s2_opp_name").value);
+    await setField("opp_coach_email", document.getElementById("s2_opp_email").value);
+    await setField("opp_coach_phone", document.getElementById("s2_opp_phone").value);
     await apiUpdateStep(currentGameNumber, 2);
     alert("Opponent contact info saved.");
   };
@@ -263,7 +303,32 @@ function renderStep3(panel) {
     <button id="s3_agreement" class="primary-btn">Agreement Reached</button>
   `;
 
+  // prefill from sheet
+  prefillInput("s3_a1_date", "opt1_date");
+  prefillInput("s3_a1_time", "opt1_time");
+  prefillInput("s3_a1_notes", "opt1_notes");
+
+  prefillInput("s3_a2_date", "opt2_date");
+  prefillInput("s3_a2_time", "opt2_time");
+  prefillInput("s3_a2_notes", "opt2_notes");
+
+  prefillInput("s3_a3_date", "opt3_date");
+  prefillInput("s3_a3_time", "opt3_time");
+  prefillInput("s3_a3_notes", "opt3_notes");
+
   document.getElementById("s3_agreement").onclick = async () => {
+    await setField("opt1_date", document.getElementById("s3_a1_date").value);
+    await setField("opt1_time", document.getElementById("s3_a1_time").value);
+    await setField("opt1_notes", document.getElementById("s3_a1_notes").value);
+
+    await setField("opt2_date", document.getElementById("s3_a2_date").value);
+    await setField("opt2_time", document.getElementById("s3_a2_time").value);
+    await setField("opt2_notes", document.getElementById("s3_a2_notes").value);
+
+    await setField("opt3_date", document.getElementById("s3_a3_date").value);
+    await setField("opt3_time", document.getElementById("s3_a3_time").value);
+    await setField("opt3_notes", document.getElementById("s3_a3_notes").value);
+
     await apiUpdateStep(currentGameNumber, 3);
     alert("Agreement recorded. Proceed to Field Hold.");
     currentStep = 4;
@@ -290,7 +355,13 @@ function renderStep4(panel) {
     <button id="s4_save" class="primary-btn">Save Field Hold Status</button>
   `;
 
+  prefillInput("s4_field", "field_requested");
+  const confirmedEl = document.getElementById("s4_confirmed");
+  confirmedEl.value = getField("field_confirmed") || "no";
+
   document.getElementById("s4_save").onclick = async () => {
+    await setField("field_requested", document.getElementById("s4_field").value);
+    await setField("field_confirmed", document.getElementById("s4_confirmed").value);
     await apiUpdateStep(currentGameNumber, 4);
     alert("Field hold status saved.");
   };
@@ -315,8 +386,15 @@ function renderStep5(panel) {
     <button id="s5_save" class="primary-btn">Save HAYSA Approval</button>
   `;
 
+  const statusEl = document.getElementById("s5_status");
+  statusEl.value = getField("haysa_status") || "pending";
+  prefillInput("s5_notes", "haysa_notes");
+
   document.getElementById("s5_save").onclick = async () => {
     const status = document.getElementById("s5_status").value;
+    await setField("haysa_status", status);
+    await setField("haysa_notes", document.getElementById("s5_notes").value);
+
     if (status !== "approved") {
       alert("HAYSA has not approved this yet. You should not proceed to SSSL.");
     }
@@ -344,6 +422,7 @@ function renderStep7(panel) {
   `;
 
   document.getElementById("s7_done").onclick = async () => {
+    await setField("calendar_updated", "yes");
     await apiUpdateStep(currentGameNumber, 7);
     alert("Calendar update recorded.");
   };
@@ -372,6 +451,7 @@ Please contact us with any questions.`
   };
 
   document.getElementById("s8_done").onclick = async () => {
+    await setField("notify_status", "completed");
     await apiUpdateStep(currentGameNumber, 8);
     alert("Notification marked complete.");
   };
@@ -379,7 +459,7 @@ Please contact us with any questions.`
 
 
 // ===============================================
-// SIGNATURE PAD + PDF
+// SIGNATURE PAD + PDF + FORM SAVE
 // ===============================================
 function initGameChangeForm() {
   const form = document.getElementById("gameChangeForm");
@@ -445,7 +525,6 @@ function initGameChangeForm() {
     const fd = new FormData(form);
     const signatureData = canvas.toDataURL();
 
-    // You already have generateReschedulePDF in your project
     await generateReschedulePDF({
       game_number: fd.get("game_number"),
       team_name: fd.get("team_name"),
@@ -463,17 +542,29 @@ function initGameChangeForm() {
       signature_data: signatureData
     });
 
-    await apiUpdateGameChangeForm({
-      game_number: fd.get("game_number"),
-      team_name: fd.get("team_name"),
-      orig_date: fd.get("orig_date"),
-      orig_time: fd.get("orig_time"),
-      orig_field: fd.get("orig_field"),
-      final_date: fd.get("final_date"),
-      final_time: fd.get("final_time"),
-      final_field: fd.get("final_field")
-    });
+    // save form fields via updateField
+    const fieldsToSave = [
+      "game_number",
+      "team_name",
+      "orig_date",
+      "orig_time",
+      "orig_field",
+      "final_date",
+      "final_time",
+      "final_field",
+      "coach_name",
+      "coach_email",
+      "coach_phone",
+      "opp_coach_name",
+      "opp_coach_phone"
+    ];
 
+    for (const name of fieldsToSave) {
+      const val = fd.get(name);
+      await setField(name, val);
+    }
+
+    await apiUpdateStep(currentGameNumber, 6);
     alert("Form saved.");
   };
 }
