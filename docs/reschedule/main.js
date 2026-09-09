@@ -508,36 +508,171 @@ function renderStep6(panel) {
 
 
 // STEP 7 — SSSL Form (uses gameChangeForm + signature)
-async function renderStep7(panel) {
+function renderStep7(panel) {
   panel.innerHTML = `
     <h2>Step 7 — SSSL Form</h2>
     <p>Complete the SSSL reschedule form below.</p>
   `;
 
-  document.getElementById("formSection").style.display = "block";
+  const fs = document.getElementById("formSection");
+  if (fs) fs.style.display = "block";
 
-  // Auto-fill form fields
-  document.querySelector("[name='game_number']").value = currentGameNumber;
-  document.querySelector("[name='team_name']").value = getField("team_name") || "";
-  document.querySelector("[name='orig_date']").value = getField("orig_date_input") || "";
-  document.querySelector("[name='orig_time']").value = getField("orig_time_input") || "";
-  document.querySelector("[name='orig_field']").value = getField("orig_field") || "";
+  // Safe auto-fill helper
+  function fill(name, value) {
+    const el = document.querySelector(`[name='${name}']`);
+    if (el) el.value = value || "";
+  }
 
-  document.querySelector("[name='final_date']").value = getField("final_date_input") || "";
-  document.querySelector("[name='final_time']").value = getField("final_time_input") || "";
-  document.querySelector("[name='final_field']").value = getField("final_field") || "";
+  fill("game_number", currentGameNumber);
+  fill("team_name", getField("team_name"));
+  fill("orig_date", getField("orig_date_input"));
+  fill("orig_time", getField("orig_time_input"));
+  fill("orig_field", getField("orig_field"));
 
-  document.querySelector("[name='coach_name']").value = getField("coach_name") || "";
-  document.querySelector("[name='coach_email']").value = getField("coach_email") || "";
-  document.querySelector("[name='coach_phone']").value = getField("coach_phone") || "";
+  fill("final_date", getField("final_date_input"));
+  fill("final_time", getField("final_time_input"));
+  fill("final_field", getField("final_field"));
 
-  document.querySelector("[name='opp_coach_name']").value = getField("opp_coach_name") || "";
-  document.querySelector("[name='opp_coach_phone']").value = getField("opp_coach_phone") || "";
+  fill("coach_name", getField("coach_name"));
+  fill("coach_email", getField("coach_email"));
+  fill("coach_phone", getField("coach_phone"));
 
-  await apiUpdateStep(currentGameNumber, 7);
-  currentRowData.step_7 = true;
-  hydrateTimelineFromRow(currentRowData);
+  fill("opp_coach_name", getField("opp_coach_name"));
+  fill("opp_coach_phone", getField("opp_coach_phone"));
 }
+
+
+
+// ===============================================
+// SIGNATURE PAD + PDF + FORM SAVE
+// ===============================================
+function initGameChangeForm() {
+  const form = document.getElementById("gameChangeForm");
+  const canvas = document.getElementById("signaturePad");
+  const clearBtn = document.getElementById("clearSignature");
+
+  // Safety: if any core element is missing, skip init
+  if (!form || !canvas || !clearBtn) {
+    console.warn("Game Change Form not fully present — skipping init.");
+    return;
+  }
+
+  const ctx = canvas.getContext("2d");
+  let drawing = false;
+  let lastX = 0;
+  let lastY = 0;
+
+  function startDraw(x, y) {
+    drawing = true;
+    lastX = x;
+    lastY = y;
+  }
+
+  function drawLine(x, y) {
+    if (!drawing) return;
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    lastX = x;
+    lastY = y;
+  }
+
+  canvas.onmousedown = e => {
+    const r = canvas.getBoundingClientRect();
+    startDraw(e.clientX - r.left, e.clientY - r.top);
+  };
+  canvas.onmousemove = e => {
+    const r = canvas.getBoundingClientRect();
+    drawLine(e.clientX - r.left, e.clientY - r.top);
+  };
+  canvas.onmouseup = () => drawing = false;
+  canvas.onmouseleave = () => drawing = false;
+
+  canvas.ontouchstart = e => {
+    e.preventDefault();
+    const r = canvas.getBoundingClientRect();
+    const t = e.touches[0];
+    startDraw(t.clientX - r.left, t.clientY - r.top);
+  };
+  canvas.ontouchmove = e => {
+    e.preventDefault();
+    const r = canvas.getBoundingClientRect();
+    const t = e.touches[0];
+    drawLine(t.clientX - r.left, t.clientY - r.top);
+  };
+  canvas.ontouchend = () => drawing = false;
+
+  clearBtn.onclick = () => ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  form.onsubmit = async e => {
+    e.preventDefault();
+
+    const fd = new FormData(form);
+    const signatureData = canvas.toDataURL();
+
+    await generateReschedulePDF({
+      game_number: fd.get("game_number"),
+      team_name: fd.get("team_name"),
+      orig_date: fd.get("orig_date"),
+      orig_time: fd.get("orig_time"),
+      orig_field: fd.get("orig_field"),
+      final_date: fd.get("final_date"),
+      final_time: fd.get("final_time"),
+      final_field: fd.get("final_field"),
+      coach_name: fd.get("coach_name"),
+      coach_email: fd.get("coach_email"),
+      coach_phone: fd.get("coach_phone"),
+      opp_coach_name: fd.get("opp_coach_name"),
+      opp_coach_phone: fd.get("opp_coach_phone"),
+      signature_data: signatureData
+    });
+
+    const fieldsToSave = [
+      "game_number",
+      "team_name",
+      "orig_date",
+      "orig_time",
+      "orig_field",
+      "final_date",
+      "final_time",
+      "final_field",
+      "coach_name",
+      "coach_email",
+      "coach_phone",
+      "opp_coach_name",
+      "opp_coach_phone"
+    ];
+
+    for (const name of fieldsToSave) {
+      const val = fd.get(name);
+      await setField(name, val);
+    }
+
+    await apiUpdateStep(currentGameNumber, 7); // SSSL Form step
+    currentRowData.step_7 = "completed";
+    hydrateTimelineFromRow(currentRowData);
+
+    alert("Form saved.");
+  };
+}
+
+
+// ===============================================
+// INIT
+// ===============================================
+document.addEventListener("DOMContentLoaded", () => {
+  initTimeline();
+
+  // Initialize the form only if it exists in DOM
+  const form = document.getElementById("gameChangeForm");
+  if (form) {
+    initGameChangeForm();
+  }
+});
 
 
 
@@ -721,5 +856,11 @@ function initGameChangeForm() {
 // ===============================================
 document.addEventListener("DOMContentLoaded", () => {
   initTimeline();
-  initGameChangeForm();
+
+  // Only initialize the form when the user reaches Step 7
+  const form = document.getElementById("gameChangeForm");
+  if (form) {
+    initGameChangeForm();
+  }
 });
+
