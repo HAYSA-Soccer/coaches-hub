@@ -91,12 +91,11 @@ function hydrateTimelineFromRow(row) {
     return apiUpdateField(currentGameNumber, field, value);
   }
   
-  function prefillInput(id, field) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.value = getField(field);
-  }
-
+function prefillInput(id, field) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = getField(field) || "";
+}
 
 
 
