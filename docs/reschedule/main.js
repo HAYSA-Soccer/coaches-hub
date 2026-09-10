@@ -63,6 +63,31 @@ async function downloadSSSLForm() {
 
 
 
+async function downloadSSSLForm() {
+  const form = new FormData();
+  form.append("action", "generateSSSLForm");
+  form.append("game_number", currentGameNumber);
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: form
+  });
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `SSSL-Reschedule-${currentGameNumber}.docx`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+
+
+
 // UNIVERSAL FIELD UPDATE
 async function apiUpdateField(gameNumber, field, value) {
   const form = new FormData();
@@ -622,7 +647,6 @@ function renderStep8(panel) {
 }
 
 
-
 // STEP 9 — Finalize Request
 function renderStep9(panel) {
   panel.innerHTML = `
@@ -637,10 +661,10 @@ function renderStep9(panel) {
     <button id="s9_save" class="secondary-btn">Mark Request Complete</button>
   `;
 
+  // ⭐ NEW: Download DOCX instead of PDF
   document.getElementById("s9_download").onclick = () => {
     downloadSSSLForm();
   };
-
 
   document.getElementById("s9_save").onclick = async () => {
     await setField("notes", document.getElementById("notes").value);
@@ -652,7 +676,6 @@ function renderStep9(panel) {
     alert("Request marked complete.");
   };
 }
-
 
 
 // ===============================================
