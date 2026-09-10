@@ -149,10 +149,12 @@ function beginWorkflow() {
   document.getElementById("nextStepContainer").style.display = "block";
 
   currentStep = 1;
+
+  // FIX: hydrate BEFORE rendering any step
+  hydrateTimelineFromRow(currentRowData);
+
   setActiveTimelineStep(currentStep);
   renderPanelForStep(currentStep);
-
-  hydrateTimelineFromRow(currentRowData);
 
   const form = document.getElementById("gameChangeForm");
   if (form && currentRowData) {
@@ -177,6 +179,7 @@ function beginWorkflow() {
     });
   }
 }
+
 
 
 // ===============================================
