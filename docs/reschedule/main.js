@@ -37,6 +37,32 @@ async function apiCreateRow(gameNumber) {
   return res.json();
 }
 
+
+
+async function downloadSSSLForm() {
+  const form = new FormData();
+  form.append("action", "generateSSSLForm");
+  form.append("game_number", currentGameNumber);
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: form
+  });
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `SSSL-Reschedule-${currentGameNumber}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+
+
 // UNIVERSAL FIELD UPDATE
 async function apiUpdateField(gameNumber, field, value) {
   const form = new FormData();
@@ -612,8 +638,9 @@ function renderStep9(panel) {
   `;
 
   document.getElementById("s9_download").onclick = () => {
-    generateReschedulePDF(currentRowData);
+    downloadSSSLForm();
   };
+
 
   document.getElementById("s9_save").onclick = async () => {
     await setField("notes", document.getElementById("notes").value);
