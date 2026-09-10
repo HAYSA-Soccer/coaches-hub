@@ -1,41 +1,66 @@
-// Make jsPDF available
-const { jsPDF } = window.jspdf;
+// pdf-lib loader
+const { PDFDocument, StandardFonts, rgb } = PDFLib;
 
-function generateReschedulePDF(data) {
-  const doc = new jsPDF();
+// RAW URL of your fillable SSSL form
+const FORM_URL = "https://raw.githubusercontent.com/HAYSA-Soccer/coaches-hub/main/docs/reschedule/sssl-reschedule.pdf";
 
-  doc.setFontSize(16);
-  doc.text("SSSL Game Change Form", 10, 10);
+async function generateReschedulePDF(data) {
+  // 1. Load the existing fillable PDF
+  const formPdfBytes = await fetch(FORM_URL).then(res => res.arrayBuffer());
+  const pdfDoc = await PDFDocument.load(formPdfBytes);
 
-  doc.setFontSize(12);
-  let y = 20;
+  // 2. Get the form
+  const form = pdfDoc.getForm();
 
-  const add = (label, value) => {
-    doc.text(`${label}: ${value || ""}`, 10, y);
-    y += 8;
-  };
+  // 3. Fill fields
+  form.getTextField("game_number").setText(data.game_number || "");
+  form.getTextField("team_name").setText(data.team_name || "");
 
-  add("Game Number", data.game_number);
-  add("Team Name", data.team_name);
-  add("Original Date", data.orig_date);
-  add("Original Time", data.orig_time);
-  add("Original Field", data.orig_field);
+  form.getTextField("orig_date").setText(data.orig_date || "");
+  form.getTextField("orig_time").setText(data.orig_time || "");
+  form.getTextField("orig_field").setText(data.orig_field || "");
 
-  add("New Date", data.final_date);
-  add("New Time", data.final_time);
-  add("New Field", data.final_field);
+  form.getTextField("final_date").setText(data.final_date || "");
+  form.getTextField("final_time").setText(data.final_time || "");
+  form.getTextField("final_field").setText(data.final_field || "");
 
-  add("Coach Name", data.coach_name);
-  add("Coach Email", data.coach_email);
-  add("Coach Phone", data.coach_phone);
+  form.getTextField("coach_name").setText(data.coach_name || "");
+  form.getTextField("coach_email").setText(data.coach_email || "");
+  form.getTextField("coach_phone").setText(data.coach_phone || "");
 
-  add("Opposing Coach Name", data.opp_coach_name);
-  add("Opposing Coach Phone", data.opp_coach_phone);
+  form.getTextField("opp_coach_name").setText(data.opp_coach_name || "");
+  form.getTextField("opp_coach_phone").setText(data.opp_coach_phone || "");
 
+  // 4. Signature (PNG)
   if (data.signature_data) {
-    doc.addImage(data.signature_data, "PNG", 10, y, 100, 40);
-    y += 50;
+    const pngImageBytes = await fetch(data.signature_data).then(res => res.arrayBuffer());
+    const pngImage = await pdfDoc.embedPng(pngImageBytes);
+
+    const pages = pdfDoc.getPages();
+    const page = pages[0];
+
+    // Adjust these coordinates to match your form layout
+    page.drawImage(pngImage, {
+      x: 50,
+      y: 150,
+      width: 200,
+      height: 80
+    });
   }
 
-  doc.save(`Game_${data.game_number}_Reschedule.pdf`);
+  // 5. Flatten the form (makes fields non-editable)
+  form.flatten();
+
+  // 6. Download the completed PDF
+  const pdfBytes = await pdfDoc.save();
+
+  const blob = new Blob([pdfBytes], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `Game_${data.game_number}_Reschedule.pdf`;
+  a.click();
+
+  URL.revokeObjectURL(url);
 }
