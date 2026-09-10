@@ -509,37 +509,42 @@ function renderStep6(panel) {
 
 
 // STEP 7 — SSSL Form (uses gameChangeForm + signature)
+// STEP 7 — SSSL Form (uses gameChangeForm + signature)
 function renderStep7(panel) {
   panel.innerHTML = `
     <h2>Step 7 — SSSL Form</h2>
     <p>Complete the SSSL reschedule form below.</p>
   `;
 
+  // Show the form section
   const fs = document.getElementById("formSection");
   if (fs) fs.style.display = "block";
 
+  // Helper to fill fields safely
   function fill(name, value) {
     const el = document.querySelector(`[name='${name}']`);
     if (el) el.value = value || "";
   }
 
+  // Auto-fill fields from stored data
   fill("game_number", currentGameNumber);
   fill("team_name", getField("team_name"));
-  fill("orig_date", getField("orig_date_input"));
-  fill("orig_time", getField("orig_time_input"));
+  fill("orig_date", getField("orig_date"));
+  fill("orig_time", getField("orig_time"));
   fill("orig_field", getField("orig_field"));
 
-  fill("final_date", getField("final_date_input"));
-  fill("final_time", getField("final_time_input"));
+  fill("final_date", getField("final_date"));
+  fill("final_time", getField("final_time"));
   fill("final_field", getField("final_field"));
 
   fill("coach_name", getField("coach_name"));
-  fill("coach_email", "");
-  fill("coach_phone", "");
+  fill("coach_email", getField("coach_email"));
+  fill("coach_phone", getField("coach_phone"));
 
   fill("opp_coach_name", getField("opp_coach_name"));
-  fill("opp_coach_phone", "");
+  fill("opp_coach_phone", getField("opp_coach_phone"));
 
+  // Attach signature pad + form submit handler
   initGameChangeForm();
 }
 
