@@ -510,25 +510,24 @@ function renderStep6(panel) {
 
 // STEP 7 — SSSL Form (uses gameChangeForm + signature)
 // STEP 7 — SSSL Form (uses gameChangeForm + signature)
+// STEP 7 — SSSL Form (uses gameChangeForm + signature)
 function renderStep7(panel) {
   panel.innerHTML = `
     <h2>Step 7 — SSSL Form</h2>
     <p>Complete the SSSL reschedule form below.</p>
   `;
 
-  // Show the form section
   const fs = document.getElementById("formSection");
   if (fs) fs.style.display = "block";
 
-  // Helper to fill fields safely
   function fill(name, value) {
     const el = document.querySelector(`[name='${name}']`);
     if (el) el.value = value || "";
   }
 
-  // Auto-fill fields from stored data
   fill("game_number", currentGameNumber);
   fill("team_name", getField("team_name"));
+
   fill("orig_date", getField("orig_date"));
   fill("orig_time", getField("orig_time"));
   fill("orig_field", getField("orig_field"));
@@ -544,7 +543,6 @@ function renderStep7(panel) {
   fill("opp_coach_name", getField("opp_coach_name"));
   fill("opp_coach_phone", getField("opp_coach_phone"));
 
-  // Attach signature pad + form submit handler
   initGameChangeForm();
 }
 
