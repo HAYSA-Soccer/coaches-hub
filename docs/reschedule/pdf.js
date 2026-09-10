@@ -1,3 +1,6 @@
+// Make jsPDF available
+const { jsPDF } = window.jspdf;
+
 function generateReschedulePDF(data) {
   const doc = new jsPDF();
 
@@ -29,7 +32,6 @@ function generateReschedulePDF(data) {
   add("Opposing Coach Name", data.opp_coach_name);
   add("Opposing Coach Phone", data.opp_coach_phone);
 
-  // Signature image
   if (data.signature_data) {
     doc.addImage(data.signature_data, "PNG", 10, y, 100, 40);
     y += 50;
