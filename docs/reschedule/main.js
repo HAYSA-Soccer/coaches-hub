@@ -291,6 +291,9 @@ function renderStep2(panel) {
     <h2>Step 2 — Original Game Details</h2>
     <p>Enter the current/original game details.</p>
 
+    <label>Team Name</label>
+    <input type="text" id="team_name" value="${getField("team_name") || ""}">
+
     <label>Original Date</label>
     <input type="date" id="orig_date" value="${getField("orig_date") || ""}">
 
@@ -304,6 +307,7 @@ function renderStep2(panel) {
   `;
 
   document.getElementById("s2_save").onclick = async () => {
+    await setField("team_name", document.getElementById("team_name").value);
     await setField("orig_date", document.getElementById("orig_date").value);
     await setField("orig_time", document.getElementById("orig_time").value);
     await setField("orig_field", document.getElementById("orig_field").value);
@@ -316,13 +320,24 @@ function renderStep2(panel) {
   };
 }
 
-
-
-// STEP 3 — Opponent Contact Info
+// STEP 3 — Coach + Opponent Contact Info
 function renderStep3(panel) {
   panel.innerHTML = `
-    <h2>Step 3 — Opponent Contact</h2>
-    <p>Record the opponent coach details.</p>
+    <h2>Step 3 — Coach & Opponent Contact</h2>
+    <p>Record your contact details and the opponent coach details.</p>
+
+    <h3>Your Contact Info</h3>
+
+    <label>Your Name</label>
+    <input type="text" id="coach_name" value="${getField("coach_name") || ""}">
+
+    <label>Your Email</label>
+    <input type="email" id="coach_email" value="${getField("coach_email") || ""}">
+
+    <label>Your Phone</label>
+    <input type="tel" id="coach_phone" value="${getField("coach_phone") || ""}">
+
+    <h3>Opposing Coach Info</h3>
 
     <label>Opposing Coach Name</label>
     <input type="text" id="opp_coach_name" value="${getField("opp_coach_name") || ""}">
@@ -333,10 +348,16 @@ function renderStep3(panel) {
     <label>Opposing Coach Phone</label>
     <input type="tel" id="opp_coach_phone" value="${getField("opp_coach_phone") || ""}">
 
-    <button id="s3_save" class="primary-btn">Save Opponent Details</button>
+    <button id="s3_save" class="primary-btn">Save Contact Details</button>
   `;
 
   document.getElementById("s3_save").onclick = async () => {
+    // your info
+    await setField("coach_name", document.getElementById("coach_name").value);
+    await setField("coach_email", document.getElementById("coach_email").value);
+    await setField("coach_phone", document.getElementById("coach_phone").value);
+
+    // opponent info
     await setField("opp_coach_name", document.getElementById("opp_coach_name").value);
     await setField("opp_coach_email", document.getElementById("opp_coach_email").value);
     await setField("opp_coach_phone", document.getElementById("opp_coach_phone").value);
@@ -345,7 +366,7 @@ function renderStep3(panel) {
     currentRowData.step_3 = "completed";
     hydrateTimelineFromRow(currentRowData);
 
-    alert("Opponent details saved.");
+    alert("Contact details saved.");
   };
 }
 
