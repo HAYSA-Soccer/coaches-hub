@@ -17,12 +17,9 @@
   <!-- LOOKUP CARD -->
   <section class="card" id="lookupContainer">
     <h2>Lookup Game</h2>
-
     <label>Enter SSSL Game Number</label>
     <input type="text" id="lookupGameNumber" placeholder="e.g., 22920056">
-
     <button class="primary-btn" onclick="lookupGameNumber()">Lookup</button>
-
     <div id="lookupStatus" class="info-text"></div>
   </section>
 
@@ -103,8 +100,14 @@
     </form>
   </section>
 
-  <!-- REQUIRED: pdf.js must load BEFORE main.js -->
+  <!-- REQUIRED: pdf-lib must load BEFORE pdf.js -->
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
+  <!-- PDF generator -->
   <script src="pdf.js"></script>
+
+  <!-- Workflow logic -->
   <script src="main.js"></script>
+
 </body>
 </html>
