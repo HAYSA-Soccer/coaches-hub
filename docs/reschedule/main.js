@@ -325,18 +325,18 @@ function renderStep3(panel) {
     <input type="text" id="opp_coach_name" value="${getField("opp_coach_name") || ""}">
 
     <label>Opposing Coach Email</label>
-    <input type="email" id="opp_coach_email" value="${getField("") || ""}">
+    <input type="email" id="opp_coach_email" value="${getField("opp_coach_email") || ""}">
 
     <label>Opposing Coach Phone</label>
-    <input type="tel" id="opp_coach_phone" value="${getField("") || ""}">
+    <input type="tel" id="opp_coach_phone" value="${getField("opp_coach_phone") || ""}">
 
     <button id="s3_save" class="primary-btn">Save Opponent Details</button>
   `;
 
   document.getElementById("s3_save").onclick = async () => {
     await setField("opp_coach_name", document.getElementById("opp_coach_name").value);
-    await setField("opp_coach_email", document.getElementById("").value);
-    await setField("opp_coach_phone", document.getElementById("").value);
+    await setField("opp_coach_email", document.getElementById("opp_coach_email").value);
+    await setField("opp_coach_phone", document.getElementById("opp_coach_phone").value);
 
     await apiUpdateStep(currentGameNumber, 3);
     currentRowData.step_3 = "completed";
