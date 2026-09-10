@@ -289,10 +289,10 @@ function renderStep2(panel) {
     <p>Enter the current/original game details.</p>
 
     <label>Original Date</label>
-    <input type="date" id="orig_date" value="${getField("orig_date_input") || ""}">
+    <input type="date" id="orig_date" value="${getField("orig_date") || ""}">
 
     <label>Original Time</label>
-    <input type="time" id="orig_time" value="${getField("orig_time_input") || ""}">
+    <input type="time" id="orig_time" value="${getField("orig_time") || ""}">
 
     <label>Original Field</label>
     <input type="text" id="orig_field" value="${getField("orig_field") || ""}">
