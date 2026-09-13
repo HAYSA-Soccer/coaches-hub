@@ -72,30 +72,52 @@ async function apiGetAllRows() {
 
 
 async function loadSubmittedRequests() {
-  const rows = await apiGetAllRows(); // your sheet fetch
+  const rows = await apiGetAllRows();
   const list = document.getElementById("submittedList");
 
   list.innerHTML = "";
 
-  rows.forEach(row => {
-    if (row.game_number) {
-      const highest = getHighestCompletedStep(row);
-      const status = highest === 9 ? "Completed" : "In Progress";
+  if (!rows.length) {
+    list.innerHTML = `<div class="info-text">No reschedules found.</div>`;
+    return;
+  }
 
-      const div = document.createElement("div");
-      div.className = "submitted-item";
-      div.innerHTML = `
-        <strong>Game #${row.game_number}</strong> — Step ${highest} — ${status}
+  const table = document.createElement("table");
+  table.className = "reschedule-table";
+
+  table.innerHTML = `
+    <tr>
+      <th>Game #</th>
+      <th>Team</th>
+      <th>Original Date</th>
+      <th>Final Date</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  `;
+
+  rows.forEach(row => {
+    const highest = getHighestCompletedStep(row);
+    const status = highest === 9 ? "Completed" : "In Progress";
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${row.game_number}</td>
+      <td>${row.team_name || ""}</td>
+      <td>${formatDate(row.orig_date)}</td>
+      <td>${formatDate(row.final_date)}</td>
+      <td>${status}</td>
+      <td>
         <button class="primary-btn"
           onclick="resumeGame('${row.game_number}'); showWorkflowUI();">
           Resume
         </button>
-      `;
-      list.appendChild(div);
-    }
+      </td>
+    `;
+    table.appendChild(tr);
   });
 
-  document.getElementById("submittedListContainer").style.display = "block";
+  list.appendChild(table);
 }
 
 
