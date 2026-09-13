@@ -881,8 +881,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("timelineContainer").style.display = "none";
   document.getElementById("panelContainer").style.display = "none";
   document.getElementById("nextStepContainer").style.display = "none";
+  document.getElementById("formSection").style.display = "none";
 
   initTimeline();
+  loadSubmittedRequests(); // <-- we will add this function next
 });
+
 
 
