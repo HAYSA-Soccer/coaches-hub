@@ -184,6 +184,8 @@ async function lookupGameNumber() {
   document.getElementById("timelineContainer").style.display = "none";
   document.getElementById("panelContainer").style.display = "none";
   document.getElementById("nextStepContainer").style.display = "none";
+  document.getElementById("formSection").style.display = "none";
+
 
   const gameNumber = document.getElementById("lookupGameNumber").value.trim();
   const statusEl = document.getElementById("lookupStatus");
