@@ -357,11 +357,37 @@ function renderStep2(panel) {
     <button id="s2_save" class="primary-btn">Save Original Details</button>
   `;
 
+  // ⭐ Warning if any required fields are missing
+  if (!getField("orig_date_input") || !getField("orig_time_input") || !getField("orig_field")) {
+    const warn = document.createElement("div");
+    warn.style.background = "#ffe8e8";
+    warn.style.border = "1px solid #cc0000";
+    warn.style.padding = "10px";
+    warn.style.marginBottom = "15px";
+    warn.style.borderRadius = "6px";
+    warn.innerHTML = `
+      <strong>Original game details are incomplete.</strong><br>
+      Please enter the date, time, and field before continuing.
+    `;
+    panel.prepend(warn);
+  }
+
   document.getElementById("s2_save").onclick = async () => {
-    await setField("team_name", document.getElementById("team_name").value);
-    await setField("orig_date", document.getElementById("orig_date").value);
-    await setField("orig_time", document.getElementById("orig_time").value);
-    await setField("orig_field", document.getElementById("orig_field").value);
+    const team = document.getElementById("team_name").value.trim();
+    const date = document.getElementById("orig_date").value;
+    const time = document.getElementById("orig_time").value;
+    const field = document.getElementById("orig_field").value.trim();
+
+    // ⭐ Prevent marking complete if fields are missing
+    if (!team || !date || !time || !field) {
+      alert("Please complete all fields before saving.");
+      return;
+    }
+
+    await setField("team_name", team);
+    await setField("orig_date", date);
+    await setField("orig_time", time);
+    await setField("orig_field", field);
 
     await apiUpdateStep(currentGameNumber, 2);
     currentRowData.step_2 = "completed";
