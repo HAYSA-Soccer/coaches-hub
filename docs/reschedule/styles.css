@@ -290,3 +290,14 @@ h1 {
   margin-top: 30px;
 }
 
+
+/* Submitted Requests List */
+.submitted-item {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
