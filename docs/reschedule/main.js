@@ -15,6 +15,25 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+function formatTime(t) {
+  if (!t) return "";
+  const d = new Date(t);
+  return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
+function computeStatus(row) {
+  const highest = getHighestCompletedStep(row);
+
+  if (highest >= 12) return "Completed";
+  if (highest >= 10) return "Calendar Updated";
+  if (highest >= 9) return "Approved";
+  if (highest >= 7) return "Awaiting HAYSA";
+  if (highest >= 4) return "Awaiting Opponent";
+  return "Drafting Options";
+}
+
+
+
 // ===============================================
 // CONFIG
 // ===============================================
