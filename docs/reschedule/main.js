@@ -47,18 +47,15 @@ function apiGetRow(gameNumber) {
 }
 
 
-
 async function apiGetAllRows() {
   try {
     const res = await fetch(API_URL + "?action=getAllRows");
     const json = await res.json();
 
-    // Backend returns { rows: [...] }
     if (json && Array.isArray(json.rows)) {
       return json.rows;
     }
 
-    // Fallback if backend ever returns a plain array
     if (Array.isArray(json)) {
       return json;
     }
@@ -69,6 +66,8 @@ async function apiGetAllRows() {
     return [];
   }
 }
+
+
 
 
 
