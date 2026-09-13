@@ -2,14 +2,16 @@
 // INIT
 // ===============================================
 document.addEventListener("DOMContentLoaded", () => {
+
   // Hide workflow UI on landing page
+  document.getElementById("workflowContainer").style.display = "none";
   document.getElementById("timelineContainer").style.display = "none";
   document.getElementById("panelContainer").style.display = "none";
   document.getElementById("nextStepContainer").style.display = "none";
   document.getElementById("formSection").style.display = "none";
 
   initTimeline();
-  loadSubmittedRequests(); // we add this function next
+  loadSubmittedRequests();
 });
 
 
