@@ -29,6 +29,36 @@ function apiGetRow(gameNumber) {
   });
 }
 
+
+
+
+async function loadSubmittedRequests() {
+  const rows = await apiGetAllRows(); // your sheet fetch
+  const list = document.getElementById("submittedList");
+
+  list.innerHTML = "";
+
+  rows.forEach(row => {
+    if (row.game_number) {
+      const highest = getHighestCompletedStep(row);
+      const status = highest === 9 ? "Completed" : "In Progress";
+
+      const div = document.createElement("div");
+      div.className = "submitted-item";
+      div.innerHTML = `
+        <strong>Game #${row.game_number}</strong> — Step ${highest} — ${status}
+        <button class="primary-btn" onclick="resumeGame('${row.game_number}')">Resume</button>
+      `;
+      list.appendChild(div);
+    }
+  });
+
+  document.getElementById("submittedListContainer").style.display = "block";
+}
+
+
+
+
 async function apiCreateRow(gameNumber) {
   const form = new FormData();
   form.append("action", "createRow");
@@ -666,6 +696,12 @@ function renderStep7(panel) {
 
 
 
+function resumeGame(gameNumber) {
+  document.getElementById("lookupGameNumber").value = gameNumber;
+  lookupGameNumber();
+}
+
+
 // STEP 8 — Calendar Update
 function renderStep8(panel) {
   panel.innerHTML = `
@@ -841,5 +877,7 @@ const fieldsToSave = [
 // INIT
 // ===============================================
 document.addEventListener("DOMContentLoaded", () => {
+  loadSubmittedRequests();
   initTimeline();
 });
+
