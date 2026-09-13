@@ -199,14 +199,22 @@ function beginWorkflow() {
   document.getElementById("panelContainer").style.display = "block";
   document.getElementById("nextStepContainer").style.display = "block";
 
-  currentStep = 1;
+  // Determine highest completed step
+  let highestCompleted = 1;
+  for (let s = 1; s <= 9; s++) {
+    if (currentRowData[`step_${s}`] === "completed") {
+      highestCompleted = s;
+    }
+  }
 
-  // FIX: hydrate BEFORE rendering any step
+  currentStep = highestCompleted;
+
+  // Hydrate AFTER determining correct step
   hydrateTimelineFromRow(currentRowData);
-
   setActiveTimelineStep(currentStep);
   renderPanelForStep(currentStep);
 
+  // Prefill form fields
   const form = document.getElementById("gameChangeForm");
   if (form && currentRowData) {
     const map = {
@@ -230,6 +238,7 @@ function beginWorkflow() {
     });
   }
 }
+
 
 
 
