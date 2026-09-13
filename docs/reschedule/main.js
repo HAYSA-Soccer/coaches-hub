@@ -50,17 +50,25 @@ function apiGetRow(gameNumber) {
 
 async function apiGetAllRows() {
   try {
-    const res = await fetch(API_URL);   // API_URL already exists in your main.js
+    const res = await fetch(API_URL + "?action=getAllRows");
     const json = await res.json();
 
-    // Always return an array
-    return json.rows || [];
+    // Backend returns { rows: [...] }
+    if (json && Array.isArray(json.rows)) {
+      return json.rows;
+    }
+
+    // Fallback if backend ever returns a plain array
+    if (Array.isArray(json)) {
+      return json;
+    }
+
+    return [];
   } catch (err) {
     console.error("apiGetAllRows failed:", err);
     return [];
   }
 }
-
 
 
 
