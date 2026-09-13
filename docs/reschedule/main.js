@@ -1,4 +1,19 @@
 // ===============================================
+// INIT
+// ===============================================
+document.addEventListener("DOMContentLoaded", () => {
+  // Hide workflow UI on landing page
+  document.getElementById("timelineContainer").style.display = "none";
+  document.getElementById("panelContainer").style.display = "none";
+  document.getElementById("nextStepContainer").style.display = "none";
+  document.getElementById("formSection").style.display = "none";
+
+  initTimeline();
+  loadSubmittedRequests(); // we add this function next
+});
+
+
+// ===============================================
 // CONFIG
 // ===============================================
 const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
@@ -875,19 +890,7 @@ const fieldsToSave = [
 }
 
 
-// ===============================================
-// INIT
-// ===============================================
-document.addEventListener("DOMContentLoaded", () => {
-  // Hide workflow UI on landing page
-  document.getElementById("timelineContainer").style.display = "none";
-  document.getElementById("panelContainer").style.display = "none";
-  document.getElementById("nextStepContainer").style.display = "none";
-  document.getElementById("formSection").style.display = "none";
 
-  initTimeline();
-  loadSubmittedRequests(); // we add this function next
-});
 
 
 
