@@ -886,8 +886,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("formSection").style.display = "none";
 
   initTimeline();
-  loadSubmittedRequests(); // <-- we will add this function next
+  loadSubmittedRequests(); // we add this function next
 });
+
 
 
 
