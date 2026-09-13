@@ -322,12 +322,9 @@ function initTimeline() {
       if (currentStep < 9) {
         currentStep++;
 
-        await apiUpdateStep(currentGameNumber, currentStep);
-        currentRowData[`step_${currentStep}`] = "completed";
-
-        hydrateTimelineFromRow(currentRowData);
         setActiveTimelineStep(currentStep);
         renderPanelForStep(currentStep);
+
       }
     };
   }
