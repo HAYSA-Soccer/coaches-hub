@@ -86,7 +86,7 @@ async function apiGetAllRows() {
 
 
 async function loadSubmittedRequests() {
-  const rows = await apiGetAllRows();
+  let rows = await apiGetAllRows();
   const list = document.getElementById("submittedList");
 
   list.innerHTML = "";
@@ -96,6 +96,9 @@ async function loadSubmittedRequests() {
     return;
   }
 
+  // Sort newest first
+  rows.sort((a, b) => new Date(b.last_updated) - new Date(a.last_updated));
+
   const table = document.createElement("table");
   table.className = "reschedule-table";
 
@@ -103,27 +106,40 @@ async function loadSubmittedRequests() {
     <tr>
       <th>Game #</th>
       <th>Team</th>
-      <th>Original Date</th>
-      <th>Final Date</th>
+      <th>Opponent</th>
+      <th>Old Info</th>
+      <th>New Info</th>
       <th>Status</th>
       <th>Action</th>
     </tr>
   `;
 
   rows.forEach(row => {
-    const highest = getHighestCompletedStep(row);
-    const status = highest === 9 ? "Completed" : "In Progress";
+    const status = computeStatus(row);
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${row.game_number}</td>
       <td>${row.team_name || ""}</td>
-      <td>${formatDate(row.orig_date)}</td>
-      <td>${formatDate(row.final_date)}</td>
+      <td>
+        ${row.opp_coach_name || ""}<br>
+        ${row.opp_coach_email || ""}<br>
+        ${row.opp_coach_phone || ""}
+      </td>
+      <td>
+        ${formatDate(row.orig_date)}<br>
+        ${formatTime(row.orig_time)}<br>
+        ${row.orig_field}
+      </td>
+      <td>
+        ${formatDate(row.final_date)}<br>
+        ${formatTime(row.final_time)}<br>
+        ${row.final_field}
+      </td>
       <td>${status}</td>
       <td>
         <button class="primary-btn"
-          onclick="resumeGame('${row.game_number}'); showWorkflowUI();">
+          onclick="resumeGame('${row.game_number}'); showWorkflowUI(); hideLandingPage();">
           Resume
         </button>
       </td>
@@ -133,6 +149,7 @@ async function loadSubmittedRequests() {
 
   list.appendChild(table);
 }
+
 
 
 
