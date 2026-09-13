@@ -80,22 +80,31 @@ h1 {
 }
 
 /* ---------------------------------------------------------
-   HORIZONTAL TIMELINE (modern, fixed)
+   HORIZONTAL TIMELINE (FINAL FIXED VERSION)
 --------------------------------------------------------- */
+
 #timelineContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 10px;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 10px !important;
+
   margin: 20px auto;
   padding: 12px 20px;
   max-width: 900px;
+
   background: #f7f9fc;
   border-radius: 10px;
   border: 1px solid #d0d7e2;
 }
 
+/* FORCE horizontal layout */
 .timeline-step {
+  display: inline-block !important;
+  width: auto !important;
+  flex: 0 0 auto !important;
+
   padding: 10px 16px;
   background: #e9eef5;
   border-radius: 6px;
@@ -108,11 +117,13 @@ h1 {
   white-space: nowrap;
 }
 
+/* Hover effect */
 .timeline-step:hover {
   background: #dce4ef;
   transform: translateY(-2px);
 }
 
+/* Active step (blue) */
 .timeline-step.active {
   background: #0078d4;
   color: white;
@@ -120,6 +131,7 @@ h1 {
   font-weight: 700;
 }
 
+/* Completed step (green) */
 .timeline-step.completed {
   background-color: #4caf50;
   color: white;
