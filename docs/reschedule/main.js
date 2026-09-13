@@ -877,7 +877,12 @@ const fieldsToSave = [
 // INIT
 // ===============================================
 document.addEventListener("DOMContentLoaded", () => {
-  loadSubmittedRequests();
+  // Hide workflow UI on landing page
+  document.getElementById("timelineContainer").style.display = "none";
+  document.getElementById("panelContainer").style.display = "none";
+  document.getElementById("nextStepContainer").style.display = "none";
+
   initTimeline();
 });
+
 
