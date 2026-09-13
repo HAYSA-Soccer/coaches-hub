@@ -497,16 +497,32 @@ function renderStep3(panel) {
   `;
 
   document.getElementById("s3_save").onclick = async () => {
-    // your info
-    await setField("coach_name", document.getElementById("coach_name").value);
-    await setField("coach_email", document.getElementById("coach_email").value);
-    await setField("coach_phone", document.getElementById("coach_phone").value);
 
-    // opponent info
-    await setField("opp_coach_name", document.getElementById("opp_coach_name").value);
-    await setField("opp_coach_email", document.getElementById("opp_coach_email").value);
-    await setField("opp_coach_phone", document.getElementById("opp_coach_phone").value);
+    const coachName = document.getElementById("coach_name").value.trim();
+    const coachEmail = document.getElementById("coach_email").value.trim();
+    const coachPhone = document.getElementById("coach_phone").value.trim();
 
+    const oppName = document.getElementById("opp_coach_name").value.trim();
+    const oppEmail = document.getElementById("opp_coach_email").value.trim();
+    const oppPhone = document.getElementById("opp_coach_phone").value.trim();
+
+    // ⭐ Prevent marking complete if fields are missing
+    if (!coachName || !coachEmail || !coachPhone ||
+        !oppName || !oppEmail || !oppPhone) {
+      alert("Please complete all contact fields before saving.");
+      return;
+    }
+
+    // Save fields
+    await setField("coach_name", coachName);
+    await setField("coach_email", coachEmail);
+    await setField("coach_phone", coachPhone);
+
+    await setField("opp_coach_name", oppName);
+    await setField("opp_coach_email", oppEmail);
+    await setField("opp_coach_phone", oppPhone);
+
+    // Mark step complete
     await apiUpdateStep(currentGameNumber, 3);
     currentRowData.step_3 = "completed";
     hydrateTimelineFromRow(currentRowData);
