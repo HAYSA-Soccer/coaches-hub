@@ -233,3 +233,26 @@ p {
 #clearSignature:hover {
   background: #aa0000;
 }
+
+
+/* ============================================
+   RESCHEDULE TABLE (Landing Page)
+   ============================================ */
+
+.reschedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.reschedule-table th,
+.reschedule-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.reschedule-table th {
+  background: #f5f5f5;
+}
+
