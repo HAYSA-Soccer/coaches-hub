@@ -47,8 +47,16 @@ function apiGetRow(gameNumber) {
 
 
 async function apiGetAllRows() {
-  const res = await fetch(`${API_URL}?action=getAllRows`);
-  return res.json();
+  try {
+    const res = await fetch(API_URL);   // API_URL already exists in your main.js
+    const json = await res.json();
+
+    // Always return an array
+    return json.rows || [];
+  } catch (err) {
+    console.error("apiGetAllRows failed:", err);
+    return [];
+  }
 }
 
 
