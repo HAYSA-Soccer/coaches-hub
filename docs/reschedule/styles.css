@@ -1,303 +1,50 @@
-/* ---------------------------------------------------------
-   GLOBAL
---------------------------------------------------------- */
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  background: #f5f7fa;
-  margin: 0;
-  padding: 0;
-  color: #333;
-}
-
-h1 {
-  margin: 0;
-  font-size: 28px;
-}
-
-.subtitle {
-  margin-top: 5px;
-  color: #555;
-}
-
-.header {
-  background: #1e88e5;
-  color: white;
-  padding: 25px;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-}
-
-/* ---------------------------------------------------------
-   CARD STYLE (modern)
---------------------------------------------------------- */
-.card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 24px;
-  margin: 20px auto;
-  max-width: 900px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 22px rgba(0,0,0,0.12);
-}
-
-/* ---------------------------------------------------------
-   BUTTONS (modern)
---------------------------------------------------------- */
-.primary-btn {
-  background: #1e88e5;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background 0.2s ease;
-}
-
-.primary-btn:hover {
-  background: #1565c0;
-}
-
-.secondary-btn {
-  background: #e0e0e0;
-  color: #333;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-left: 10px;
-  transition: background 0.2s ease;
-}
-
-.secondary-btn:hover {
-  background: #bdbdbd;
-}
-
-/* ---------------------------------------------------------
-   HORIZONTAL TIMELINE (FINAL FIXED VERSION)
---------------------------------------------------------- */
-
-#timelineContainer {
-  display: flex !important;
-  flex-direction: row !important;
-  justify-content: center !important;
-  align-items: center !important;
-  gap: 10px !important;
-
-  margin: 20px auto;
-  padding: 12px 20px;
-  max-width: 900px;
-
-  background: #f7f9fc;
-  border-radius: 10px;
-  border: 1px solid #d0d7e2;
-}
-
-/* FORCE horizontal layout */
-.timeline-step {
-  display: inline-block !important;
-  width: auto !important;
-  flex: 0 0 auto !important;
-
-  padding: 10px 16px;
-  background: #e9eef5;
-  border-radius: 6px;
-  font-weight: 600;
-  color: #3a4a63;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
-  border: 1px solid transparent;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
-/* Hover effect */
-.timeline-step:hover {
-  background: #dce4ef;
-  transform: translateY(-2px);
-}
-
-/* Active step (blue) */
-.timeline-step.active {
-  background: #0078d4;
-  color: white;
-  border-color: #005fa3;
-  font-weight: 700;
-}
-
-/* Completed step (green) */
-.timeline-step.completed {
-  background-color: #4caf50;
-  color: white;
-  border-color: #4caf50;
-  font-weight: 600;
-}
-
-/* ---------------------------------------------------------
-   PANEL CONTAINER (clean card)
---------------------------------------------------------- */
-#panelContainer {
-  background: #fff;
-  padding: 24px;
-  border-radius: 14px;
-  margin: 20px auto;
-  max-width: 900px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-}
-
-#panelContainer h2 {
-  margin-top: 0;
-  font-size: 24px;
-  color: #1e88e5;
-}
-
-#panelContainer label {
-  display: block;
-  margin-top: 14px;
-  font-weight: 600;
-}
-
-#panelContainer input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 6px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-}
-
-/* ---------------------------------------------------------
-   STEP 7 FORM SECTION
---------------------------------------------------------- */
-#formSection {
-  display: none;
-  margin-top: 20px;
+/* Shared wrapper for all step panels */
+.step-content {
   padding: 20px;
-  background: #f7f7f7;
-  border-radius: 10px;
-  border: 1px solid #d0d7e2;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
-#formSection h3 {
-  margin-top: 0;
-  font-size: 20px;
-  color: #1e88e5;
-}
-
-#gameChangeForm {
-  margin-top: 10px;
-}
-
-#gameChangeForm label {
-  display: block;
-  margin-top: 12px;
-  font-weight: 500;
-}
-
-#gameChangeForm input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  background: #fff;
-}
-
-/* ---------------------------------------------------------
-   PANEL + ANIMATION
---------------------------------------------------------- */
-.panel {
-  min-height: 200px;
-}
-
-.fade-in {
-  animation: fadeIn 0.35s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.next-step-container {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.info-text {
-  margin-top: 10px;
-  color: #666;
-}
-
-/* ---------------------------------------------------------
-   COMPARISON BLOCK (Step 4)
---------------------------------------------------------- */
+/* Comparison grid */
 .comparison-row {
   display: grid;
-  grid-template-columns: 150px 1fr 150px 1fr;
-  gap: 12px;
-  padding: 10px 0;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 8px 12px;
+  margin-bottom: 12px;
   align-items: center;
+}
+
+/* Highlight changed values */
+.changed {
+  font-weight: 600;
+  color: #b30000;
+}
+
+/* Form labels */
+.step-content label {
+  display: block;
+  margin-top: 16px;
+  font-weight: 600;
+}
+
+/* Form inputs */
+.step-content input[type="text"],
+.step-content input[type="date"],
+.step-content input[type="time"] {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   font-size: 15px;
 }
 
-.comparison-row div:nth-child(1),
-.comparison-row div:nth-child(3) {
-  font-weight: 600;
-  color: #444;
+/* Save button spacing */
+.step-content button.primary-btn {
+  margin-top: 20px;
 }
 
-.comparison-note {
-  font-size: 13px;
-  color: #666;
-  margin-bottom: 20px;
+/* Next Step button spacing */
+#nextStepContainer {
+  margin-top: 25px;
 }
-
-.changed {
-  background: #ffe9e9;
-  border-left: 4px solid #d40000;
-  padding-left: 8px;
-  border-radius: 4px;
-  font-weight: 600;
-}
-
-/* ---------------------------------------------------------
-   SIGNATURE PAD (modern)
---------------------------------------------------------- */
-#signaturePad {
-  border: 2px dashed #ccc;
-  border-radius: 10px;
-  width: 100%;
-  height: 200px;
-  background: #fff;
-  margin-top: 12px;
-}
-
-
-/* Start/Search Page Spacing */
-#lookupContainer {
-  margin-bottom: 30px;
-}
-
-#timelineContainer {
-  margin-top: 30px;
-}
-
-
-/* Submitted Requests List */
-.submitted-item {
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-
