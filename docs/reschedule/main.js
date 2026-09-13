@@ -681,8 +681,6 @@ function renderStep6(panel) {
 
 
 // STEP 7 — SSSL Form (uses gameChangeForm + signature)
-// STEP 7 — SSSL Form (uses gameChangeForm + signature)
-// STEP 7 — SSSL Form (uses gameChangeForm + signature)
 function renderStep7(panel) {
   panel.innerHTML = `
     <h2>Step 7 — SSSL Form</h2>
@@ -895,10 +893,4 @@ const fieldsToSave = [
     alert("Form saved.");
   };
 }
-
-
-
-
-
-
 
