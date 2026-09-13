@@ -403,7 +403,6 @@ function renderStep1(panel) {
 }
 
 
-
 // STEP 2 — Original Game Details
 function renderStep2(panel) {
   panel.innerHTML = `
@@ -414,10 +413,10 @@ function renderStep2(panel) {
     <input type="text" id="team_name" value="${getField("team_name") || ""}">
 
     <label>Original Date</label>
-    <input type="date" id="orig_date" value="${getField("orig_date_input") || ""}">
+    <input type="date" id="orig_date" value="${getField("orig_date") || ""}">
 
     <label>Original Time</label>
-    <input type="time" id="orig_time" value="${getField("orig_time_input") || ""}">
+    <input type="time" id="orig_time" value="${getField("orig_time") || ""}">
 
     <label>Original Field</label>
     <input type="text" id="orig_field" value="${getField("orig_field") || ""}">
@@ -426,7 +425,7 @@ function renderStep2(panel) {
   `;
 
   // ⭐ Warning if any required fields are missing
-  if (!getField("orig_date_input") || !getField("orig_time_input") || !getField("orig_field")) {
+  if (!getField("orig_date") || !getField("orig_time") || !getField("orig_field")) {
     const warn = document.createElement("div");
     warn.style.background = "#ffe8e8";
     warn.style.border = "1px solid #cc0000";
@@ -464,6 +463,7 @@ function renderStep2(panel) {
     alert("Original details saved.");
   };
 }
+
 
 // STEP 3 — Coach + Opponent Contact Info
 function renderStep3(panel) {
