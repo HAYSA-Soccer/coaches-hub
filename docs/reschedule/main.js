@@ -46,6 +46,20 @@ function apiGetRow(gameNumber) {
 
 
 
+async function apiGetAllRows() {
+  const form = new FormData();
+  form.append("action", "getAllRows");
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: form
+  });
+
+  return res.json(); // returns an array of rows
+}
+
+
+
 
 async function loadSubmittedRequests() {
   const rows = await apiGetAllRows(); // your sheet fetch
