@@ -122,7 +122,6 @@ async function loadSubmittedRequests() {
 
 
 
-
 async function apiCreateRow(gameNumber) {
   const form = new FormData();
   form.append("action", "createRow");
