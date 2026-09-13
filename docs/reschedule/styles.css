@@ -1,11 +1,136 @@
-/* Shared wrapper for all step panels */
+/* ============================================
+   GLOBAL LAYOUT
+   ============================================ */
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f7f7f7;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+h3 {
+  margin-top: 24px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+p {
+  margin: 10px 0 20px 0;
+}
+
+
+/* ============================================
+   STEP PANEL WRAPPER
+   ============================================ */
+
 .step-content {
+  background: #fff;
   padding: 20px;
   max-width: 700px;
   margin: 0 auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-/* Comparison grid */
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+
+.step-content label {
+  display: block;
+  margin-top: 16px;
+  font-weight: 600;
+}
+
+.step-content input[type="text"],
+.step-content input[type="date"],
+.step-content input[type="time"],
+.step-content input[type="email"],
+.step-content input[type="tel"] {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.step-content button.primary-btn {
+  margin-top: 20px;
+}
+
+
+/* ============================================
+   TIMELINE NAVIGATION
+   ============================================ */
+
+.timeline-container {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 20px auto;
+  flex-wrap: wrap;
+}
+
+.timeline-step {
+  padding: 10px 14px;
+  background: #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.timeline-step:hover {
+  background: #d0d0d0;
+}
+
+.timeline-step.active {
+  background: #007bff;
+  color: #fff;
+}
+
+
+/* ============================================
+   NEXT STEP BUTTON
+   ============================================ */
+
+#nextStepContainer {
+  text-align: center;
+  margin-top: 25px;
+}
+
+#nextStepBtn {
+  padding: 10px 20px;
+  background: #007bff;
+  color: #fff;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+#nextStepBtn:hover {
+  background: #0069d9;
+}
+
+
+/* ============================================
+   COMPARISON GRID (Step 4)
+   ============================================ */
+
 .comparison-row {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -14,37 +139,97 @@
   align-items: center;
 }
 
-/* Highlight changed values */
 .changed {
   font-weight: 600;
   color: #b30000;
 }
 
-/* Form labels */
-.step-content label {
-  display: block;
-  margin-top: 16px;
+.comparison-note {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+.primary-btn {
+  background: #007bff;
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
   font-weight: 600;
 }
 
-/* Form inputs */
-.step-content input[type="text"],
-.step-content input[type="date"],
-.step-content input[type="time"] {
-  width: 100%;
-  padding: 8px 10px;
-  margin-top: 6px;
+.primary-btn:hover {
+  background: #0069d9;
+}
+
+.secondary-btn {
+  background: #555;
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.secondary-btn:hover {
+  background: #444;
+}
+
+
+/* ============================================
+   WARNING BOXES
+   ============================================ */
+
+.warning-box {
+  background: #ffe8e8;
+  border: 1px solid #cc0000;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+
+/* ============================================
+   FORM SECTION (Step 7)
+   ============================================ */
+
+#formSection {
+  display: none;
+  background: #fff;
+  padding: 20px;
+  max-width: 700px;
+  margin: 20px auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+#signaturePad {
   border: 1px solid #ccc;
   border-radius: 6px;
-  font-size: 15px;
+  margin-top: 10px;
 }
 
-/* Save button spacing */
-.step-content button.primary-btn {
-  margin-top: 20px;
+#clearSignature {
+  margin-top: 10px;
+  padding: 8px 14px;
+  background: #cc0000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
-/* Next Step button spacing */
-#nextStepContainer {
-  margin-top: 25px;
+#clearSignature:hover {
+  background: #aa0000;
 }
