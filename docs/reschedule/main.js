@@ -79,7 +79,10 @@ async function loadSubmittedRequests() {
       div.className = "submitted-item";
       div.innerHTML = `
         <strong>Game #${row.game_number}</strong> — Step ${highest} — ${status}
-        <button class="primary-btn" onclick="resumeGame('${row.game_number}')">Resume</button>
+        <button class="primary-btn"
+          onclick="resumeGame('${row.game_number}'); showWorkflowUI();">
+          Resume
+        </button>
       `;
       list.appendChild(div);
     }
@@ -388,6 +391,16 @@ function goToStep(step) {
   setActiveTimelineStep(step);
   renderPanelForStep(step);
 }
+
+
+
+function showWorkflowUI() {
+  document.getElementById("workflowContainer").style.display = "block";
+  document.getElementById("timelineContainer").style.display = "flex";
+  document.getElementById("panelContainer").style.display = "block";
+  document.getElementById("nextStepContainer").style.display = "block";
+}
+
 
 
 // ===============================================
