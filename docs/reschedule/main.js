@@ -20,6 +20,20 @@ document.addEventListener("DOMContentLoaded", () => {
 // ===============================================
 const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
 
+// =========================
+// Helpers
+// =========================
+
+function formatDate(d) {
+  if (!d) return "";
+  return new Date(d).toLocaleDateString();
+}
+
+function getHighestCompletedStep(row) {
+  // your existing logic
+}
+
+
 
 // ===============================================
 // API HELPERS
