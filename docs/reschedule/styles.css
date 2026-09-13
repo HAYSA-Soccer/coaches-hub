@@ -27,6 +27,13 @@ p {
 }
 
 
+.reschedule-table td {
+  vertical-align: top;
+  line-height: 1.4;
+}
+
+
+
 /* ============================================
    STEP PANEL WRAPPER
    ============================================ */
