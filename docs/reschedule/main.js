@@ -261,6 +261,13 @@ async function lookupGameNumber() {
 
 
 
+function hideLandingPage() {
+  document.getElementById("submittedListContainer").style.display = "none";
+  document.getElementById("lookupContainer").style.display = "none";
+}
+
+
+
 async function startNewWorkflow(gameNumber) {
   const res = await apiCreateRow(gameNumber);
   if (!res || (!res.success && !res.created)) {
