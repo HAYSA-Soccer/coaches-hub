@@ -216,11 +216,12 @@ function hydrateTimelineFromRow(row) {
 // LOOKUP FLOW (ONE GAME NUMBER PER ROW)
 // ===============================================
 async function lookupGameNumber() {
+  // Hide workflow UI until user chooses Continue or Start New
+  document.getElementById("workflowContainer").style.display = "none";
   document.getElementById("timelineContainer").style.display = "none";
   document.getElementById("panelContainer").style.display = "none";
   document.getElementById("nextStepContainer").style.display = "none";
   document.getElementById("formSection").style.display = "none";
-
 
   const gameNumber = document.getElementById("lookupGameNumber").value.trim();
   const statusEl = document.getElementById("lookupStatus");
@@ -241,18 +242,24 @@ async function lookupGameNumber() {
       currentRowData = row.data || {};
       statusEl.innerHTML = `
         <p>Existing request found for Game #${gameNumber}.</p>
-        <button class="primary-btn" onclick="beginWorkflow()">Continue Request</button>
+        <button class="primary-btn" onclick="beginWorkflow(); showWorkflowUI(); hideLandingPage();">
+          Continue Request
+        </button>
       `;
     } else {
       statusEl.innerHTML = `
         <p>No existing request found for Game #${gameNumber}.</p>
-        <button class="primary-btn" onclick="startNewWorkflow('${gameNumber}')">Start New Request</button>
+        <button class="primary-btn" onclick="startNewWorkflow('${gameNumber}'); showWorkflowUI(); hideLandingPage();">
+          Start New Request
+        </button>
       `;
     }
   } catch (err) {
     statusEl.textContent = "Error loading game. Please try again.";
   }
 }
+
+
 
 async function startNewWorkflow(gameNumber) {
   const res = await apiCreateRow(gameNumber);
