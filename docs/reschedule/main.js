@@ -534,6 +534,7 @@ function renderStep3(panel) {
 
 
 // STEP 4 — Final Game Details (New Schedule) + Clean Comparison + Auto-Fill
+// STEP 4 — Final Game Details (New Schedule) + Clean Comparison + Auto-Fill
 function renderStep4(panel) {
 
   const origDateDisplay = getField("orig_date") || "(none)";
@@ -544,51 +545,55 @@ function renderStep4(panel) {
   const finalTimeDisplay = getField("final_time") || "(none)";
   const finalFieldDisplay = getField("final_field") || "(none)";
 
-  const finalDateInput = getField("final_date_input") || "";
-  const finalTimeInput = getField("final_time_input") || "";
+  const finalDateInput = getField("final_date") || "";
+  const finalTimeInput = getField("final_time") || "";
   const finalFieldInput = getField("final_field") || "";
 
   panel.innerHTML = `
-    <h2>Step 4 — Final Game Details (New Schedule)</h2>
-    <p>Enter the agreed new game date, time, and field.</p>
+    <div class="step-content">
 
-    <h3>Original vs New</h3>
+      <h2>Step 4 — Final Game Details (New Schedule)</h2>
+      <p>Enter the agreed new game date, time, and field.</p>
 
-    <div class="comparison-row">
-      <div>Original Date:</div>
-      <div>${origDateDisplay}</div>
-      <div>New Date:</div>
-      <div id="cmp_final_date">${finalDateDisplay}</div>
+      <h3>Original vs New</h3>
+
+      <div class="comparison-row">
+        <div>Original Date:</div>
+        <div>${origDateDisplay}</div>
+        <div>New Date:</div>
+        <div id="cmp_final_date">${finalDateDisplay}</div>
+      </div>
+
+      <div class="comparison-row">
+        <div>Original Time:</div>
+        <div>${origTimeDisplay}</div>
+        <div>New Time:</div>
+        <div id="cmp_final_time">${finalTimeDisplay}</div>
+      </div>
+
+      <div class="comparison-row">
+        <div>Original Field:</div>
+        <div>${origFieldDisplay}</div>
+        <div>New Field:</div>
+        <div id="cmp_final_field">${finalFieldDisplay}</div>
+      </div>
+
+      <p class="comparison-note">Changes will be highlighted when different from the original.</p>
+
+      <h3>New Game Details</h3>
+
+      <label>New Date</label>
+      <input type="date" id="final_date" value="${finalDateInput}">
+
+      <label>New Time</label>
+      <input type="time" id="final_time" value="${finalTimeInput}">
+
+      <label>New Field</label>
+      <input type="text" id="final_field" value="${finalFieldInput}">
+
+      <button id="s4_save" class="primary-btn">Save New Game Details</button>
+
     </div>
-
-    <div class="comparison-row">
-      <div>Original Time:</div>
-      <div>${origTimeDisplay}</div>
-      <div>New Time:</div>
-      <div id="cmp_final_time">${finalTimeDisplay}</div>
-    </div>
-
-    <div class="comparison-row">
-      <div>Original Field:</div>
-      <div>${origFieldDisplay}</div>
-      <div>New Field:</div>
-      <div id="cmp_final_field">${finalFieldDisplay}</div>
-    </div>
-
-    <p class="comparison-note">Changes will be highlighted when different from the original.</p>
-
-    <h3>New Game Details</h3>
-
-    <label>New Date</label>
-    <input type="date" id="final_date" value="${finalDateInput}">
-
-    <label>New Time</label>
-    <input type="time" id="final_time" value="${finalTimeInput}">
-
-    <label>New Field</label>
-    <input type="text" id="final_field" value="${finalFieldInput}">
-
-    <button id="s4_save" class="primary-btn">Save New Game Details</button>
   `;
 
   function updateChangeHighlights() {
@@ -619,6 +624,11 @@ function renderStep4(panel) {
     const newDate = document.getElementById("final_date").value;
     const newTime = document.getElementById("final_time").value;
     const newField = document.getElementById("final_field").value;
+
+    if (!newDate || !newTime || !newField) {
+      alert("Please complete all new game details before saving.");
+      return;
+    }
 
     await setField("final_date", newDate);
     await setField("final_time", newTime);
