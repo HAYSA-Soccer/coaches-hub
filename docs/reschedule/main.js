@@ -151,6 +151,10 @@ function hydrateTimelineFromRow(row) {
 // LOOKUP FLOW (ONE GAME NUMBER PER ROW)
 // ===============================================
 async function lookupGameNumber() {
+  document.getElementById("timelineContainer").style.display = "none";
+  document.getElementById("panelContainer").style.display = "none";
+  document.getElementById("nextStepContainer").style.display = "none";
+
   const gameNumber = document.getElementById("lookupGameNumber").value.trim();
   const statusEl = document.getElementById("lookupStatus");
 
@@ -194,10 +198,14 @@ async function startNewWorkflow(gameNumber) {
 }
 
 function beginWorkflow() {
+  // Hide lookup card
   document.getElementById("lookupContainer").style.display = "none";
-  document.getElementById("timelineContainer").style.display = "block";
+  
+  // Show workflow UI (horizontal timeline)
+  document.getElementById("timelineContainer").style.display = "flex";
   document.getElementById("panelContainer").style.display = "block";
   document.getElementById("nextStepContainer").style.display = "block";
+
 
   // Determine highest completed step
   let highestCompleted = 1;
