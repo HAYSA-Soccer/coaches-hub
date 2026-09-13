@@ -279,3 +279,14 @@ h1 {
   background: #fff;
   margin-top: 12px;
 }
+
+
+/* Start/Search Page Spacing */
+#lookupContainer {
+  margin-bottom: 30px;
+}
+
+#timelineContainer {
+  margin-top: 30px;
+}
+
