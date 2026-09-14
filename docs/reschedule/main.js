@@ -372,7 +372,7 @@ async function lookupGameNumber() {
   const result = await apiGetGame(gameNumber);
 
   if (!result || !result.exists) {
-    alert("Game not found.");
+    document.getElementById("lookupStatus").innerText = "Game not found.";
     return;
   }
 
@@ -395,6 +395,7 @@ async function lookupGameNumber() {
   hydrateTimelineFromRow(row);
   goToStep(nextStep);
 }
+
 
 
 
