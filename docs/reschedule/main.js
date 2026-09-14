@@ -277,16 +277,30 @@ function prefillInput(id, field) {
 // TIMELINE HYDRATION
 // ===============================================
 function hydrateTimelineFromRow(row) {
-  document.querySelectorAll(".timeline-step").forEach(el => {
-    const stepNum = Number(el.dataset.step);
-    const fieldName = `step_${stepNum}`;
 
-    if (row[fieldName] === true || row[fieldName] === "true" || row[fieldName] === "completed") {
+  function mark(step, complete) {
+    const el = document.getElementById(`step_${step}`);
+    if (!el) return;
+
+    el.classList.remove("completed", "locked", "current");
+
+    if (complete) {
       el.classList.add("completed");
+    } else if (step === currentStep) {
+      el.classList.add("current");
     } else {
-      el.classList.remove("completed");
+      el.classList.add("locked");
     }
-  });
+  }
+
+  mark(2, isStepComplete(2));
+  mark(3, isStepComplete(3));
+  mark(4, isStepComplete(4));
+  mark(5, isStepComplete(5));
+  mark(6, isStepComplete(6));
+  mark(7, isStepComplete(7));
+  mark(8, isStepComplete(8));
+  mark(9, isStepComplete(9));
 }
 
 
@@ -497,12 +511,93 @@ function renderPanelForStep(step) {
   }
 }
 
-function goToStep(step) {
-  currentStep = step;
-  setActiveTimelineStep(step);
-  renderPanelForStep(step);
+function isStepComplete(step) {
+  const f = (name) => getField(name);
+
+  switch (step) {
+
+    case 2:
+      return (
+        f("age_division") &&
+        f("team_name") &&
+        f("is_haysa_home") &&
+        f("orig_date") &&
+        f("orig_time") &&
+        f("orig_field")
+      );
+
+    case 3:
+      return (
+        f("coach_name") &&
+        f("coach_email") &&
+        f("coach_phone") &&
+        f("opp_coach_name") &&
+        f("opp_coach_email") &&
+        f("opp_coach_phone") &&
+        f("away_team") &&
+        f("opp_town")
+      );
+
+    case 4:
+      return (
+        f("is_haysa_home_final") &&
+        f("final_date") &&
+        f("final_time") &&
+        f("final_field")
+      );
+
+    case 5:
+      return f("field_hold_status") === "completed";
+
+    case 6:
+      return f("haysa_approval") === "approved";
+
+    case 7:
+      return (
+        f("certified") === "true" &&
+        f("signed_name")
+      );
+
+    case 8:
+      return f("calendar_updated") === "true";
+
+    case 9:
+      return f("step_9") === "completed";
+
+    default:
+      return false;
+  }
 }
 
+
+
+function goToStep(step) {
+
+  // Prevent skipping ahead
+  for (let s = 2; s < step; s++) {
+    if (!isStepComplete(s)) {
+      alert(`You must complete Step ${s} before continuing.`);
+      return;
+    }
+  }
+
+  currentStep = step;
+
+  const panel = document.getElementById("stepPanel");
+
+  switch (step) {
+    case 2: renderStep2(panel); break;
+    case 3: renderStep3(panel); break;
+    case 4: renderStep4(panel); break;
+    case 5: renderStep5(panel); break;
+    case 6: renderStep6(panel); break;
+    case 7: renderStep7(panel); break;
+    case 8: renderStep8(panel); break;
+    case 9: renderStep9(panel); break;
+  }
+
+  highlightStepInTimeline(step);
+}
 
 
 function showWorkflowUI() {
