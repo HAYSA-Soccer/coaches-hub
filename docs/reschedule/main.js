@@ -878,45 +878,88 @@ function renderStep6(panel) {
 
 // STEP 7 — SSSL Form (uses gameChangeForm + signature)
 function renderStep7(panel) {
+
+  const fd = (name) => getField(name) || "";
+
+  const isHomeOriginal = fd("is_haysa_home") === "true";
+  const isHomeFinal = fd("is_haysa_home_final") === "true";
+
+  const oppTown = fd("opp_town");
+  const awayTeam = fd("away_team");
+  const teamName = fd("team_name");
+
+  // Determine home/away for original
+  const homeTeamOriginal = isHomeOriginal ? teamName : awayTeam;
+  const awayTeamOriginal = isHomeOriginal ? awayTeam : teamName;
+
+  // Determine home/away for final
+  const homeTeamFinal = isHomeFinal ? teamName : awayTeam;
+  const awayTeamFinal = isHomeFinal ? awayTeam : teamName;
+
   panel.innerHTML = `
-    <h2>Step 7 — SSSL Form</h2>
-    <p>Complete the SSSL reschedule form below.</p>
+    <h2>Step 7 — SSSL Form Auto‑Fill</h2>
+    <p>Review and confirm the SSSL reschedule form details.</p>
+
+    <h3>Team Information</h3>
+    <div class="sssl-field">Age/Gender/Division: <strong>${fd("age_division")}</strong></div>
+    <div class="sssl-field">Team Name: <strong>${teamName}</strong></div>
+
+    <h3>Original Game</h3>
+    <div class="sssl-field">Home Team: <strong>${homeTeamOriginal}</strong></div>
+    <div class="sssl-field">Away Team: <strong>${awayTeamOriginal}</strong></div>
+    <div class="sssl-field">Date: <strong>${fd("orig_date")}</strong></div>
+    <div class="sssl-field">Time: <strong>${fd("orig_time")}</strong></div>
+    <div class="sssl-field">Location: <strong>${fd("orig_field")}</strong></div>
+
+    <h3>New Game</h3>
+    <div class="sssl-field">Home Team: <strong>${homeTeamFinal}</strong></div>
+    <div class="sssl-field">Away Team: <strong>${awayTeamFinal}</strong></div>
+    <div class="sssl-field">Date: <strong>${fd("final_date")}</strong></div>
+    <div class="sssl-field">Time: <strong>${fd("final_time")}</strong></div>
+    <div class="sssl-field">Location: <strong>${fd("final_field")}</strong></div>
+
+    <h3>Coach Contact</h3>
+    <div class="sssl-field">Coach Name: <strong>${fd("coach_name")}</strong></div>
+    <div class="sssl-field">Coach Phone: <strong>${fd("coach_phone")}</strong></div>
+
+    <h3>Opposing Coach Contact</h3>
+    <div class="sssl-field">Opposing Coach Name: <strong>${fd("opp_coach_name")}</strong></div>
+    <div class="sssl-field">Opposing Coach Email: <strong>${fd("opp_coach_email")}</strong></div>
+    <div class="sssl-field">Opposing Coach Phone: <strong>${fd("opp_coach_phone")}</strong></div>
+
+    <h3>Certification</h3>
+    <label><input type="checkbox" id="certified" ${fd("certified")==="true"?"checked":""}> I certify the opposing coach agreed to this change.</label>
+
+    <label>Signed Name</label>
+    <input type="text" id="signed_name" value="${fd("signed_name")}">
+
+    <button id="s7_save" class="primary-btn">Save SSSL Form Details</button>
   `;
 
-  const fs = document.getElementById("formSection");
-  if (fs) fs.style.display = "block";
+  document.getElementById("s7_save").onclick = async () => {
 
-  function fill(name, value) {
-    const el = document.querySelector(`[name='${name}']`);
-    if (el) el.value = value || "";
-  }
+    const certified = document.getElementById("certified").checked;
+    const signedName = document.getElementById("signed_name").value.trim();
 
-  fill("game_number", currentGameNumber);
-  fill("team_name", getField("team_name"));
+    if (!certified) {
+      alert("You must certify that the opposing coach agreed.");
+      return;
+    }
 
-  fill("orig_date", getField("orig_date"));
-  fill("orig_time", getField("orig_time"));
-  fill("orig_field", getField("orig_field"));
+    if (!signedName) {
+      alert("Signed name is required.");
+      return;
+    }
 
-  fill("final_date", getField("final_date"));
-  fill("final_time", getField("final_time"));
-  fill("final_field", getField("final_field"));
+    await setField("certified", certified ? "true" : "false");
+    await setField("signed_name", signedName);
 
-  fill("coach_name", getField("coach_name"));
-  fill("coach_email", getField("coach_email"));
-  fill("coach_phone", getField("coach_phone"));
+    await apiUpdateStep(currentGameNumber, 7);
+    currentRowData.step_7 = "completed";
+    hydrateTimelineFromRow(currentRowData);
 
-  fill("opp_coach_name", getField("opp_coach_name"));
-  fill("opp_coach_phone", getField("opp_coach_phone"));
-
-  initGameChangeForm();
-}
-
-
-
-function resumeGame(gameNumber) {
-  document.getElementById("lookupGameNumber").value = gameNumber;
-  lookupGameNumber();
+    alert("SSSL form details saved.");
+  };
 }
 
 
@@ -946,6 +989,33 @@ function renderStep8(panel) {
 
 // STEP 9 — Finalize Request
 function renderStep9(panel) {
+
+  const row = currentRowData;
+
+  function isComplete() {
+    const required = [
+      "age_division",
+      "team_name",
+      "is_haysa_home",
+      "orig_date",
+      "orig_time",
+      "orig_field",
+      "is_haysa_home_final",
+      "final_date",
+      "final_time",
+      "final_field",
+      "coach_name",
+      "coach_phone",
+      "opp_coach_name",
+      "opp_coach_email",
+      "opp_coach_phone",
+      "certified",
+      "signed_name"
+    ];
+
+    return required.every(f => row[f] && row[f] !== "" && row[f] !== "TBD");
+  }
+
   panel.innerHTML = `
     <h2>Step 9 — Finalize Request</h2>
     <p>Download the completed form and record any final notes.</p>
@@ -958,12 +1028,18 @@ function renderStep9(panel) {
     <button id="s9_save" class="secondary-btn">Mark Request Complete</button>
   `;
 
-  // ⭐ NEW: Download DOCX instead of PDF
+  // ⭐ Download DOCX
   document.getElementById("s9_download").onclick = () => {
     downloadSSSLForm();
   };
 
   document.getElementById("s9_save").onclick = async () => {
+
+    if (!isComplete()) {
+      alert("Some required fields are missing. Please review all steps before finalizing.");
+      return;
+    }
+
     await setField("notes", document.getElementById("notes").value);
 
     await apiUpdateStep(currentGameNumber, 9);
