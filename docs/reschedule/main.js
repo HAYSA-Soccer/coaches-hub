@@ -1,3 +1,40 @@
+// ===============================
+// API LAYER
+// ===============================
+
+// Fetch a single game row by game number
+async function apiGetGame(gameNumber) {
+  const url = `https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec?action=getRow&game_number=${gameNumber}`;
+
+  try {
+    const response = await fetch(url, { method: "GET" });
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error("apiGetGame error:", err);
+    return null;
+  }
+}
+
+// Fetch ALL rows for landing page
+async function apiGetAllRows() {
+  const url = `https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec?action=getAll`;
+
+  try {
+    const response = await fetch(url, { method: "GET" });
+    if (!response.ok) return [];
+
+    const data = await response.json();
+    return data.rows || [];
+  } catch (err) {
+    console.error("apiGetAllRows error:", err);
+    return [];
+  }
+}
+
+
 // ===============================================
 // INIT
 // ===============================================
