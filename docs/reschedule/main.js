@@ -289,7 +289,6 @@ async function lookupGameNumber() {
   currentGameNumber = gameNumber;
   currentRowData = row;
 
-  // Hydrate all fields into memory
   hydrateFieldsFromRow(row);
 
   // Determine next incomplete step
@@ -303,12 +302,10 @@ async function lookupGameNumber() {
 
   // Hide landing page, show workflow
   document.getElementById("landingPage").style.display = "none";
-  document.getElementById("workflowPage").style.display = "block";
+  document.getElementById("workflowContainer").style.display = "block";
 
-  // Update timeline
   hydrateTimelineFromRow(row);
 
-  // Jump to next incomplete step
   goToStep(nextStep);
 }
 
