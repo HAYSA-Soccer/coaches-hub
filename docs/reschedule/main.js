@@ -543,14 +543,32 @@ function renderStep2(panel) {
     <h2>Step 2 — Original Game Details</h2>
     <p>Enter the current/original game details.</p>
 
-    <label>Age / Gender / Division</label>
-    <input type="text" id="age_division" value="${getField("age_division") || ""}">
+    <h3>Team Identity</h3>
 
-    <label>Home Team</label>
-    <input type="text" id="home_team" value="${getField("home_team") || ""}">
+    <label>Age Group (e.g., 5/6, 7/8)</label>
+    <input type="text" id="age_group" value="${getField("age_group") || ""}">
 
-    <label>Your Team Name</label>
-    <input type="text" id="team_name" value="${getField("team_name") || ""}">
+    <label>Gender</label>
+    <select id="gender">
+      <option value="">Select…</option>
+      <option value="Girls" ${getField("gender")==="Girls"?"selected":""}>Girls</option>
+      <option value="Boys" ${getField("gender")==="Boys"?"selected":""}>Boys</option>
+    </select>
+
+    <label>Division (Presidents, 6.2, etc.)</label>
+    <input type="text" id="division" value="${getField("division") || ""}">
+
+    <label>Coach Last Name</label>
+    <input type="text" id="coach_last_name" value="${getField("coach_last_name") || ""}">
+
+    <label>Is HAYSA the Home Team?</label>
+    <select id="is_haysa_home">
+      <option value="">Select…</option>
+      <option value="true" ${getField("is_haysa_home")==="true"?"selected":""}>Home</option>
+      <option value="false" ${getField("is_haysa_home")==="false"?"selected":""}>Away</option>
+    </select>
+
+    <h3>Original Game Details</h3>
 
     <label>Original Date</label>
     <input type="date" id="orig_date" value="${getField("orig_date") || ""}">
@@ -558,52 +576,47 @@ function renderStep2(panel) {
     <label>Original Time</label>
     <input type="time" id="orig_time" value="${getField("orig_time") || ""}">
 
-    <label>Current Game Location (Field)</label>
+    <label>Original Field</label>
     <input type="text" id="orig_field" value="${getField("orig_field") || ""}">
 
     <button id="s2_save" class="primary-btn">Save Original Details</button>
   `;
 
-  // ⭐ Warning if any required fields are missing
-  if (!getField("age_division") ||
-      !getField("home_team") ||
-      !getField("orig_date") ||
-      !getField("orig_time") ||
-      !getField("orig_field")) {
-
-    const warn = document.createElement("div");
-    warn.style.background = "#ffe8e8";
-    warn.style.border = "1px solid #cc0000";
-    warn.style.padding = "10px";
-    warn.style.marginBottom = "15px";
-    warn.style.borderRadius = "6px";
-    warn.innerHTML = `
-      <strong>Original game details are incomplete.</strong><br>
-      Please enter age/division, home team, date, time, and field before continuing.
-    `;
-    panel.prepend(warn);
-  }
-
   document.getElementById("s2_save").onclick = async () => {
-    const ageDiv = document.getElementById("age_division").value.trim();
-    const homeTeam = document.getElementById("home_team").value.trim();
-    const team = document.getElementById("team_name").value.trim();
-    const date = document.getElementById("orig_date").value;
-    const time = document.getElementById("orig_time").value;
-    const field = document.getElementById("orig_field").value.trim();
 
-    // ⭐ Prevent marking complete if fields are missing
-    if (!ageDiv || !homeTeam || !team || !date || !time || !field) {
+    const ageGroup = document.getElementById("age_group").value.trim();
+    const gender = document.getElementById("gender").value;
+    const division = document.getElementById("division").value.trim();
+    const coachLast = document.getElementById("coach_last_name").value.trim();
+    const isHome = document.getElementById("is_haysa_home").value;
+
+    const origDate = document.getElementById("orig_date").value;
+    const origTime = document.getElementById("orig_time").value;
+    const origField = document.getElementById("orig_field").value.trim();
+
+    if (!ageGroup || !gender || !division || !coachLast || !isHome ||
+        !origDate || !origTime || !origField) {
       alert("Please complete all fields before saving.");
       return;
     }
 
-    await setField("age_division", ageDiv);
-    await setField("home_team", homeTeam);
-    await setField("team_name", team);
-    await setField("orig_date", date);
-    await setField("orig_time", time);
-    await setField("orig_field", field);
+    // Auto-build composite fields
+    const ageDivision = `${ageGroup} ${gender} ${division}`;
+    const teamName = `${ageGroup} ${gender} (${coachLast})`;
+
+    await setField("age_group", ageGroup);
+    await setField("gender", gender);
+    await setField("division", division);
+    await setField("coach_last_name", coachLast);
+
+    await setField("age_division", ageDivision);
+    await setField("team_name", teamName);
+
+    await setField("is_haysa_home", isHome);
+
+    await setField("orig_date", origDate);
+    await setField("orig_time", origTime);
+    await setField("orig_field", origField);
 
     await apiUpdateStep(currentGameNumber, 2);
     currentRowData.step_2 = "completed";
@@ -612,6 +625,7 @@ function renderStep2(panel) {
     alert("Original details saved.");
   };
 }
+
 
 // STEP 3 — Coach + Opponent Contact Info
 function renderStep3(panel) {
