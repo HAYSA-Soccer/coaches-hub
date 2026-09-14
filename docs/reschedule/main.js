@@ -915,26 +915,39 @@ function renderStep4(panel) {
 
 // STEP 5 — Field Hold (home game)
 function renderStep5(panel) {
+
+  const status = getField("field_hold_status") || "";
+
   panel.innerHTML = `
     <h2>Step 5 — Field Hold</h2>
-    <p>Record whether the field has been requested and confirmed.</p>
+    <p>If required, request a field hold for the new game location.</p>
 
-    <label>Field Requested?</label>
-    <input type="text" id="field_requested" value="${getField("field_requested") || ""}">
-
-    <label>Field Confirmed?</label>
-    <input type="text" id="field_confirmed" value="${getField("field_confirmed") || ""}">
+    <label>Field Hold Status</label>
+    <select id="field_hold_status">
+      <option value="">Select…</option>
+      <option value="not_needed" ${status==="not_needed"?"selected":""}>Not Needed</option>
+      <option value="requested" ${status==="requested"?"selected":""}>Requested</option>
+      <option value="completed" ${status==="completed"?"selected":""}>Completed</option>
+    </select>
 
     <button id="s5_save" class="primary-btn">Save Field Hold Status</button>
   `;
 
   document.getElementById("s5_save").onclick = async () => {
-    await setField("field_requested", document.getElementById("field_requested").value);
-    await setField("field_confirmed", document.getElementById("field_confirmed").value);
+    const newStatus = document.getElementById("field_hold_status").value;
 
-    await apiUpdateStep(currentGameNumber, 5);
-    currentRowData.step_5 = "completed";
-    hydrateTimelineFromRow(currentRowData);
+    if (!newStatus) {
+      alert("Please select a field hold status.");
+      return;
+    }
+
+    await setField("field_hold_status", newStatus);
+
+    if (newStatus === "completed") {
+      await apiUpdateStep(currentGameNumber, 5);
+      currentRowData.step_5 = "completed";
+      hydrateTimelineFromRow(currentRowData);
+    }
 
     alert("Field hold status saved.");
   };
