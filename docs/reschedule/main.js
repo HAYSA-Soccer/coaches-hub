@@ -6,7 +6,8 @@
 async function apiGetGame(gameNumber) {
   const url = `https://script.google.com/macros/s/AKfycbz14OzCFeMIyWMY6FRLckWwgBBtlLej71cDkYNb-qGEISJVHHWSe57Tp_49wHmwlRTQ/exec?action=getRow&game_number=${gameNumber}`;
 
-  
+  console.log("apiGetGame sending:", gameNumber);
+  console.log("Full URL:", url);
 
   try {
     const response = await fetch(url, { method: "GET" });
