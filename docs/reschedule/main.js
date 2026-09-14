@@ -24,10 +24,10 @@ function formatTime(t) {
 function computeStatus(row) {
   const highest = getHighestCompletedStep(row);
 
-  if (highest >= 12) return "Completed";
-  if (highest >= 10) return "Calendar Updated";
-  if (highest >= 9) return "Approved";
-  if (highest >= 7) return "Awaiting HAYSA";
+  if (highest >= 9) return "Finalized";
+  if (highest >= 8) return "Calendar Updated";
+  if (highest >= 7) return "SSSL Form Ready";
+  if (highest >= 6) return "Awaiting HAYSA Approval";
   if (highest >= 4) return "Awaiting Opponent";
   return "Drafting Options";
 }
