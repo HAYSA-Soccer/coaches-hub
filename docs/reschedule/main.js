@@ -307,9 +307,6 @@ async function resumeGame(gameNumber) {
 
 
 
-// ===============================================
-// LOOKUP FLOW (ONE GAME NUMBER PER ROW)
-// ===============================================
 async function lookupGameNumber() {
   const gameNumber = document.getElementById("lookupGameNumber").value.trim();
   if (!gameNumber) {
