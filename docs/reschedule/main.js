@@ -327,12 +327,14 @@ function hydrateTimelineFromRow(row) {
 
 
 async function resumeGame(gameNumber) {
-  const row = await apiGetGame(gameNumber);
+  const result = await apiGetGame(gameNumber);
 
-  if (!row) {
+  if (!result || !result.exists) {
     alert("Game not found.");
     return;
   }
+
+  const row = result.data;
 
   currentGameNumber = gameNumber;
   currentRowData = row;
@@ -347,11 +349,11 @@ async function resumeGame(gameNumber) {
     }
   }
 
-  showWorkflowUI();   // ← REQUIRED
-
+  showWorkflowUI();
   hydrateTimelineFromRow(row);
   goToStep(nextStep);
 }
+
 
 
 function hydrateFieldsFromRow(row) {
@@ -367,12 +369,14 @@ async function lookupGameNumber() {
     return;
   }
 
-  const row = await apiGetGame(gameNumber);
+  const result = await apiGetGame(gameNumber);
 
-  if (!row) {
+  if (!result || !result.exists) {
     alert("Game not found.");
     return;
   }
+
+  const row = result.data;
 
   currentGameNumber = gameNumber;
   currentRowData = row;
@@ -387,8 +391,7 @@ async function lookupGameNumber() {
     }
   }
 
-  showWorkflowUI();   // ← REQUIRED
-
+  showWorkflowUI();
   hydrateTimelineFromRow(row);
   goToStep(nextStep);
 }
