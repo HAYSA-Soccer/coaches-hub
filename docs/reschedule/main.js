@@ -4,7 +4,9 @@
 
 // Fetch a single game row by game number
 async function apiGetGame(gameNumber) {
-  const url = `https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec?action=getRow&game_number=${gameNumber}`;
+  const url = `https://script.google.com/macros/s/AKfycbz14OzCFeMIyWMY6FRLckWwgBBtlLej71cDkYNb-qGEISJVHHWSe57Tp_49wHmwlRTQ/exec?action=getRow&game_number=${gameNumber}`;
+
+  
 
   try {
     const response = await fetch(url, { method: "GET" });
@@ -20,7 +22,7 @@ async function apiGetGame(gameNumber) {
 
 // Fetch ALL rows for landing page
 async function apiGetAllRows() {
-  const url = `https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec?action=getAll`;
+  const url = `https://script.google.com/macros/s/AKfycbz14OzCFeMIyWMY6FRLckWwgBBtlLej71cDkYNb-qGEISJVHHWSe57Tp_49wHmwlRTQ/exec?action=getAll`;
 
   try {
     const response = await fetch(url, { method: "GET" });
