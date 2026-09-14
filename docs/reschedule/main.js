@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Load saved requests into landing page
   loadSubmittedRequests();
 
-  // Hydrate timeline from currentRowData if available
+  // Hydrate timeline if a row is already loaded
   if (currentRowData) {
     hydrateTimelineFromRow(currentRowData);
   }
@@ -590,6 +590,7 @@ function showWorkflowUI() {
   document.getElementById("panelContainer").style.display = "block";
   document.getElementById("nextStepContainer").style.display = "block";
 }
+
 
 
 
