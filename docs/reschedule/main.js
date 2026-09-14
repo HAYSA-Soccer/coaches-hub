@@ -269,6 +269,43 @@ function hydrateTimelineFromRow(row) {
 }
 
 
+
+async function resumeGame(gameNumber) {
+  const row = await apiGetGame(gameNumber);
+
+  if (!row) {
+    alert("Game not found.");
+    return;
+  }
+
+  currentGameNumber = gameNumber;
+  currentRowData = row;
+
+  // Load all fields into memory
+  hydrateFieldsFromRow(row);
+
+  // Determine next incomplete step
+  let nextStep = 2;
+  for (let s = 2; s <= 9; s++) {
+    if (!isStepComplete(s)) {
+      nextStep = s;
+      break;
+    }
+  }
+
+  // Hide landing page, show workflow
+  document.getElementById("landingPage").style.display = "none";
+  document.getElementById("workflowContainer").style.display = "block";
+
+  // Update timeline
+  hydrateTimelineFromRow(row);
+
+  // Jump to correct step
+  goToStep(nextStep);
+}
+
+
+
 // ===============================================
 // LOOKUP FLOW (ONE GAME NUMBER PER ROW)
 // ===============================================
