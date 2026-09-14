@@ -330,7 +330,7 @@ async function resumeGame(gameNumber) {
   const result = await apiGetGame(gameNumber);
 
   if (!result || !result.exists) {
-    alert("Game not found.");
+    document.getElementById("lookupStatus").innerText = "Game not found.";
     return;
   }
 
