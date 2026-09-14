@@ -341,6 +341,9 @@ async function resumeGame(gameNumber) {
 }
 
 
+function hydrateFieldsFromRow(row) {
+  console.log("hydrateFieldsFromRow called with:", row);
+}
 
 
 
