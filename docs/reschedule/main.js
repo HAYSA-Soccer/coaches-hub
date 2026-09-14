@@ -57,6 +57,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+function highlightStepInTimeline(step) {
+  const steps = document.querySelectorAll(".timeline-step");
+
+  steps.forEach(el => {
+    const s = parseInt(el.getAttribute("data-step"), 10);
+
+    if (s === step) {
+      el.classList.add("active-step");
+    } else {
+      el.classList.remove("active-step");
+    }
+  });
+}
+
+
+
 
 function formatTime(t) {
   if (!t) return "";
