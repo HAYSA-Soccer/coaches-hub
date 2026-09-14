@@ -608,6 +608,14 @@ function renderStep3(panel) {
     <label>Opposing Coach Phone</label>
     <input type="tel" id="opp_coach_phone" value="${getField("opp_coach_phone") || ""}">
 
+    <h3>Opponent Team Info</h3>
+
+    <label>Away Team Name (as shown in SSSL schedule)</label>
+    <input type="text" id="away_team" value="${getField("away_team") || ""}">
+
+    <label>Opponent Town</label>
+    <input type="text" id="opp_town" value="${getField("opp_town") || ""}">
+
     <button id="s3_save" class="primary-btn">Save Contact Details</button>
   `;
 
@@ -621,14 +629,16 @@ function renderStep3(panel) {
     const oppEmail = document.getElementById("opp_coach_email").value.trim();
     const oppPhone = document.getElementById("opp_coach_phone").value.trim();
 
-    // ⭐ Prevent marking complete if fields are missing
+    const awayTeam = document.getElementById("away_team").value.trim();
+    const oppTown = document.getElementById("opp_town").value.trim();
+
     if (!coachName || !coachEmail || !coachPhone ||
-        !oppName || !oppEmail || !oppPhone) {
-      alert("Please complete all contact fields before saving.");
+        !oppName || !oppEmail || !oppPhone ||
+        !awayTeam || !oppTown) {
+      alert("Please complete all fields before saving.");
       return;
     }
 
-    // Save fields
     await setField("coach_name", coachName);
     await setField("coach_email", coachEmail);
     await setField("coach_phone", coachPhone);
@@ -637,7 +647,9 @@ function renderStep3(panel) {
     await setField("opp_coach_email", oppEmail);
     await setField("opp_coach_phone", oppPhone);
 
-    // Mark step complete
+    await setField("away_team", awayTeam);
+    await setField("opp_town", oppTown);
+
     await apiUpdateStep(currentGameNumber, 3);
     currentRowData.step_3 = "completed";
     hydrateTimelineFromRow(currentRowData);
