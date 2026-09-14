@@ -34,6 +34,14 @@ p {
 
 
 
+.timeline-step.active-step {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+
+
 /* ============================================
    STEP PANEL WRAPPER
    ============================================ */
