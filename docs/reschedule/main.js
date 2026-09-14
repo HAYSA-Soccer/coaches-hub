@@ -8,19 +8,13 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("timelineContainer").style.display = "none";
   document.getElementById("panelContainer").style.display = "none";
   document.getElementById("nextStepContainer").style.display = "none";
+  document.getElementById("backToListContainer").style.display = "none";
   document.getElementById("formSection").style.display = "none";
 
-  // Initialize timeline UI (empty)
   initTimeline();
-
-  // Load saved requests into landing page
   loadSubmittedRequests();
-
-  // Hydrate timeline if a row is already loaded
-  if (currentRowData) {
-    hydrateTimelineFromRow(currentRowData);
-  }
 });
+
 
 
 
@@ -291,10 +285,8 @@ async function resumeGame(gameNumber) {
   currentGameNumber = gameNumber;
   currentRowData = row;
 
-  // Load all fields into memory
   hydrateFieldsFromRow(row);
 
-  // Determine next incomplete step
   let nextStep = 2;
   for (let s = 2; s <= 9; s++) {
     if (!isStepComplete(s)) {
@@ -303,17 +295,13 @@ async function resumeGame(gameNumber) {
     }
   }
 
-  // Hide landing page, show workflow
-  document.getElementById("landingPage").style.display = "none";
-  document.getElementById("workflowPage").style.display = "block";
+  showWorkflowUI();   // ← REQUIRED
 
-
-  // Update timeline
   hydrateTimelineFromRow(row);
-
-  // Jump to correct step
   goToStep(nextStep);
 }
+
+
 
 
 
@@ -336,7 +324,6 @@ async function lookupGameNumber() {
 
   hydrateFieldsFromRow(row);
 
-  // Determine next incomplete step
   let nextStep = 2;
   for (let s = 2; s <= 9; s++) {
     if (!isStepComplete(s)) {
@@ -345,15 +332,12 @@ async function lookupGameNumber() {
     }
   }
 
-  // Hide landing page, show workflow
-  document.getElementById("landingPage").style.display = "none";
-  document.getElementById("workflowPage").style.display = "block";
-
+  showWorkflowUI();   // ← REQUIRED
 
   hydrateTimelineFromRow(row);
-
   goToStep(nextStep);
 }
+
 
 
 
@@ -589,7 +573,9 @@ function showWorkflowUI() {
   document.getElementById("timelineContainer").style.display = "flex";
   document.getElementById("panelContainer").style.display = "block";
   document.getElementById("nextStepContainer").style.display = "block";
+  document.getElementById("backToListContainer").style.display = "block";
 }
+
 
 
 
