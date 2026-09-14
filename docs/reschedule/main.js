@@ -105,70 +105,35 @@ async function apiGetAllRows() {
 
 
 async function loadSubmittedRequests() {
-  let rows = await apiGetAllRows();
+  const rows = await apiGetAllRows();
   const list = document.getElementById("submittedList");
 
   list.innerHTML = "";
 
-  if (!rows.length) {
-    list.innerHTML = `<div class="info-text">No reschedules found.</div>`;
-    return;
-  }
-
-  // Sort newest first
-  rows.sort((a, b) => new Date(b.last_updated) - new Date(a.last_updated));
-
-  const table = document.createElement("table");
-  table.className = "reschedule-table";
-
-  table.innerHTML = `
-    <tr>
-      <th>Game #</th>
-      <th>Team</th>
-      <th>Opponent</th>
-      <th>Old Info</th>
-      <th>New Info</th>
-      <th>Status</th>
-      <th>Action</th>
-    </tr>
-  `;
-
   rows.forEach(row => {
-    const status = computeStatus(row);
+    if (row.game_number) {
 
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${row.game_number}</td>
-      <td>${row.team_name || ""}</td>
-      <td>
-        ${row.opp_coach_name || ""}<br>
-        ${row.opp_coach_email || ""}<br>
-        ${row.opp_coach_phone || ""}
-      </td>
-      <td>
-        ${formatDate(row.orig_date)}<br>
-        ${formatTime(row.orig_time)}<br>
-        ${row.orig_field}
-      </td>
-      <td>
-        ${formatDate(row.final_date)}<br>
-        ${formatTime(row.final_time)}<br>
-        ${row.final_field}
-      </td>
-      <td>${status}</td>
-      <td>
-        <button class="primary-btn"
-          onclick="resumeGame('${row.game_number}'); showWorkflowUI(); hideLandingPage();">
-          Resume
-        </button>
-      </td>
-    `;
-    table.appendChild(tr);
+      // Determine next incomplete step
+      let nextStep = 2;
+      for (let s = 2; s <= 9; s++) {
+        if (!row[`step_${s}`] || row[`step_${s}`] === "" || row[`step_${s}`] === "TBD") {
+          nextStep = s;
+          break;
+        }
+      }
+
+      const div = document.createElement("div");
+      div.className = "submitted-item";
+      div.innerHTML = `
+        <strong>Game #${row.game_number}</strong> — Next Step ${nextStep}
+        <button class="primary-btn" onclick="resumeGame('${row.game_number}')">Resume</button>
+      `;
+      list.appendChild(div);
+    }
   });
 
-  list.appendChild(table);
+  document.getElementById("submittedListContainer").style.display = "block";
 }
-
 
 
 
@@ -308,66 +273,43 @@ function hydrateTimelineFromRow(row) {
 // LOOKUP FLOW (ONE GAME NUMBER PER ROW)
 // ===============================================
 async function lookupGameNumber() {
-  // Hide workflow UI until user chooses Continue or Start New
-  document.getElementById("workflowContainer").style.display = "none";
-  document.getElementById("timelineContainer").style.display = "none";
-  document.getElementById("panelContainer").style.display = "none";
-  document.getElementById("nextStepContainer").style.display = "none";
-  document.getElementById("formSection").style.display = "none";
-
   const gameNumber = document.getElementById("lookupGameNumber").value.trim();
-  const statusEl = document.getElementById("lookupStatus");
-
   if (!gameNumber) {
-    statusEl.textContent = "Please enter a game number.";
+    alert("Please enter a game number.");
     return;
   }
 
-  statusEl.textContent = "Looking up game…";
+  const row = await apiGetGame(gameNumber);
 
-  try {
-    const row = await apiGetRow(gameNumber);
-    currentGameNumber = gameNumber;
-    document.getElementById("form_game_number").value = gameNumber;
-
-    if (row.exists) {
-      currentRowData = row.data || {};
-
-      // ⭐ NEW: hydrate timeline immediately
-      hydrateTimelineFromRow(currentRowData);
-      
-      // ⭐ NEW: show timeline
-      document.getElementById("timelineContainer").style.display = "flex";
-      
-      // ⭐ NEW: compute status for landing page (if needed)
-      const status = computeStatus(currentRowData);
-      
-      statusEl.innerHTML = `
-        <p>Existing request found for Game #${gameNumber}.</p>
-        <button class="primary-btn" onclick="beginWorkflow(); showWorkflowUI(); hideLandingPage();">
-          Continue Request
-        </button>
-      `;
-    } else {
-      // ⭐ NEW: initialize empty row for hydration
-      currentRowData = {};
-      
-      // ⭐ NEW: hydrate timeline (all steps incomplete)
-      hydrateTimelineFromRow(currentRowData);
-      
-      // ⭐ NEW: show timeline
-      document.getElementById("timelineContainer").style.display = "flex";
-      
-      statusEl.innerHTML = `
-        <p>No existing request found for Game #${gameNumber}.</p>
-        <button class="primary-btn" onclick="startNewWorkflow('${gameNumber}'); showWorkflowUI(); hideLandingPage();">
-          Start New Request
-        </button>
-      `;
-    }
-  } catch (err) {
-    statusEl.textContent = "Error loading game. Please try again.";
+  if (!row) {
+    alert("Game not found.");
+    return;
   }
+
+  currentGameNumber = gameNumber;
+  currentRowData = row;
+
+  // Hydrate all fields into memory
+  hydrateFieldsFromRow(row);
+
+  // Determine next incomplete step
+  let nextStep = 2;
+  for (let s = 2; s <= 9; s++) {
+    if (!isStepComplete(s)) {
+      nextStep = s;
+      break;
+    }
+  }
+
+  // Hide landing page, show workflow
+  document.getElementById("landingPage").style.display = "none";
+  document.getElementById("workflowPage").style.display = "block";
+
+  // Update timeline
+  hydrateTimelineFromRow(row);
+
+  // Jump to next incomplete step
+  goToStep(nextStep);
 }
 
 
