@@ -957,30 +957,43 @@ function renderStep5(panel) {
 
 // STEP 6 — HAYSA Approval
 function renderStep6(panel) {
+
+  const approval = getField("haysa_approval") || "";
+
   panel.innerHTML = `
     <h2>Step 6 — HAYSA Approval</h2>
-    <p>Record the HAYSA approval status.</p>
+    <p>The HAYSA board must approve this reschedule request.</p>
 
-    <label>HAYSA Status</label>
-    <input type="text" id="haysa_status" value="${getField("haysa_status") || ""}">
+    <label>Approval Status</label>
+    <select id="haysa_approval">
+      <option value="">Select…</option>
+      <option value="approved" ${approval==="approved"?"selected":""}>Approved</option>
+      <option value="denied" ${approval==="denied"?"selected":""}>Denied</option>
+    </select>
 
-    <label>HAYSA Notes</label>
-    <input type="text" id="haysa_notes" value="${getField("haysa_notes") || ""}">
-
-    <button id="s6_save" class="primary-btn">Save HAYSA Approval</button>
+    <button id="s6_save" class="primary-btn">Save Approval Status</button>
   `;
 
   document.getElementById("s6_save").onclick = async () => {
-    await setField("haysa_status", document.getElementById("haysa_status").value);
-    await setField("haysa_notes", document.getElementById("haysa_notes").value);
+    const newStatus = document.getElementById("haysa_approval").value;
 
-    await apiUpdateStep(currentGameNumber, 6);
-    currentRowData.step_6 = "completed";
-    hydrateTimelineFromRow(currentRowData);
+    if (!newStatus) {
+      alert("Please select an approval status.");
+      return;
+    }
 
-    alert("HAYSA approval saved.");
+    await setField("haysa_approval", newStatus);
+
+    if (newStatus === "approved") {
+      await apiUpdateStep(currentGameNumber, 6);
+      currentRowData.step_6 = "completed";
+      hydrateTimelineFromRow(currentRowData);
+    }
+
+    alert("Approval status saved.");
   };
 }
+
 
 
 
@@ -1073,26 +1086,43 @@ function renderStep7(panel) {
 
 // STEP 8 — Calendar Update
 function renderStep8(panel) {
+
+  const updated = getField("calendar_updated") || "";
+
   panel.innerHTML = `
     <h2>Step 8 — Calendar Update</h2>
-    <p>Record whether the calendar has been updated.</p>
+    <p>Confirm that the new game date/time/location has been added to your calendar.</p>
 
     <label>Calendar Updated?</label>
-    <input type="text" id="calendar_updated" value="${getField("calendar_updated") || ""}">
+    <select id="calendar_updated">
+      <option value="">Select…</option>
+      <option value="true" ${updated==="true"?"selected":""}>Yes</option>
+      <option value="false" ${updated==="false"?"selected":""}>No</option>
+    </select>
 
-    <button id="s8_save" class="primary-btn">Save Calendar Update</button>
+    <button id="s8_save" class="primary-btn">Save Calendar Update Status</button>
   `;
 
   document.getElementById("s8_save").onclick = async () => {
-    await setField("calendar_updated", document.getElementById("calendar_updated").value);
+    const newStatus = document.getElementById("calendar_updated").value;
 
-    await apiUpdateStep(currentGameNumber, 8);
-    currentRowData.step_8 = "completed";
-    hydrateTimelineFromRow(currentRowData);
+    if (!newStatus) {
+      alert("Please select a calendar update status.");
+      return;
+    }
 
-    alert("Calendar update saved.");
+    await setField("calendar_updated", newStatus);
+
+    if (newStatus === "true") {
+      await apiUpdateStep(currentGameNumber, 8);
+      currentRowData.step_8 = "completed";
+      hydrateTimelineFromRow(currentRowData);
+    }
+
+    alert("Calendar update status saved.");
   };
 }
+
 
 
 // STEP 9 — Finalize Request
