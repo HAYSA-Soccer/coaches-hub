@@ -123,24 +123,20 @@ function apiGetRow(gameNumber) {
 
 
 async function apiGetAllRows() {
+  const url = `https://script.google.com/macros/s/AKfycbz14OzCFeMIyWMY6FRLckWwgBBtlLej71cDkYNb-qGEISJVHHWSe57Tp_49wHmwlRTQ/exec?action=getAllRows`;
+
   try {
-    const res = await fetch(API_URL + "?action=getAllRows");
-    const json = await res.json();
+    const response = await fetch(url, { method: "GET" });
+    if (!response.ok) return [];
 
-    if (json && Array.isArray(json.rows)) {
-      return json.rows;
-    }
-
-    if (Array.isArray(json)) {
-      return json;
-    }
-
-    return [];
+    const data = await response.json();
+    return data.rows || [];
   } catch (err) {
-    console.error("apiGetAllRows failed:", err);
+    console.error("apiGetAllRows error:", err);
     return [];
   }
 }
+
 
 
 
