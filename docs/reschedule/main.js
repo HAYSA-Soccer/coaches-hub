@@ -613,7 +613,6 @@ function renderStep2(panel) {
   };
 }
 
-
 // STEP 3 — Coach + Opponent Contact Info
 function renderStep3(panel) {
   panel.innerHTML = `
@@ -666,6 +665,7 @@ function renderStep3(panel) {
     const awayTeam = document.getElementById("away_team").value.trim();
     const oppTown = document.getElementById("opp_town").value.trim();
 
+    // ⭐ Prevent marking complete if fields are missing
     if (!coachName || !coachEmail || !coachPhone ||
         !oppName || !oppEmail || !oppPhone ||
         !awayTeam || !oppTown) {
@@ -676,30 +676,23 @@ function renderStep3(panel) {
     await apiUpdateField(currentGameNumber, "coach_name", coachName);
     await apiUpdateField(currentGameNumber, "coach_email", coachEmail);
     await apiUpdateField(currentGameNumber, "coach_phone", coachPhone);
-    
+
     await apiUpdateField(currentGameNumber, "opp_coach_name", oppName);
     await apiUpdateField(currentGameNumber, "opp_coach_email", oppEmail);
     await apiUpdateField(currentGameNumber, "opp_coach_phone", oppPhone);
-    
+
     await apiUpdateField(currentGameNumber, "away_team", awayTeam);
     await apiUpdateField(currentGameNumber, "opp_town", oppTown);
-    
+
     await apiUpdateStep(currentGameNumber, 3);
     currentRowData.step_3 = "completed";
     hydrateTimelineFromRow(currentRowData);
-    
+
     alert("Contact details saved.");
   };
 }
 
 
-
-
-
-
-
-
-// STEP 4 — Final Game Details (New Schedule) + Clean Comparison + Auto-Fill
 // STEP 4 — Final Game Details (New Schedule) + Clean Comparison + Auto-Fill
 function renderStep4(panel) {
 
