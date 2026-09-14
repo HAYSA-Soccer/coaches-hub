@@ -543,7 +543,13 @@ function renderStep2(panel) {
     <h2>Step 2 — Original Game Details</h2>
     <p>Enter the current/original game details.</p>
 
-    <label>Team Name</label>
+    <label>Age / Gender / Division</label>
+    <input type="text" id="age_division" value="${getField("age_division") || ""}">
+
+    <label>Home Team</label>
+    <input type="text" id="home_team" value="${getField("home_team") || ""}">
+
+    <label>Your Team Name</label>
     <input type="text" id="team_name" value="${getField("team_name") || ""}">
 
     <label>Original Date</label>
@@ -552,14 +558,19 @@ function renderStep2(panel) {
     <label>Original Time</label>
     <input type="time" id="orig_time" value="${getField("orig_time") || ""}">
 
-    <label>Original Field</label>
+    <label>Current Game Location (Field)</label>
     <input type="text" id="orig_field" value="${getField("orig_field") || ""}">
 
     <button id="s2_save" class="primary-btn">Save Original Details</button>
   `;
 
   // ⭐ Warning if any required fields are missing
-  if (!getField("orig_date") || !getField("orig_time") || !getField("orig_field")) {
+  if (!getField("age_division") ||
+      !getField("home_team") ||
+      !getField("orig_date") ||
+      !getField("orig_time") ||
+      !getField("orig_field")) {
+
     const warn = document.createElement("div");
     warn.style.background = "#ffe8e8";
     warn.style.border = "1px solid #cc0000";
@@ -568,23 +579,27 @@ function renderStep2(panel) {
     warn.style.borderRadius = "6px";
     warn.innerHTML = `
       <strong>Original game details are incomplete.</strong><br>
-      Please enter the date, time, and field before continuing.
+      Please enter age/division, home team, date, time, and field before continuing.
     `;
     panel.prepend(warn);
   }
 
   document.getElementById("s2_save").onclick = async () => {
+    const ageDiv = document.getElementById("age_division").value.trim();
+    const homeTeam = document.getElementById("home_team").value.trim();
     const team = document.getElementById("team_name").value.trim();
     const date = document.getElementById("orig_date").value;
     const time = document.getElementById("orig_time").value;
     const field = document.getElementById("orig_field").value.trim();
 
     // ⭐ Prevent marking complete if fields are missing
-    if (!team || !date || !time || !field) {
+    if (!ageDiv || !homeTeam || !team || !date || !time || !field) {
       alert("Please complete all fields before saving.");
       return;
     }
 
+    await setField("age_division", ageDiv);
+    await setField("home_team", homeTeam);
     await setField("team_name", team);
     await setField("orig_date", date);
     await setField("orig_time", time);
