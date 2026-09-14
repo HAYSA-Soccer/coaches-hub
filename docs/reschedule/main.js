@@ -318,6 +318,16 @@ async function lookupGameNumber() {
 
     if (row.exists) {
       currentRowData = row.data || {};
+
+      // ⭐ NEW: hydrate timeline immediately
+      hydrateTimelineFromRow(currentRowData);
+      
+      // ⭐ NEW: show timeline
+      document.getElementById("timelineContainer").style.display = "flex";
+      
+      // ⭐ NEW: compute status for landing page (if needed)
+      const status = computeStatus(currentRowData);
+      
       statusEl.innerHTML = `
         <p>Existing request found for Game #${gameNumber}.</p>
         <button class="primary-btn" onclick="beginWorkflow(); showWorkflowUI(); hideLandingPage();">
@@ -325,6 +335,15 @@ async function lookupGameNumber() {
         </button>
       `;
     } else {
+      // ⭐ NEW: initialize empty row for hydration
+      currentRowData = {};
+      
+      // ⭐ NEW: hydrate timeline (all steps incomplete)
+      hydrateTimelineFromRow(currentRowData);
+      
+      // ⭐ NEW: show timeline
+      document.getElementById("timelineContainer").style.display = "flex";
+      
       statusEl.innerHTML = `
         <p>No existing request found for Game #${gameNumber}.</p>
         <button class="primary-btn" onclick="startNewWorkflow('${gameNumber}'); showWorkflowUI(); hideLandingPage();">
