@@ -660,6 +660,11 @@ function renderStep3(panel) {
 
 
 
+
+
+
+
+
 // STEP 4 — Final Game Details (New Schedule) + Clean Comparison + Auto-Fill
 // STEP 4 — Final Game Details (New Schedule) + Clean Comparison + Auto-Fill
 function renderStep4(panel) {
