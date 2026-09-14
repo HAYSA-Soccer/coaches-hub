@@ -590,7 +590,7 @@ function goToStep(step) {
 
   currentStep = step;
 
-  const panel = document.getElementById("stepPanel");
+  const panel = document.getElementById("panelContainer");
 
   switch (step) {
     case 2: renderStep2(panel); break;
