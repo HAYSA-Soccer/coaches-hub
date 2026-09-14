@@ -4,15 +4,24 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   // Hide workflow UI on landing page
-  document.getElementById("workflowContainer").style.display = "none";
+  document.getElementById("workflowPage").style.display = "none";
   document.getElementById("timelineContainer").style.display = "none";
   document.getElementById("panelContainer").style.display = "none";
   document.getElementById("nextStepContainer").style.display = "none";
   document.getElementById("formSection").style.display = "none";
 
+  // Initialize timeline UI (empty)
   initTimeline();
+
+  // Load saved requests into landing page
   loadSubmittedRequests();
+
+  // Hydrate timeline from currentRowData if available
+  if (currentRowData) {
+    hydrateTimelineFromRow(currentRowData);
+  }
 });
+
 
 
 function formatTime(t) {
@@ -296,7 +305,8 @@ async function resumeGame(gameNumber) {
 
   // Hide landing page, show workflow
   document.getElementById("landingPage").style.display = "none";
-  document.getElementById("workflowContainer").style.display = "block";
+  document.getElementById("workflowPage").style.display = "block";
+
 
   // Update timeline
   hydrateTimelineFromRow(row);
@@ -337,7 +347,8 @@ async function lookupGameNumber() {
 
   // Hide landing page, show workflow
   document.getElementById("landingPage").style.display = "none";
-  document.getElementById("workflowContainer").style.display = "block";
+  document.getElementById("workflowPage").style.display = "block";
+
 
   hydrateTimelineFromRow(row);
 
@@ -544,7 +555,6 @@ function isStepComplete(step) {
 }
 
 
-
 function goToStep(step) {
 
   // Prevent skipping ahead
@@ -575,7 +585,7 @@ function goToStep(step) {
 
 
 function showWorkflowUI() {
-  document.getElementById("workflowContainer").style.display = "block";
+  document.getElementById("workflowPage").style.display = "block";
   document.getElementById("timelineContainer").style.display = "flex";
   document.getElementById("panelContainer").style.display = "block";
   document.getElementById("nextStepContainer").style.display = "block";
