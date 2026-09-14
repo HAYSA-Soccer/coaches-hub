@@ -116,7 +116,7 @@ async function loadSubmittedRequests() {
       // Determine next incomplete step
       let nextStep = 2;
       for (let s = 2; s <= 9; s++) {
-        if (!row[`step_${s}`] || row[`step_${s}`] === "" || row[`step_${s}`] === "TBD") {
+        if (!isStepComplete(s)) {
           nextStep = s;
           break;
         }
@@ -134,6 +134,7 @@ async function loadSubmittedRequests() {
 
   document.getElementById("submittedListContainer").style.display = "block";
 }
+
 
 
 
