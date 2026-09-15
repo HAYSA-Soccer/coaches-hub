@@ -768,10 +768,10 @@ function renderStep2(panel) {
     <h3>Original Game Details</h3>
 
     <label>Original Date</label>
-    <input type="date" id="orig_date" value="${getField("orig_date") || ""}">
+    <input type="date" id="orig_date" value="${getField("orig_date_input") || ""}">
 
     <label>Original Time</label>
-    <input type="time" id="orig_time" value="${getField("orig_time") || ""}">
+    <input type="time" id="orig_time" value="${getField("orig_time_input") || ""}">
 
     <label>Original Field</label>
     <input type="text" id="orig_field" value="${getField("orig_field") || ""}">
@@ -1011,7 +1011,7 @@ function renderStep4(panel) {
     updateChangeHighlights();
     alert("New game details saved.");
   };
-}
+}<input type="date" id="orig_date" value="${getField("orig_date") || ""}">
 
 
 
