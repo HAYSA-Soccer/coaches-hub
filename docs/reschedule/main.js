@@ -120,6 +120,52 @@ function getHighestCompletedStep(row) {
 
 
 
+function buildQuickView(row) {
+  return {
+    game_number: row.game_number,
+    team_name: row.team_name,
+    age_group: row.age_group,
+    gender: row.gender,
+    division: row.division,
+    coach_last_name: row.coach_last_name,
+
+    orig: {
+      date: row.orig_date,
+      time: row.orig_time,
+      field: row.orig_field
+    },
+
+    final: {
+      date: row.final_date,
+      time: row.final_time,
+      field: row.final_field
+    },
+
+    progress: {
+      steps_completed: [
+        row.step_1,
+        row.step_2,
+        row.step_3,
+        row.step_4,
+        row.step_5,
+        row.step_6,
+        row.step_7,
+        row.step_8,
+        row.step_9
+      ].filter(v => v === true).length
+    },
+
+    status: {
+      certified: row.certified,
+      calendar_updated: row.calendar_updated,
+      haysa_status: row.haysa_status
+    }
+  };
+}
+
+
+
+
 // ===============================================
 // API HELPERS
 // ===============================================
@@ -172,31 +218,50 @@ async function loadSubmittedRequests() {
 
   list.innerHTML = "";
 
-  rows.forEach(row => {
-    if (row.game_number) {
-
-      // Determine next incomplete step
-      let nextStep = 2;
-      for (let s = 2; s <= 9; s++) {
-        if (!isStepComplete(s)) {
-          nextStep = s;
-          break;
-        }
-      }
+  rows
+    .filter(r => r.game_number)               // only valid rows
+    .map(buildQuickView)                      // normalize
+    .forEach(item => {
 
       const div = document.createElement("div");
       div.className = "submitted-item";
+
       div.innerHTML = `
-        <strong>Game #${row.game_number}</strong> — Next Step ${nextStep}
-        <button class="primary-btn" onclick="resumeGame('${row.game_number}')">Resume</button>
+        <div class="submitted-header">
+          <strong>Game #${item.game_number}</strong>
+          <button class="primary-btn" onclick="resumeGame('${item.game_number}')">Resume</button>
+        </div>
+
+        <div class="submitted-team">
+          ${item.team_name} — ${item.age_group} ${item.gender} ${item.division}
+        </div>
+
+        <div class="submitted-orig">
+          <strong>Original:</strong>
+          ${item.orig.date} @ ${item.orig.time} — ${item.orig.field}
+        </div>
+
+        <div class="submitted-final">
+          <strong>Final:</strong>
+          ${item.final.date} @ ${item.final.time} — ${item.final.field}
+        </div>
+
+        <div class="submitted-progress">
+          <strong>Progress:</strong> ${item.progress.steps_completed}/9
+        </div>
+
+        <div class="submitted-status">
+          Certified: ${item.status.certified ? "Yes" : "No"} |
+          Calendar Updated: ${item.status.calendar_updated ? "Yes" : "No"} |
+          HAYSA Status: ${item.status.haysa_status || "—"}
+        </div>
       `;
+
       list.appendChild(div);
-    }
-  });
+    });
 
   document.getElementById("submittedListContainer").style.display = "block";
 }
-
 
 
 
