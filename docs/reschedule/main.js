@@ -44,6 +44,31 @@ async function apiGetAllRows() {
 
 
 
+async function apiDownloadSSSLForm(gameNumber) {
+  const url = `${BASE_URL}?action=generateSSSLForm&game_number=${encodeURIComponent(gameNumber)}`;
+
+  try {
+    const response = await fetch(url, { method: "GET" });
+    if (!response.ok) {
+      console.error("Failed to download DOCX");
+      return;
+    }
+
+    const blob = await response.blob();
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `SSSL-Reschedule-${gameNumber}.docx`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (err) {
+    console.error("apiDownloadSSSLForm error:", err);
+  }
+}
+
+
+
 
 // ===============================================
 // INIT
@@ -1196,6 +1221,7 @@ function renderStep8(panel) {
 
 
 // STEP 9 — Finalize Request
+// STEP 9 — Finalize Request
 function renderStep9(panel) {
 
   const row = currentRowData;
@@ -1236,9 +1262,9 @@ function renderStep9(panel) {
     <button id="s9_save" class="secondary-btn">Mark Request Complete</button>
   `;
 
-  // ⭐ Download DOCX
+  // ⭐ Download DOCX — THIS IS THE FIX
   document.getElementById("s9_download").onclick = () => {
-    downloadSSSLForm();
+    apiDownloadSSSLForm(currentGameNumber);
   };
 
   document.getElementById("s9_save").onclick = async () => {
@@ -1257,6 +1283,7 @@ function renderStep9(panel) {
     alert("Request marked complete.");
   };
 }
+
 
 
 // ===============================================
