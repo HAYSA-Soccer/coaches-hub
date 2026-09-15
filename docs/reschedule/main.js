@@ -1266,7 +1266,7 @@ function renderStep9(panel) {
 
   // ⭐ Download DOCX — THIS IS THE FIX
   document.getElementById("s9_download").onclick = () => {
-    apiDownloadSSSLForm(currentGameNumber);
+    apiDownloadSSSLForm(row.game_number);
   };
 
   document.getElementById("s9_save").onclick = async () => {
