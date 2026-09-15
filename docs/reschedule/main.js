@@ -44,30 +44,17 @@ async function apiGetAllRows() {
 
 
 
-async function apiDownloadSSSLForm(gameNumber) {
+function apiDownloadSSSLForm(gameNumber) {
   const url = `${BASE_URL}?action=generateSSSLForm&game_number=${encodeURIComponent(gameNumber)}`;
 
-  try {
-    const response = await fetch(url, { method: "GET" });
-
-    if (!response.ok) {
-      console.error("Failed to download DOCX");
-      return;
-    }
-
-    const blob = await response.blob();
-
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `SSSL-Reschedule-${gameNumber}.docx`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  } catch (err) {
-    console.error("apiDownloadSSSLForm error:", err);
-  }
+  // Direct navigation — bypasses CORS and fetch limitations
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `SSSL-Reschedule-${gameNumber}.docx`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }
-
 
 
 
