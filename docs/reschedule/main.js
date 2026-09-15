@@ -1011,7 +1011,7 @@ function renderStep4(panel) {
     updateChangeHighlights();
     alert("New game details saved.");
   };
-}<input type="date" id="orig_date" value="${getField("orig_date") || ""}">
+}
 
 
 
