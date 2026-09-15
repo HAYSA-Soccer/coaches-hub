@@ -915,8 +915,8 @@ function renderStep4(panel) {
   const finalTimeDisplay = getField("final_time") || "(none)";
   const finalFieldDisplay = getField("final_field") || "(none)";
 
-  const finalDateInput = getField("final_date") || "";
-  const finalTimeInput = getField("final_time") || "";
+  const finalDateInput = getField("final_date_input") || "";
+  const finalTimeInput = getField("final_time_input") || "";
   const finalFieldInput = getField("final_field") || "";
 
   panel.innerHTML = `
