@@ -49,6 +49,7 @@ async function apiDownloadSSSLForm(gameNumber) {
 
   try {
     const response = await fetch(url, { method: "GET" });
+
     if (!response.ok) {
       console.error("Failed to download DOCX");
       return;
