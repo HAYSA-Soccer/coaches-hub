@@ -275,51 +275,19 @@ async function apiCreateRow(gameNumber) {
 
 
 
-async function downloadSSSLForm() {
-  const form = new FormData();
-  form.append("action", "generateSSSLForm");
-  form.append("game_number", currentGameNumber);
+function downloadSSSLForm() {
+  const url = `${API_URL}?action=generateSSSLForm&game_number=${currentGameNumber}`;
 
-  const res = await fetch(API_URL, {
-    method: "POST",
-    body: form
-  });
-
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
-
+  // Create a temporary link and click it
   const a = document.createElement("a");
   a.href = url;
-  a.download = `SSSL-Reschedule-${currentGameNumber}.pdf`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
-
-
-
-async function downloadSSSLForm() {
-  const form = new FormData();
-  form.append("action", "generateSSSLForm");
-  form.append("game_number", currentGameNumber);
-
-  const res = await fetch(API_URL, {
-    method: "POST",
-    body: form
-  });
-
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
+  a.target = "_blank";   // optional, but avoids blocking
   a.download = `SSSL-Reschedule-${currentGameNumber}.docx`;
   document.body.appendChild(a);
   a.click();
   a.remove();
-  URL.revokeObjectURL(url);
 }
+
 
 
 
