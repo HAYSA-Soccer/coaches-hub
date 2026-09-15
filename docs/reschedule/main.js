@@ -44,17 +44,31 @@ async function apiGetAllRows() {
 
 
 
-function apiDownloadSSSLForm(gameNumber) {
+async function apiDownloadSSSLForm(gameNumber) {
   const url = `${BASE_URL}?action=generateSSSLForm&game_number=${encodeURIComponent(gameNumber)}`;
 
-  // Direct navigation — bypasses CORS and fetch limitations
+  const response = await fetch(url);
+  const base64 = await response.text();
+
+  const byteCharacters = atob(base64);
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  const byteArray = new Uint8Array(byteNumbers);
+
+  const blob = new Blob([byteArray], {
+    type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  });
+
   const link = document.createElement("a");
-  link.href = url;
+  link.href = URL.createObjectURL(blob);
   link.download = `SSSL-Reschedule-${gameNumber}.docx`;
   document.body.appendChild(link);
   link.click();
   link.remove();
 }
+
 
 
 
