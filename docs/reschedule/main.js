@@ -301,40 +301,56 @@ async function loadSubmittedRequests() {
 
   rows
     .filter(r => r.game_number)               // only valid rows
-    .map(buildQuickView)                      // normalize
+    .map(buildQuickView)                      // normalize + format
     .forEach(item => {
 
       const div = document.createElement("div");
       div.className = "submitted-item";
 
       div.innerHTML = `
-        <div class="submitted-header">
-          <strong>Game #${item.game_number}</strong>
-          <button class="primary-btn" onclick="resumeGame('${item.game_number}')">Resume</button>
-        </div>
+        <div class="submitted-grid">
 
-        <div class="submitted-team">
-          ${item.team_name} — ${item.age_group} ${item.gender} ${item.division}
-        </div>
+          <div class="sg-col sg-game">
+            <div class="sg-label">Game #</div>
+            <div class="sg-value">${item.game_number}</div>
+          </div>
 
-        <div class="submitted-orig">
-          <strong>Original:</strong>
-          ${item.orig.date} @ ${item.orig.time} — ${item.orig.field}
-        </div>
+          <div class="sg-col sg-team">
+            <div class="sg-label">Team</div>
+            <div class="sg-value">${item.team_name}</div>
+            <div class="sg-sub">${item.age_group} ${item.gender} ${item.division}</div>
+          </div>
 
-        <div class="submitted-final">
-          <strong>Final:</strong>
-          ${item.final.date} @ ${item.final.time} — ${item.final.field}
-        </div>
+          <div class="sg-col sg-original">
+            <div class="sg-label">Original</div>
+            <div class="sg-value">${item.orig.date}</div>
+            <div class="sg-sub">${item.orig.time} — ${item.orig.field}</div>
+          </div>
 
-        <div class="submitted-progress">
-          <strong>Progress:</strong> ${item.progress.steps_completed}/9
-        </div>
+          <div class="sg-col sg-final">
+            <div class="sg-label">Final</div>
+            <div class="sg-value">${item.final.date}</div>
+            <div class="sg-sub">${item.final.time} — ${item.final.field}</div>
+          </div>
 
-        <div class="submitted-status">
-          Certified: ${item.status.certified ? "Yes" : "No"} |
-          Calendar Updated: ${item.status.calendar_updated ? "Yes" : "No"} |
-          HAYSA Status: ${item.status.haysa_status || "—"}
+          <div class="sg-col sg-progress">
+            <div class="sg-label">Progress</div>
+            <div class="sg-value">${item.progress.steps_completed}/9</div>
+          </div>
+
+          <div class="sg-col sg-status">
+            <div class="sg-label">Status</div>
+            <div class="sg-sub">
+              Certified: ${item.status.certified ? "Yes" : "No"}<br>
+              Calendar: ${item.status.calendar_updated ? "Yes" : "No"}<br>
+              HAYSA: ${item.status.haysa_status || "—"}
+            </div>
+          </div>
+
+          <div class="sg-col sg-action">
+            <button type="button" class="primary-btn" onclick="resumeGame('${item.game_number}')">Resume</button>
+          </div>
+
         </div>
       `;
 
