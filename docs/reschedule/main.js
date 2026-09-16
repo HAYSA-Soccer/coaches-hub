@@ -680,6 +680,7 @@ function renderStep1(panel) {
     goToStep(2);
   };
 }
+
 // STEP 2 — Original Game Details
 function renderStep2(panel) {
 
