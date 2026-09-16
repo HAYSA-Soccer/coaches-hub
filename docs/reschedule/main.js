@@ -2,14 +2,12 @@
 // API LAYER
 // ===============================
 
-
-const BASE_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
-
+const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
 
 
 // Fetch a single game row by game number
 async function apiGetGame(gameNumber) {
-  const url = `${BASE_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}`;
+  const url = `${API_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}`;
 
   console.log("apiGetGame sending:", gameNumber);
   console.log("Full URL:", url);
@@ -28,7 +26,7 @@ async function apiGetGame(gameNumber) {
 
 // Fetch ALL rows for landing page
 async function apiGetAllRows() {
-  const url = `${BASE_URL}?action=getAllRows`;
+  const url = `${API_URL}?action=getAllRows`;
 
   try {
     const response = await fetch(url, { method: "GET" });
@@ -43,9 +41,8 @@ async function apiGetAllRows() {
 }
 
 
-
 async function apiDownloadSSSLForm(gameNumber) {
-  const url = `${BASE_URL}?action=generateSSSLForm&game_number=${encodeURIComponent(gameNumber)}`;
+  const url = `${API_URL}?action=generateSSSLForm&game_number=${encodeURIComponent(gameNumber)}`;
 
   const response = await fetch(url);
   const base64 = await response.text();
@@ -70,25 +67,33 @@ async function apiDownloadSSSLForm(gameNumber) {
 }
 
 
-
-
 // ===============================================
 // INIT
 // ===============================================
 document.addEventListener("DOMContentLoaded", () => {
-
   // Hide workflow UI on landing page
-  document.getElementById("workflowPage").style.display = "none";
-  document.getElementById("timelineContainer").style.display = "none";
-  document.getElementById("panelContainer").style.display = "none";
-  document.getElementById("nextStepContainer").style.display = "none";
-  document.getElementById("backToListContainer").style.display = "none";
-  document.getElementById("formSection").style.display = "none";
+  const wf = document.getElementById("workflowPage");
+  if (wf) wf.style.display = "none";
+
+  const tl = document.getElementById("timelineContainer");
+  if (tl) tl.style.display = "none";
+
+  const panel = document.getElementById("panelContainer");
+  if (panel) panel.style.display = "none";
+
+  const next = document.getElementById("nextStepContainer");
+  if (next) next.style.display = "none";
+
+  const back = document.getElementById("backToListContainer");
+  if (back) back.style.display = "none";
+
+  const formSection = document.getElementById("formSection");
+  if (formSection) formSection.style.display = "none";
 
   initTimeline();
   loadSubmittedRequests();
+  initGameChangeForm();
 });
-
 
 
 function highlightStepInTimeline(step) {
@@ -106,12 +111,31 @@ function highlightStepInTimeline(step) {
 }
 
 
-
-
 function formatTime(t) {
   if (!t) return "";
   const d = new Date(t);
   return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
+
+// ===============================================
+// CONFIG + HELPERS
+// ===============================================
+
+function formatDate(d) {
+  if (!d) return "";
+  return new Date(d).toLocaleDateString();
+}
+
+function getHighestCompletedStep(row) {
+  let highest = 1;
+  for (let s = 1; s <= 9; s++) {
+    const val = row[`step_${s}`];
+    if (val === true || val === "true" || val === "completed") {
+      highest = s;
+    }
+  }
+  return highest;
 }
 
 function computeStatus(row) {
@@ -124,28 +148,6 @@ function computeStatus(row) {
   if (highest >= 4) return "Awaiting Opponent";
   return "Drafting Options";
 }
-
-
-
-// ===============================================
-// CONFIG
-// ===============================================
-const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
-
-// =========================
-// Helpers
-// =========================
-
-function formatDate(d) {
-  if (!d) return "";
-  return new Date(d).toLocaleDateString();
-}
-
-function getHighestCompletedStep(row) {
-  // your existing logic
-}
-
-
 
 function buildQuickView(row) {
   return {
@@ -179,77 +181,33 @@ function buildQuickView(row) {
         row.step_7,
         row.step_8,
         row.step_9
-      ].filter(v => v === true).length
+      ].filter(v => v === true || v === "true" || v === "completed").length
     },
 
     status: {
-      certified: row.certified,
-      calendar_updated: row.calendar_updated,
+      certified: row.certified === "true" || row.certified === true,
+      calendar_updated: row.calendar_updated === "true" || row.calendar_updated === true,
       haysa_status: row.haysa_status
     }
   };
 }
 
 
-
-
 // ===============================================
 // API HELPERS
 // ===============================================
-function apiGetRow(gameNumber) {
-  return new Promise((resolve, reject) => {
-    const callbackName = "haysaWorkflowCallback_" + gameNumber;
-    const script = document.createElement("script");
-
-    window[callbackName] = function (data) {
-      delete window[callbackName];
-      script.remove();
-      resolve(data);
-    };
-
-    script.src = `${API_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}&callback=${encodeURIComponent(callbackName)}`;
-    script.onerror = () => {
-      delete window[callbackName];
-      script.remove();
-      reject(new Error("Failed to load workflow data"));
-    };
-
-    document.body.appendChild(script);
-  });
-}
-
-
-async function apiGetAllRows() {
-  const url = `https://script.google.com/macros/s/AKfycbz14OzCFeMIyWMY6FRLckWwgBBtlLej71cDkYNb-qGEISJVHHWSe57Tp_49wHmwlRTQ/exec?action=getAllRows`;
-
-  try {
-    const response = await fetch(url, { method: "GET" });
-    if (!response.ok) return [];
-
-    const data = await response.json();
-    return data.rows || [];
-  } catch (err) {
-    console.error("apiGetAllRows error:", err);
-    return [];
-  }
-}
-
-
-
-
-
 
 async function loadSubmittedRequests() {
   const rows = await apiGetAllRows();
   const list = document.getElementById("submittedList");
+  if (!list) return;
 
   list.innerHTML = "";
 
   rows
-    .filter(r => r.game_number)               // only valid rows
-    .map(buildQuickView)                      // normalize
+    .filter(r => r.game_number)
+    .map(buildQuickView)
     .forEach(item => {
-
       const div = document.createElement("div");
       div.className = "submitted-item";
 
@@ -287,9 +245,9 @@ async function loadSubmittedRequests() {
       list.appendChild(div);
     });
 
-  document.getElementById("submittedListContainer").style.display = "block";
+  const container = document.getElementById("submittedListContainer");
+  if (container) container.style.display = "block";
 }
-
 
 
 async function apiCreateRow(gameNumber) {
@@ -299,24 +257,6 @@ async function apiCreateRow(gameNumber) {
   const res = await fetch(API_URL, { method: "POST", body: form });
   return res.json();
 }
-
-
-
-function downloadSSSLForm() {
-  const url = `${API_URL}?action=generateSSSLForm&game_number=${currentGameNumber}`;
-
-  // Create a temporary link and click it
-  const a = document.createElement("a");
-  a.href = url;
-  a.target = "_blank";   // optional, but avoids blocking
-  a.download = `SSSL-Reschedule-${currentGameNumber}.docx`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-}
-
-
-
 
 
 // UNIVERSAL FIELD UPDATE
@@ -365,12 +305,12 @@ function prefillInput(id, field) {
 // TIMELINE HYDRATION
 // ===============================================
 function hydrateTimelineFromRow(row) {
-
-  function mark(step, complete) {
-    const el = document.getElementById(`step_${step}`);
-    if (!el) return;
+  document.querySelectorAll(".timeline-step").forEach(el => {
+    const step = Number(el.dataset.step);
 
     el.classList.remove("completed", "locked", "current");
+
+    const complete = isStepComplete(step);
 
     if (complete) {
       el.classList.add("completed");
@@ -379,25 +319,16 @@ function hydrateTimelineFromRow(row) {
     } else {
       el.classList.add("locked");
     }
-  }
-
-  mark(2, isStepComplete(2));
-  mark(3, isStepComplete(3));
-  mark(4, isStepComplete(4));
-  mark(5, isStepComplete(5));
-  mark(6, isStepComplete(6));
-  mark(7, isStepComplete(7));
-  mark(8, isStepComplete(8));
-  mark(9, isStepComplete(9));
+  });
 }
-
 
 
 async function resumeGame(gameNumber) {
   const result = await apiGetGame(gameNumber);
 
   if (!result || !result.exists) {
-    document.getElementById("lookupStatus").innerText = "Game not found.";
+    const statusEl = document.getElementById("lookupStatus");
+    if (statusEl) statusEl.innerText = "Game not found.";
     return;
   }
 
@@ -422,15 +353,20 @@ async function resumeGame(gameNumber) {
 }
 
 
-
 function hydrateFieldsFromRow(row) {
   console.log("hydrateFieldsFromRow called with:", row);
+  currentRowData = row;
 }
 
 
-
+// ===============================================
+// LOOKUP + NEW WORKFLOW
+// ===============================================
 async function lookupGameNumber() {
-  const gameNumber = document.getElementById("lookupGameNumber").value.trim();
+  const input = document.getElementById("lookupGameNumber");
+  if (!input) return;
+
+  const gameNumber = input.value.trim();
   if (!gameNumber) {
     alert("Please enter a game number.");
     return;
@@ -439,7 +375,8 @@ async function lookupGameNumber() {
   const result = await apiGetGame(gameNumber);
 
   if (!result || !result.exists) {
-    document.getElementById("lookupStatus").innerText = "Game not found.";
+    const statusEl = document.getElementById("lookupStatus");
+    if (statusEl) statusEl.innerText = "Game not found.";
     return;
   }
 
@@ -464,14 +401,13 @@ async function lookupGameNumber() {
 }
 
 
-
-
-
 function hideLandingPage() {
-  document.getElementById("submittedListContainer").style.display = "none";
-  document.getElementById("lookupContainer").style.display = "none";
-}
+  const submitted = document.getElementById("submittedListContainer");
+  if (submitted) submitted.style.display = "none";
 
+  const lookup = document.getElementById("lookupContainer");
+  if (lookup) lookup.style.display = "none";
+}
 
 
 async function startNewWorkflow(gameNumber) {
@@ -481,20 +417,23 @@ async function startNewWorkflow(gameNumber) {
     return;
   }
   currentRowData = res.data || {};
+  currentGameNumber = gameNumber;
   beginWorkflow();
 }
 
 function beginWorkflow() {
-  // Hide lookup card
-  document.getElementById("lookupContainer").style.display = "none";
-  
-  // Show workflow UI (horizontal timeline)
-  document.getElementById("timelineContainer").style.display = "flex";
-  document.getElementById("panelContainer").style.display = "block";
-  document.getElementById("nextStepContainer").style.display = "block";
+  const lookup = document.getElementById("lookupContainer");
+  if (lookup) lookup.style.display = "none";
 
+  const tl = document.getElementById("timelineContainer");
+  if (tl) tl.style.display = "flex";
 
-  // Determine highest completed step
+  const panel = document.getElementById("panelContainer");
+  if (panel) panel.style.display = "block";
+
+  const next = document.getElementById("nextStepContainer");
+  if (next) next.style.display = "block";
+
   let highestCompleted = 1;
   for (let s = 1; s <= 9; s++) {
     if (currentRowData[`step_${s}`] === "completed") {
@@ -504,12 +443,10 @@ function beginWorkflow() {
 
   currentStep = highestCompleted;
 
-  // Hydrate AFTER determining correct step
   hydrateTimelineFromRow(currentRowData);
   setActiveTimelineStep(currentStep);
   renderPanelForStep(currentStep);
 
-  // Prefill form fields
   const form = document.getElementById("gameChangeForm");
   if (form && currentRowData) {
     const map = {
@@ -535,8 +472,6 @@ function beginWorkflow() {
 }
 
 
-
-
 // ===============================================
 // TIMELINE + NAVIGATION (HORIZONTAL)
 // ===============================================
@@ -554,10 +489,8 @@ function initTimeline() {
     nextBtn.onclick = async () => {
       if (currentStep < 9) {
         currentStep++;
-
         setActiveTimelineStep(currentStep);
         renderPanelForStep(currentStep);
-
       }
     };
   }
@@ -610,7 +543,6 @@ function isStepComplete(step) {
   const f = (name) => getField(name);
 
   switch (step) {
-
     case 2:
       return (
         f("age_division") &&
@@ -635,17 +567,16 @@ function isStepComplete(step) {
 
     case 4:
       return (
-        f("is_haysa_home_final") &&
         f("final_date") &&
         f("final_time") &&
         f("final_field")
       );
 
     case 5:
-      return f("field_hold_status") === "completed";
+      return f("field_requested") || f("field_confirmed") || f("field_hold_status") === "completed";
 
     case 6:
-      return f("haysa_approval") === "approved";
+      return f("haysa_approval") === "approved" || f("haysa_status") === "approved";
 
     case 7:
       return (
@@ -664,10 +595,7 @@ function isStepComplete(step) {
   }
 }
 
-
 function goToStep(step) {
-
-  // Prevent skipping ahead
   for (let s = 2; s < step; s++) {
     if (!isStepComplete(s)) {
       alert(`You must complete Step ${s} before continuing.`);
@@ -676,7 +604,6 @@ function goToStep(step) {
   }
 
   currentStep = step;
-
   const panel = document.getElementById("panelContainer");
 
   switch (step) {
@@ -694,16 +621,25 @@ function goToStep(step) {
 }
 
 
+// ===============================================
+// WORKFLOW UI
+// ===============================================
 function showWorkflowUI() {
-  document.getElementById("workflowPage").style.display = "block";
-  document.getElementById("timelineContainer").style.display = "flex";
-  document.getElementById("panelContainer").style.display = "block";
-  document.getElementById("nextStepContainer").style.display = "block";
-  document.getElementById("backToListContainer").style.display = "block";
+  const wf = document.getElementById("workflowPage");
+  if (wf) wf.style.display = "block";
+
+  const tl = document.getElementById("timelineContainer");
+  if (tl) tl.style.display = "flex";
+
+  const panel = document.getElementById("panelContainer");
+  if (panel) panel.style.display = "block";
+
+  const next = document.getElementById("nextStepContainer");
+  if (next) next.style.display = "block";
+
+  const back = document.getElementById("backToListContainer");
+  if (back) back.style.display = "block";
 }
-
-
-
 
 
 // ===============================================
@@ -763,10 +699,10 @@ function renderStep2(panel) {
     <h3>Original Game Details</h3>
 
     <label>Original Date</label>
-    <input type="date" id="orig_date" value="${getField("orig_date_input") || ""}">
+    <input type="date" id="orig_date" value="${getField("orig_date") || ""}">
 
     <label>Original Time</label>
-    <input type="time" id="orig_time" value="${getField("orig_time_input") || ""}">
+    <input type="time" id="orig_time" value="${getField("orig_time") || ""}">
 
     <label>Original Field</label>
     <input type="text" id="orig_field" value="${getField("orig_field") || ""}">
@@ -775,7 +711,6 @@ function renderStep2(panel) {
   `;
 
   document.getElementById("s2_save").onclick = async () => {
-
     const ageGroup = document.getElementById("age_group").value.trim();
     const gender = document.getElementById("gender").value;
     const division = document.getElementById("division").value.trim();
@@ -792,7 +727,6 @@ function renderStep2(panel) {
       return;
     }
 
-    // Auto-build composite fields
     const ageDivision = `${ageGroup} ${gender} ${division}`;
     const teamName = `${ageGroup} ${gender} (${coachLast})`;
 
@@ -859,7 +793,6 @@ function renderStep3(panel) {
   `;
 
   document.getElementById("s3_save").onclick = async () => {
-
     const coachName = document.getElementById("coach_name").value.trim();
     const coachEmail = document.getElementById("coach_email").value.trim();
     const coachPhone = document.getElementById("coach_phone").value.trim();
@@ -871,7 +804,6 @@ function renderStep3(panel) {
     const awayTeam = document.getElementById("away_team").value.trim();
     const oppTown = document.getElementById("opp_town").value.trim();
 
-    // ⭐ Prevent marking complete if fields are missing
     if (!coachName || !coachEmail || !coachPhone ||
         !oppName || !oppEmail || !oppPhone ||
         !awayTeam || !oppTown) {
@@ -879,16 +811,16 @@ function renderStep3(panel) {
       return;
     }
 
-    await apiUpdateField(currentGameNumber, "coach_name", coachName);
-    await apiUpdateField(currentGameNumber, "coach_email", coachEmail);
-    await apiUpdateField(currentGameNumber, "coach_phone", coachPhone);
+    await setField("coach_name", coachName);
+    await setField("coach_email", coachEmail);
+    await setField("coach_phone", coachPhone);
 
-    await apiUpdateField(currentGameNumber, "opp_coach_name", oppName);
-    await apiUpdateField(currentGameNumber, "opp_coach_email", oppEmail);
-    await apiUpdateField(currentGameNumber, "opp_coach_phone", oppPhone);
+    await setField("opp_coach_name", oppName);
+    await setField("opp_coach_email", oppEmail);
+    await setField("opp_coach_phone", oppPhone);
 
-    await apiUpdateField(currentGameNumber, "away_team", awayTeam);
-    await apiUpdateField(currentGameNumber, "opp_town", oppTown);
+    await setField("away_team", awayTeam);
+    await setField("opp_town", oppTown);
 
     await apiUpdateStep(currentGameNumber, 3);
     currentRowData.step_3 = "completed";
@@ -899,9 +831,8 @@ function renderStep3(panel) {
 }
 
 
-// STEP 4 — Final Game Details (New Schedule) + Clean Comparison + Auto-Fill
+// STEP 4 — Final Game Details (New Schedule) + Comparison
 function renderStep4(panel) {
-
   const origDateDisplay = getField("orig_date") || "(none)";
   const origTimeDisplay = getField("orig_time") || "(none)";
   const origFieldDisplay = getField("orig_field") || "(none)";
@@ -910,8 +841,8 @@ function renderStep4(panel) {
   const finalTimeDisplay = getField("final_time") || "(none)";
   const finalFieldDisplay = getField("final_field") || "(none)";
 
-  const finalDateInput = getField("final_date_input") || "";
-  const finalTimeInput = getField("final_time_input") || "";
+  const finalDateInput = getField("final_date") || "";
+  const finalTimeInput = getField("final_time") || "";
   const finalFieldInput = getField("final_field") || "";
 
   panel.innerHTML = `
@@ -1009,11 +940,9 @@ function renderStep4(panel) {
 }
 
 
-
 // STEP 5 — Field Hold (home game)
 function renderStep5(panel) {
-
-  const status = getField("field_hold_status") || "";
+  const status = getField("field_hold_status") || getField("field_requested") || "";
 
   panel.innerHTML = `
     <h2>Step 5 — Field Hold</h2>
@@ -1051,11 +980,9 @@ function renderStep5(panel) {
 }
 
 
-
 // STEP 6 — HAYSA Approval
 function renderStep6(panel) {
-
-  const approval = getField("haysa_approval") || "";
+  const approval = getField("haysa_approval") || getField("haysa_status") || "";
 
   panel.innerHTML = `
     <h2>Step 6 — HAYSA Approval</h2>
@@ -1080,6 +1007,7 @@ function renderStep6(panel) {
     }
 
     await setField("haysa_approval", newStatus);
+    await setField("haysa_status", newStatus);
 
     if (newStatus === "approved") {
       await apiUpdateStep(currentGameNumber, 6);
@@ -1092,11 +1020,8 @@ function renderStep6(panel) {
 }
 
 
-
-
-// STEP 7 — SSSL Form (uses gameChangeForm + signature)
+// STEP 7 — SSSL Form Auto-Fill
 function renderStep7(panel) {
-
   const fd = (name) => getField(name) || "";
 
   const isHomeOriginal = fd("is_haysa_home") === "true";
@@ -1106,11 +1031,9 @@ function renderStep7(panel) {
   const awayTeam = fd("away_team");
   const teamName = fd("team_name");
 
-  // Determine home/away for original
   const homeTeamOriginal = isHomeOriginal ? teamName : awayTeam;
   const awayTeamOriginal = isHomeOriginal ? awayTeam : teamName;
 
-  // Determine home/away for final
   const homeTeamFinal = isHomeFinal ? teamName : awayTeam;
   const awayTeamFinal = isHomeFinal ? awayTeam : teamName;
 
@@ -1155,7 +1078,6 @@ function renderStep7(panel) {
   `;
 
   document.getElementById("s7_save").onclick = async () => {
-
     const certified = document.getElementById("certified").checked;
     const signedName = document.getElementById("signed_name").value.trim();
 
@@ -1183,7 +1105,6 @@ function renderStep7(panel) {
 
 // STEP 8 — Calendar Update
 function renderStep8(panel) {
-
   const updated = getField("calendar_updated") || "";
 
   panel.innerHTML = `
@@ -1221,11 +1142,8 @@ function renderStep8(panel) {
 }
 
 
-
-// STEP 9 — Finalize Request
 // STEP 9 — Finalize Request
 function renderStep9(panel) {
-
   const row = currentRowData;
 
   function isComplete() {
@@ -1236,7 +1154,6 @@ function renderStep9(panel) {
       "orig_date",
       "orig_time",
       "orig_field",
-      "is_haysa_home_final",
       "final_date",
       "final_time",
       "final_field",
@@ -1264,13 +1181,11 @@ function renderStep9(panel) {
     <button id="s9_save" class="secondary-btn">Mark Request Complete</button>
   `;
 
-  // ⭐ Download DOCX — THIS IS THE FIX
   document.getElementById("s9_download").onclick = () => {
     apiDownloadSSSLForm(row.game_number);
   };
 
   document.getElementById("s9_save").onclick = async () => {
-
     if (!isComplete()) {
       alert("Some required fields are missing. Please review all steps before finalizing.");
       return;
@@ -1285,7 +1200,6 @@ function renderStep9(panel) {
     alert("Request marked complete.");
   };
 }
-
 
 
 // ===============================================
@@ -1358,37 +1272,23 @@ function initGameChangeForm() {
     const fd = new FormData(form);
     const signatureData = canvas.toDataURL();
 
-    await generateReschedulePDF({
-      game_number: fd.get("game_number"),
-      team_name: fd.get("team_name"),
-      orig_date: fd.get("orig_date"),
-      orig_time: fd.get("orig_time"),
-      orig_field: fd.get("orig_field"),
-      final_date: fd.get("final_date"),
-      final_time: fd.get("final_time"),
-      final_field: fd.get("final_field"),
-      coach_name: fd.get("coach_name"),
-      coach_email: fd.get("coach_email"),
-      coach_phone: fd.get("coach_phone"),
-      opp_coach_name: fd.get("opp_coach_name"),
-      opp_coach_phone: fd.get("opp_coach_phone"),
-      signature_data: signatureData
-    });
+    // If you have generateReschedulePDF on backend, call it here via fetch or Apps Script
+    // For now, we just save fields into workflow
 
-const fieldsToSave = [
-  "team_name",
-  "orig_date",
-  "orig_time",
-  "orig_field",
-  "final_date",
-  "final_time",
-  "final_field",
-  "coach_name",
-  "coach_email",
-  "coach_phone",
-  "opp_coach_name",
-  "opp_coach_phone"
-];
+    const fieldsToSave = [
+      "team_name",
+      "orig_date",
+      "orig_time",
+      "orig_field",
+      "final_date",
+      "final_time",
+      "final_field",
+      "coach_name",
+      "coach_email",
+      "coach_phone",
+      "opp_coach_name",
+      "opp_coach_phone"
+    ];
 
     for (const name of fieldsToSave) {
       const val = fd.get(name);
@@ -1402,4 +1302,3 @@ const fieldsToSave = [
     alert("Form saved.");
   };
 }
-
