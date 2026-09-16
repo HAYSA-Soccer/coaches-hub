@@ -225,6 +225,27 @@ async function setField(field, value) {
 }
 
 function buildQuickView(row) {
+
+  // Format date
+  const fmtDate = (d) => {
+    if (!d) return "";
+    if (d.includes("T")) {
+      // ISO timestamp
+      return new Date(d).toLocaleDateString();
+    }
+    return d; // already formatted
+  };
+
+  // Format time
+  const fmtTime = (t) => {
+    if (!t) return "";
+    if (t.includes("T")) {
+      const d = new Date(t);
+      return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    }
+    return t; // already formatted (AM/PM)
+  };
+
   return {
     game_number: row.game_number,
     team_name: row.team_name,
@@ -234,14 +255,14 @@ function buildQuickView(row) {
     coach_last_name: row.coach_last_name,
 
     orig: {
-      date: row.orig_date,
-      time: row.orig_time,
+      date: fmtDate(row.orig_date),
+      time: fmtTime(row.orig_time),
       field: row.orig_field
     },
 
     final: {
-      date: row.final_date,
-      time: row.final_time,
+      date: fmtDate(row.final_date),
+      time: fmtTime(row.final_time),
       field: row.final_field
     },
 
@@ -260,12 +281,13 @@ function buildQuickView(row) {
     },
 
     status: {
-      certified: row.certified === "true" || row.certified === true,
-      calendar_updated: row.calendar_updated === "true" || row.calendar_updated === true,
+      certified: row.certified === "true",
+      calendar_updated: row.calendar_updated === "true",
       haysa_status: row.haysa_status
     }
   };
 }
+
 
 // ===============================
 // LANDING PAGE
