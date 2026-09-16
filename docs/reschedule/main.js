@@ -921,7 +921,196 @@ function renderStep3(panel) {
 
 
 // STEP 4 — Final Game Details (New Schedule) + Comparison
-“Let’s rewrite Step 4 with the new structure.”
+function renderStep4(panel) {
+
+  // Normalize sheet or ISO values for HTML inputs
+  const finalDateInput =
+    currentRowData.final_date_input ||
+    normalizeDateForInput(getField("final_date"));
+
+  const finalTimeInput =
+    currentRowData.final_time_input ||
+    normalizeTimeForInput(getField("final_time"));
+
+  const currentDateDisplay = getField("orig_date") || "(none)";
+  const currentTimeDisplay = getField("orig_time") || "(none)";
+  const currentFieldDisplay = getField("orig_field") || "(none)";
+
+  const finalDateDisplay = getField("final_date") || "(none)";
+  const finalTimeDisplay = getField("final_time") || "(none)";
+  const finalFieldDisplay = getField("final_field") || "(none)";
+
+  const p1_status = getField("proposed_1_status") || "";
+  const p2_status = getField("proposed_2_status") || "";
+
+  const anyPending = (p1_status === "pending" || p2_status === "pending");
+  const anyApproved = (p1_status === "approved" || p2_status === "approved");
+
+  panel.innerHTML = `
+    <div class="step-content">
+
+      <h2>Step 4 — Choose & Confirm New Game Time</h2>
+
+      <p class="workflow-explainer">
+        Before contacting the opposing coach, review field availability and request up to two possible
+        date/time/field options. The board will approve or reject each option. Once an option is approved,
+        you may offer it to the opposing coach. After both coaches agree, enter the final agreed details below.
+      </p>
+
+      ${anyPending ? `
+        <div class="alert-warning">
+          ⚠️ Proposed options are pending board approval.<br>
+          Final agreed details should not be entered yet.
+        </div>
+      ` : ""}
+
+      ${anyApproved ? `
+        <div class="alert-approved">
+          ✔ An option has been approved by the board.<br>
+          You may now contact the opposing coach and finalize the new game details.
+        </div>
+      ` : ""}
+
+      <h3>Check Field Availability</h3>
+      <p>Use the calendar below to find open field slots for your proposed reschedule.</p>
+
+      <iframe src="https://haysa-soccer.github.io/haysa-scheduler-ui/"
+              class="calendar-embed"></iframe>
+
+      <div class="step-divider"></div>
+
+      <h3>Request New Game Options (Board Approval Required)</h3>
+      <p>You may propose up to two possible date/time/field options for board review.</p>
+
+      <div class="proposed-block">
+        <h4>Option A</h4>
+
+        <label>Option A Date</label>
+        <input type="date" id="proposed_1_date" value="${getField("proposed_1_date") || ""}">
+
+        <label>Option A Time</label>
+        <input type="time" id="proposed_1_time" value="${getField("proposed_1_time") || ""}">
+
+        <label>Option A Field</label>
+        <input type="text" id="proposed_1_field" value="${getField("proposed_1_field") || ""}">
+
+        <div class="proposed-status ${p1_status}">
+          Status: <strong>${p1_status || "pending"}</strong>
+        </div>
+      </div>
+
+      <div class="proposed-block">
+        <h4>Option B</h4>
+
+        <label>Option B Date</label>
+        <input type="date" id="proposed_2_date" value="${getField("proposed_2_date") || ""}">
+
+        <label>Option B Time</label>
+        <input type="time" id="proposed_2_time" value="${getField("proposed_2_time") || ""}">
+
+        <label>Option B Field</label>
+        <input type="text" id="proposed_2_field" value="${getField("proposed_2_field") || ""}">
+
+        <div class="proposed-status ${p2_status}">
+          Status: <strong>${p2_status || "pending"}</strong>
+        </div>
+      </div>
+
+      <button id="s4_save_proposed" class="secondary-btn">Save Proposed Options</button>
+
+      <div class="step-divider"></div>
+
+      <h3>Final Agreed Game Details (After Approval)</h3>
+      <p>Enter the final agreed date/time/field after board approval and opposing coach confirmation.</p>
+
+      <div class="comparison-row">
+        <div>Current Scheduled Date:</div>
+        <div>${currentDateDisplay}</div>
+        <div>Final Agreed Date:</div>
+        <div id="cmp_final_date">${finalDateDisplay}</div>
+      </div>
+
+      <div class="comparison-row">
+        <div>Current Scheduled Time:</div>
+        <div>${currentTimeDisplay}</div>
+        <div>Final Agreed Time:</div>
+        <div id="cmp_final_time">${finalTimeDisplay}</div>
+      </div>
+
+      <div class="comparison-row">
+        <div>Current Scheduled Field:</div>
+        <div>${currentFieldDisplay}</div>
+        <div>Final Agreed Field:</div>
+        <div id="cmp_final_field">${finalFieldDisplay}</div>
+      </div>
+
+      <label>Final Agreed Date</label>
+      <input type="date" id="final_date" value="${finalDateInput}">
+
+      <label>Final Agreed Time</label>
+      <input type="time" id="final_time" value="${finalTimeInput}">
+
+      <label>Final Agreed Field</label>
+      <input type="text" id="final_field" value="${getField("final_field") || ""}">
+
+      <button id="s4_save" class="primary-btn">Save Final Agreed Details</button>
+
+    </div>
+  `;
+
+  // Save final agreed details
+  document.getElementById("s4_save").onclick = async () => {
+    const newDateRaw = document.getElementById("final_date").value;
+    const newTimeRaw = document.getElementById("final_time").value;
+    const newField = document.getElementById("final_field").value.trim();
+
+    if (!newDateRaw || !newTimeRaw || !newField) {
+      alert("Please complete all final agreed details before saving.");
+      return;
+    }
+
+    const newDate = formatDateForStorage(newDateRaw);
+    const newTime = formatTimeForStorage(newTimeRaw);
+
+    await setField("final_date", newDate);
+    await setField("final_time", newTime);
+    await setField("final_field", newField);
+
+    await apiUpdateStep(currentGameNumber, 4);
+    currentRowData.step_4 = "completed";
+    hydrateTimelineFromRow(currentRowData);
+
+    alert("Final agreed game details saved.");
+  };
+
+  // Save proposed options
+  document.getElementById("s4_save_proposed").onclick = async () => {
+    const p1_date = document.getElementById("proposed_1_date").value;
+    const p1_time = document.getElementById("proposed_1_time").value;
+    const p1_field = document.getElementById("proposed_1_field").value.trim();
+
+    const p2_date = document.getElementById("proposed_2_date").value;
+    const p2_time = document.getElementById("proposed_2_time").value;
+    const p2_field = document.getElementById("proposed_2_field").value.trim();
+
+    if (p1_date || p1_time || p1_field) {
+      await setField("proposed_1_date", p1_date);
+      await setField("proposed_1_time", p1_time);
+      await setField("proposed_1_field", p1_field);
+      await setField("proposed_1_status", "pending");
+    }
+
+    if (p2_date || p2_time || p2_field) {
+      await setField("proposed_2_date", p2_date);
+      await setField("proposed_2_time", p2_time);
+      await setField("proposed_2_field", p2_field);
+      await setField("proposed_2_status", "pending");
+    }
+
+    alert("Proposed options saved and sent to board for review.");
+  };
+}
+
 
 
 // STEP 5 — Field Hold (home game)
