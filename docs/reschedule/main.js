@@ -5,6 +5,62 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
 const BASE_URL = API_URL;
 
+
+// Convert "MM/dd/yyyy" -> "yyyy-MM-dd" for <input type="date">
+function normalizeDateForInput(value) {
+  if (!value) return "";
+  // Already in correct format
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+
+  const m = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!m) return "";
+  const [, mm, dd, yyyy] = m;
+  return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
+}
+
+// Convert "h:mm AM/PM" -> "HH:mm" for <input type="time">
+function normalizeTimeForInput(value) {
+  if (!value) return "";
+  // Already in correct format
+  if (/^\d{2}:\d{2}/.test(value)) return value;
+
+  const m = value.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!m) return "";
+  let [, hh, mm, ap] = m;
+  hh = parseInt(hh, 10);
+
+  ap = ap.toUpperCase();
+  if (ap === "PM" && hh < 12) hh += 12;
+  if (ap === "AM" && hh === 12) hh = 0;
+
+  return `${String(hh).padStart(2, "0")}:${mm}`;
+}
+
+// Convert "yyyy-MM-dd" -> "MM/dd/yyyy" for storage in sheet
+function formatDateForStorage(value) {
+  if (!value) return "";
+  const [yyyy, mm, dd] = value.split("-");
+  return `${mm}/${dd}/${yyyy}`;
+}
+
+// Convert "HH:mm" -> "h:mm AM/PM" for storage in sheet
+function formatTimeForStorage(value) {
+  if (!value) return "";
+  const [hh, mm] = value.split(":");
+  let h = parseInt(hh, 10);
+  let ap = "AM";
+
+  if (h >= 12) {
+    ap = "PM";
+    if (h > 12) h -= 12;
+  } else if (h === 0) {
+    h = 12;
+  }
+
+  return `${h}:${mm} ${ap}`;
+}
+
+
 // ===============================
 // STATE
 // ===============================
@@ -600,9 +656,13 @@ function renderStep1(panel) {
     goToStep(2);
   };
 }
-
 // STEP 2 — Original Game Details
 function renderStep2(panel) {
+
+  // Normalize sheet values for HTML inputs
+  const origDateInput = normalizeDateForInput(getField("orig_date"));
+  const origTimeInput = normalizeTimeForInput(getField("orig_time"));
+
   panel.innerHTML = `
     <h2>Step 2 — Original Game Details</h2>
     <p>Enter the current/original game details.</p>
@@ -635,10 +695,10 @@ function renderStep2(panel) {
     <h3>Original Game Details</h3>
 
     <label>Original Date</label>
-    <input type="date" id="orig_date" value="${getField("orig_date") || ""}">
+    <input type="date" id="orig_date" value="${origDateInput}">
 
     <label>Original Time</label>
-    <input type="time" id="orig_time" value="${getField("orig_time") || ""}">
+    <input type="time" id="orig_time" value="${origTimeInput}">
 
     <label>Original Field</label>
     <input type="text" id="orig_field" value="${getField("orig_field") || ""}">
@@ -654,15 +714,19 @@ function renderStep2(panel) {
     const coachLast = document.getElementById("coach_last_name").value.trim();
     const isHome = document.getElementById("is_haysa_home").value;
 
-    const origDate = document.getElementById("orig_date").value;
-    const origTime = document.getElementById("orig_time").value;
+    const origDateRaw = document.getElementById("orig_date").value;
+    const origTimeRaw = document.getElementById("orig_time").value;
     const origField = document.getElementById("orig_field").value.trim();
 
     if (!ageGroup || !gender || !division || !coachLast || !isHome ||
-        !origDate || !origTime || !origField) {
+        !origDateRaw || !origTimeRaw || !origField) {
       alert("Please complete all fields before saving.");
       return;
     }
+
+    // Convert HTML input formats → sheet formats
+    const origDate = formatDateForStorage(origDateRaw);
+    const origTime = formatTimeForStorage(origTimeRaw);
 
     // Auto-build composite fields
     const ageDivision = `${ageGroup} ${gender} ${division}`;
@@ -689,6 +753,7 @@ function renderStep2(panel) {
     alert("Original details saved.");
   };
 }
+
 
 // STEP 3 — Coach + Opponent Contact Info
 function renderStep3(panel) {
