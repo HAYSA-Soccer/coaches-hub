@@ -1,273 +1,258 @@
-/* ============================================
-   GLOBAL LAYOUT
-   ============================================ */
-
-body {
-  font-family: Arial, sans-serif;
-  background: #f7f7f7;
+/* ===============================
+   GLOBAL RESET + BASE
+   =============================== */
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  color: #333;
 }
 
-h2 {
-  margin-top: 0;
-  font-size: 24px;
+body {
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f5f7fa;
+  color: #222;
+  line-height: 1.5;
+  padding-bottom: 60px;
+}
+
+/* ===============================
+   HEADER
+   =============================== */
+.header {
+  text-align: center;
+  padding: 30px 20px;
+  background: #003366;
+  color: white;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 32px;
   font-weight: 700;
 }
 
-h3 {
-  margin-top: 24px;
-  font-size: 18px;
-  font-weight: 600;
+.subtitle {
+  font-size: 16px;
+  opacity: 0.9;
+  margin-top: 6px;
 }
 
-p {
-  margin: 10px 0 20px 0;
-}
-
-
-.reschedule-table td {
-  vertical-align: top;
-  line-height: 1.4;
-}
-
-
-
-.timeline-step.active-step {
-  background-color: #007bff;
-  color: white;
-  font-weight: bold;
-}
-
-
-
-/* ============================================
-   STEP PANEL WRAPPER
-   ============================================ */
-
-.step-content {
-  background: #fff;
-  padding: 20px;
-  max-width: 700px;
-  margin: 0 auto;
+/* ===============================
+   CARD LAYOUT
+   =============================== */
+.card {
+  background: white;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  padding: 25px;
+  margin: 20px auto;
+  width: 95%;
+  max-width: 900px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-
-/* ============================================
-   FORM ELEMENTS
-   ============================================ */
-
-.step-content label {
-  display: block;
-  margin-top: 16px;
+.card h2 {
+  margin-bottom: 15px;
+  font-size: 22px;
   font-weight: 600;
 }
 
-.step-content input[type="text"],
-.step-content input[type="date"],
-.step-content input[type="time"],
-.step-content input[type="email"],
-.step-content input[type="tel"] {
+/* ===============================
+   INPUTS
+   =============================== */
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="time"],
+select {
   width: 100%;
-  padding: 8px 10px;
+  padding: 10px;
   margin-top: 6px;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 15px;
-  box-sizing: border-box;
 }
 
-.step-content button.primary-btn {
+input:focus,
+select:focus {
+  border-color: #0066cc;
+  outline: none;
+}
+
+/* ===============================
+   BUTTONS
+   =============================== */
+.primary-btn,
+.secondary-btn {
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
   margin-top: 20px;
 }
 
+.primary-btn {
+  background: #0066cc;
+  color: white;
+}
 
-/* ============================================
-   TIMELINE NAVIGATION
-   ============================================ */
+.primary-btn:hover {
+  background: #005bb5;
+}
 
-.timeline-container {
+.secondary-btn {
+  background: #ddd;
+  color: #333;
+}
+
+.secondary-btn:hover {
+  background: #ccc;
+}
+
+/* ===============================
+   SUBMITTED LIST
+   =============================== */
+.submitted-item {
+  background: #fafafa;
+  border: 1px solid #e3e3e3;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.submitted-header {
   display: flex;
-  justify-content: center;
-  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.submitted-team,
+.submitted-orig,
+.submitted-final,
+.submitted-progress,
+.submitted-status {
+  margin-top: 8px;
+  font-size: 15px;
+}
+
+/* ===============================
+   TIMELINE
+   =============================== */
+#timelineContainer {
+  display: flex;
+  justify-content: space-between;
   margin: 20px auto;
-  flex-wrap: wrap;
+  width: 95%;
+  max-width: 900px;
 }
 
 .timeline-step {
-  padding: 10px 14px;
-  background: #e0e0e0;
+  flex: 1;
+  text-align: center;
+  padding: 10px 5px;
+  background: #e6e6e6;
+  margin: 0 4px;
   border-radius: 6px;
-  cursor: pointer;
   font-size: 14px;
-  font-weight: 600;
+  cursor: pointer;
   transition: background 0.2s;
 }
 
 .timeline-step:hover {
-  background: #d0d0d0;
+  background: #d4d4d4;
 }
 
-.timeline-step.active {
-  background: #007bff;
-  color: #fff;
-}
-
-
-/* ============================================
-   NEXT STEP BUTTON
-   ============================================ */
-
-#nextStepContainer {
-  text-align: center;
-  margin-top: 25px;
-}
-
-#nextStepBtn {
-  padding: 10px 20px;
-  background: #007bff;
-  color: #fff;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
+.timeline-step.active,
+.timeline-step.active-step {
+  background: #0066cc;
+  color: white;
   font-weight: 600;
 }
 
-#nextStepBtn:hover {
-  background: #0069d9;
+/* ===============================
+   PANEL CONTENT
+   =============================== */
+.panel {
+  margin-top: 20px;
 }
 
+.panel h2 {
+  margin-bottom: 10px;
+}
 
-/* ============================================
-   COMPARISON GRID (Step 4)
-   ============================================ */
+.panel h3 {
+  margin-top: 20px;
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
 
+/* ===============================
+   COMPARISON ROWS
+   =============================== */
 .comparison-row {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 8px 12px;
-  margin-bottom: 12px;
-  align-items: center;
-}
-
-.changed {
-  font-weight: 600;
-  color: #b30000;
-}
-
-.comparison-note {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 20px;
-}
-
-
-/* ============================================
-   BUTTONS
-   ============================================ */
-
-.primary-btn {
-  background: #007bff;
-  color: #fff;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
   font-size: 15px;
-  font-weight: 600;
 }
 
-.primary-btn:hover {
-  background: #0069d9;
+/* ===============================
+   NEXT/BACK BUTTONS
+   =============================== */
+.next-step-container {
+  text-align: right;
+  width: 95%;
+  max-width: 900px;
+  margin: 10px auto;
 }
 
-.secondary-btn {
-  background: #555;
-  color: #fff;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.secondary-btn:hover {
-  background: #444;
-}
-
-
-/* ============================================
-   WARNING BOXES
-   ============================================ */
-
-.warning-box {
-  background: #ffe8e8;
-  border: 1px solid #cc0000;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-
-/* ============================================
-   FORM SECTION (Step 7)
-   ============================================ */
-
-#formSection {
-  display: none;
-  background: #fff;
-  padding: 20px;
-  max-width: 700px;
-  margin: 20px auto;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
-
+/* ===============================
+   SIGNATURE PAD
+   =============================== */
 #signaturePad {
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  margin-top: 10px;
-}
-
-#clearSignature {
-  margin-top: 10px;
-  padding: 8px 14px;
-  background: #cc0000;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-#clearSignature:hover {
-  background: #aa0000;
-}
-
-
-/* ============================================
-   RESCHEDULE TABLE (Landing Page)
-   ============================================ */
-
-.reschedule-table {
   width: 100%;
-  border-collapse: collapse;
+  height: 200px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  background: white;
   margin-top: 10px;
 }
 
-.reschedule-table th,
-.reschedule-table td {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
+/* ===============================
+   FADE-IN ANIMATION
+   =============================== */
+.fade-in {
+  animation: fadeIn 0.25s ease-in-out;
 }
 
-.reschedule-table th {
-  background: #f5f5f5;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
+/* ===============================
+   RESPONSIVE
+   =============================== */
+@media (max-width: 600px) {
+  .comparison-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  #timelineContainer {
+    flex-wrap: wrap;
+  }
+
+  .timeline-step {
+    flex: 0 0 48%;
+    margin-bottom: 8px;
+  }
+}
