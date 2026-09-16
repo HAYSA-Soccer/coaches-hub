@@ -858,7 +858,12 @@ function renderStep3(panel) {
 }
 
 // STEP 4 — Final Game Details (New Schedule) + Comparison
+// STEP 4 — Final Game Details (New Schedule) + Comparison
 function renderStep4(panel) {
+
+  // Normalize sheet or ISO values for HTML inputs
+  const finalDateInput = normalizeDateForInput(getField("final_date"));
+  const finalTimeInput = normalizeTimeForInput(getField("final_time"));
 
   const origDateDisplay = getField("orig_date") || "(none)";
   const origTimeDisplay = getField("orig_time") || "(none)";
@@ -867,10 +872,6 @@ function renderStep4(panel) {
   const finalDateDisplay = getField("final_date") || "(none)";
   const finalTimeDisplay = getField("final_time") || "(none)";
   const finalFieldDisplay = getField("final_field") || "(none)";
-
-  const finalDateInput = getField("final_date") || "";
-  const finalTimeInput = getField("final_time") || "";
-  const finalFieldInput = getField("final_field") || "";
 
   panel.innerHTML = `
     <div class="step-content">
@@ -901,8 +902,6 @@ function renderStep4(panel) {
         <div id="cmp_final_field">${finalFieldDisplay}</div>
       </div>
 
-      <p class="comparison-note">Changes will be highlighted when different from the original.</p>
-
       <h3>New Game Details</h3>
 
       <label>New Date</label>
@@ -912,46 +911,26 @@ function renderStep4(panel) {
       <input type="time" id="final_time" value="${finalTimeInput}">
 
       <label>New Field</label>
-      <input type="text" id="final_field" value="${finalFieldInput}">
+      <input type="text" id="final_field" value="${getField("final_field") || ""}">
 
       <button id="s4_save" class="primary-btn">Save New Game Details</button>
 
     </div>
   `;
 
-  function updateChangeHighlights() {
-    const newDate = document.getElementById("final_date").value || finalDateDisplay;
-    const newTime = document.getElementById("final_time").value || finalTimeDisplay;
-    const newField = document.getElementById("final_field").value || finalFieldDisplay;
-
-    const fdSpan = document.getElementById("cmp_final_date");
-    const ftSpan = document.getElementById("cmp_final_time");
-    const ffSpan = document.getElementById("cmp_final_field");
-
-    fdSpan.textContent = newDate || "(none)";
-    ftSpan.textContent = newTime || "(none)";
-    ffSpan.textContent = newField || "(none)";
-
-    fdSpan.classList.toggle("changed", newDate !== origDateDisplay);
-    ftSpan.classList.toggle("changed", newTime !== origTimeDisplay);
-    ffSpan.classList.toggle("changed", newField !== origFieldDisplay);
-  }
-
-  document.getElementById("final_date").addEventListener("input", updateChangeHighlights);
-  document.getElementById("final_time").addEventListener("input", updateChangeHighlights);
-  document.getElementById("final_field").addEventListener("input", updateChangeHighlights);
-
-  updateChangeHighlights();
-
   document.getElementById("s4_save").onclick = async () => {
-    const newDate = document.getElementById("final_date").value;
-    const newTime = document.getElementById("final_time").value;
-    const newField = document.getElementById("final_field").value;
+    const newDateRaw = document.getElementById("final_date").value;
+    const newTimeRaw = document.getElementById("final_time").value;
+    const newField = document.getElementById("final_field").value.trim();
 
-    if (!newDate || !newTime || !newField) {
+    if (!newDateRaw || !newTimeRaw || !newField) {
       alert("Please complete all new game details before saving.");
       return;
     }
+
+    // Convert HTML input formats → sheet formats
+    const newDate = formatDateForStorage(newDateRaw);
+    const newTime = formatTimeForStorage(newTimeRaw);
 
     await setField("final_date", newDate);
     await setField("final_time", newTime);
@@ -961,7 +940,6 @@ function renderStep4(panel) {
     currentRowData.step_4 = "completed";
     hydrateTimelineFromRow(currentRowData);
 
-    updateChangeHighlights();
     alert("New game details saved.");
   };
 }
