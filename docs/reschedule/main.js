@@ -6,37 +6,9 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9a
 const BASE_URL = API_URL;
 
 
-// Convert sheet or ISO date → yyyy-MM-dd
-function normalizeDateForInput(value) {
-  if (!value) return "";
-
-  // Already correct
-  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
-
-  // MM/dd/yyyy
-  const m1 = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (m1) {
-    const [, mm, dd, yyyy] = m1;
-    return `${yyyy}-${mm.padStart(2,"0")}-${dd.padStart(2,"0")}`;
-  }
-
-  // ISO format
-  const d = new Date(value);
-  if (!isNaN(d.getTime())) {
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2,"0");
-    const dd = String(d.getDate()).padStart(2,"0");
-    return `${yyyy}-${mm}-${dd}`;
-  }
-
-  return "";
-}
-
-// Convert sheet or ISO time → HH:mm
 // Convert "MM/dd/yyyy" -> "yyyy-MM-dd" for <input type="date">
 function normalizeDateForInput(value) {
   if (!value) return "";
-  // Already in correct format (strict)
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
 
   const m = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
@@ -49,10 +21,9 @@ function normalizeDateForInput(value) {
 function normalizeTimeForInput(value) {
   if (!value) return "";
 
-  // Already in correct 24h format (strict, no AM/PM allowed)
+  // STRICT: only pure HH:mm is considered "already correct"
   if (/^\d{2}:\d{2}$/.test(value)) return value;
 
-  // Handle "h:mm AM/PM"
   const m = value.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
   if (!m) return "";
   let [, hh, mm, ap] = m;
@@ -65,29 +36,29 @@ function normalizeTimeForInput(value) {
   return `${String(hh).padStart(2, "0")}:${mm}`;
 }
 
-
-// Convert yyyy-MM-dd → MM/dd/yyyy
+// Convert "yyyy-MM-dd" -> "MM/dd/yyyy" for storage in sheet
 function formatDateForStorage(value) {
   if (!value) return "";
   const [yyyy, mm, dd] = value.split("-");
   return `${mm}/${dd}/${yyyy}`;
 }
 
-// Convert HH:mm → h:mm AM/PM
+// Convert "HH:mm" -> "h:mm AM/PM" for storage in sheet
 function formatTimeForStorage(value) {
   if (!value) return "";
   const [hh, mm] = value.split(":");
   let h = parseInt(hh, 10);
   let ap = "AM";
+
   if (h >= 12) {
     ap = "PM";
     if (h > 12) h -= 12;
   } else if (h === 0) {
     h = 12;
   }
+
   return `${h}:${mm} ${ap}`;
 }
-
 
 
 // ===============================
