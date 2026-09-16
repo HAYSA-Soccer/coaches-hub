@@ -155,31 +155,12 @@ async function apiUpdateStep(gameNumber, stepNumber) {
   return apiUpdateField(gameNumber, `step_${stepNumber}`, "completed");
 }
 
-// DOCX download via base64 from backend
-async function apiDownloadSSSLForm(gameNumber) {
+// SSSL form download — avoid CORS by letting browser navigate
+function apiDownloadSSSLForm(gameNumber) {
   const url = `${BASE_URL}?action=generateSSSLForm&game_number=${encodeURIComponent(gameNumber)}`;
-
-  const response = await fetch(url);
-  const base64 = await response.text();
-
-  const byteCharacters = atob(base64);
-  const byteNumbers = new Array(byteCharacters.length);
-  for (let i = 0; i < byteCharacters.length; i++) {
-    byteNumbers[i] = byteCharacters.charCodeAt(i);
-  }
-  const byteArray = new Uint8Array(byteNumbers);
-
-  const blob = new Blob([byteArray], {
-    type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-  });
-
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = `SSSL-Reschedule-${gameNumber}.docx`;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
+  window.open(url, "_blank");
 }
+
 
 // ===============================
 // HELPERS
@@ -263,8 +244,8 @@ function buildQuickView(row) {
     },
 
     status: {
-      certified: row.certified === "true",
-      calendar_updated: row.calendar_updated === "true",
+      certified: row.certified === "true" || row.certified === true,
+      calendar_updated: row.calendar_updated === "true" || row.calendar_updated === true,
       haysa_status: row.haysa_status
     }
   };
@@ -357,8 +338,6 @@ async function lookupGameNumber() {
   const row = result.data;
 
   currentGameNumber = gameNumber;
-  currentRowData = row;
-
   hydrateFieldsFromRow(row);
 
   let nextStep = 2;
@@ -370,7 +349,7 @@ async function lookupGameNumber() {
   }
 
   showWorkflowUI();
-  hydrateTimelineFromRow(row);
+  hydrateTimelineFromRow(currentRowData || {});
   goToStep(nextStep);
 }
 
@@ -386,8 +365,6 @@ async function resumeGame(gameNumber) {
   const row = result.data;
 
   currentGameNumber = gameNumber;
-  currentRowData = row;
-
   hydrateFieldsFromRow(row);
 
   let nextStep = 2;
@@ -399,7 +376,7 @@ async function resumeGame(gameNumber) {
   }
 
   showWorkflowUI();
-  hydrateTimelineFromRow(row);
+  hydrateTimelineFromRow(currentRowData || {});
   goToStep(nextStep);
 }
 
@@ -456,8 +433,16 @@ function beginWorkflow() {
 
 function hydrateFieldsFromRow(row) {
   console.log("hydrateFieldsFromRow called with:", row);
-}
 
+  // Copy backend row into our state
+  currentRowData = { ...row };
+
+  // Precompute normalized inputs for the HTML controls
+  currentRowData.orig_date_input  = normalizeDateForInput(row.orig_date);
+  currentRowData.orig_time_input  = normalizeTimeForInput(row.orig_time);
+  currentRowData.final_date_input = normalizeDateForInput(row.final_date);
+  currentRowData.final_time_input = normalizeTimeForInput(row.final_time);
+}
 // ===============================
 // WORKFLOW UI
 // ===============================
@@ -520,6 +505,8 @@ function highlightStepInTimeline(step) {
 }
 
 function hydrateTimelineFromRow(row) {
+  const source = row || currentRowData || {};
+
   function mark(step, complete) {
     const el = document.getElementById(`step_${step}`);
     if (!el) return;
@@ -536,7 +523,7 @@ function hydrateTimelineFromRow(row) {
   }
 
   for (let s = 2; s <= 9; s++) {
-    const complete = row[`step_${s}`] === "completed";
+    const complete = source[`step_${s}`] === "completed";
     mark(s, complete);
   }
 }
@@ -577,19 +564,19 @@ function isStepComplete(step) {
       );
 
     case 5:
-      return f("field_confirmed") === "true";
+      return f("field_confirmed") === "true" || f("field_confirmed") === true;
 
     case 6:
       return f("haysa_status") === "approved";
 
     case 7:
       return (
-        f("certified") === "true" &&
+        (f("certified") === "true" || f("certified") === true) &&
         f("signed_name")
       );
 
     case 8:
-      return f("calendar_updated") === "true";
+      return f("calendar_updated") === "true" || f("calendar_updated") === true;
 
     case 9:
       return f("step_9") === "completed";
@@ -638,7 +625,6 @@ function renderPanelForStep(step) {
 // ===============================
 // STEP PANELS
 // ===============================
-
 // STEP 1 — Start Reschedule Attempt
 function renderStep1(panel) {
   panel.innerHTML = `
@@ -657,12 +643,19 @@ function renderStep1(panel) {
   };
 }
 
+
+
 // STEP 2 — Original Game Details
 function renderStep2(panel) {
 
   // Normalize sheet values for HTML inputs
-  const origDateInput = normalizeDateForInput(getField("orig_date"));
-  const origTimeInput = normalizeTimeForInput(getField("orig_time"));
+  const origDateInput =
+    currentRowData.orig_date_input ||
+    normalizeDateForInput(getField("orig_date"));
+
+  const origTimeInput =
+    currentRowData.orig_time_input ||
+    normalizeTimeForInput(getField("orig_time"));
 
   panel.innerHTML = `
     <h2>Step 2 — Original Game Details</h2>
@@ -756,6 +749,7 @@ function renderStep2(panel) {
 }
 
 
+
 // STEP 3 — Coach + Opponent Contact Info
 function renderStep3(panel) {
   panel.innerHTML = `
@@ -834,13 +828,18 @@ function renderStep3(panel) {
   };
 }
 
-// STEP 4 — Final Game Details (New Schedule) + Comparison
+
 // STEP 4 — Final Game Details (New Schedule) + Comparison
 function renderStep4(panel) {
 
   // Normalize sheet or ISO values for HTML inputs
-  const finalDateInput = normalizeDateForInput(getField("final_date"));
-  const finalTimeInput = normalizeTimeForInput(getField("final_time"));
+  const finalDateInput =
+    currentRowData.final_date_input ||
+    normalizeDateForInput(getField("final_date"));
+
+  const finalTimeInput =
+    currentRowData.final_time_input ||
+    normalizeTimeForInput(getField("final_time"));
 
   const origDateDisplay = getField("orig_date") || "(none)";
   const origTimeDisplay = getField("orig_time") || "(none)";
@@ -921,6 +920,8 @@ function renderStep4(panel) {
   };
 }
 
+
+
 // STEP 5 — Field Hold (home game)
 function renderStep5(panel) {
 
@@ -928,8 +929,8 @@ function renderStep5(panel) {
   const confirmed = getField("field_confirmed") || "";
 
   let status = "";
-  if (confirmed === "true") status = "confirmed";
-  else if (requested === "true") status = "requested";
+  if (confirmed === "true" || confirmed === true) status = "confirmed";
+  else if (requested === "true" || requested === true) status = "requested";
 
   panel.innerHTML = `
     <h2>Step 5 — Field Hold</h2>
@@ -975,6 +976,8 @@ function renderStep5(panel) {
   };
 }
 
+
+
 // STEP 6 — HAYSA Approval
 function renderStep6(panel) {
 
@@ -1019,6 +1022,8 @@ function renderStep6(panel) {
     alert("Approval status saved.");
   };
 }
+
+
 
 // STEP 7 — SSSL Form (auto-fill)
 function renderStep7(panel) {
@@ -1103,6 +1108,8 @@ function renderStep7(panel) {
   };
 }
 
+
+
 // STEP 8 — Calendar Update
 function renderStep8(panel) {
 
@@ -1141,6 +1148,8 @@ function renderStep8(panel) {
     alert("Calendar update status saved.");
   };
 }
+
+
 
 // STEP 9 — Finalize Request
 function renderStep9(panel) {
@@ -1240,6 +1249,7 @@ function initGameChangeForm() {
     lastY = y;
   }
 
+  // Mouse events
   canvas.onmousedown = e => {
     const r = canvas.getBoundingClientRect();
     startDraw(e.clientX - r.left, e.clientY - r.top);
@@ -1251,6 +1261,7 @@ function initGameChangeForm() {
   canvas.onmouseup = () => drawing = false;
   canvas.onmouseleave = () => drawing = false;
 
+  // Touch events
   canvas.ontouchstart = e => {
     e.preventDefault();
     const r = canvas.getBoundingClientRect();
@@ -1267,29 +1278,39 @@ function initGameChangeForm() {
 
   clearBtn.onclick = () => ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  // FORM SUBMIT
   form.onsubmit = async e => {
     e.preventDefault();
 
     const fd = new FormData(form);
     const signatureData = canvas.toDataURL();
 
-    await generateReschedulePDF({
-      game_number: fd.get("game_number"),
-      team_name: fd.get("team_name"),
-      orig_date: fd.get("orig_date"),
-      orig_time: fd.get("orig_time"),
-      orig_field: fd.get("orig_field"),
-      final_date: fd.get("final_date"),
-      final_time: fd.get("final_time"),
-      final_field: fd.get("final_field"),
-      coach_name: fd.get("coach_name"),
-      coach_email: fd.get("coach_email"),
-      coach_phone: fd.get("coach_phone"),
-      opp_coach_name: fd.get("opp_coach_name"),
-      opp_coach_phone: fd.get("opp_coach_phone"),
-      signature_data: signatureData
-    });
+    // If you have a backend PDF generator, call it here.
+    // If not, this safely does nothing.
+    if (typeof generateReschedulePDF === "function") {
+      try {
+        await generateReschedulePDF({
+          game_number: fd.get("game_number"),
+          team_name: fd.get("team_name"),
+          orig_date: fd.get("orig_date"),
+          orig_time: fd.get("orig_time"),
+          orig_field: fd.get("orig_field"),
+          final_date: fd.get("final_date"),
+          final_time: fd.get("final_time"),
+          final_field: fd.get("final_field"),
+          coach_name: fd.get("coach_name"),
+          coach_email: fd.get("coach_email"),
+          coach_phone: fd.get("coach_phone"),
+          opp_coach_name: fd.get("opp_coach_name"),
+          opp_coach_phone: fd.get("opp_coach_phone"),
+          signature_data: signatureData
+        });
+      } catch (err) {
+        console.warn("PDF generation skipped or failed:", err);
+      }
+    }
 
+    // Fields to save back to sheet
     const fieldsToSave = [
       "team_name",
       "orig_date",
@@ -1310,6 +1331,7 @@ function initGameChangeForm() {
       await setField(name, val);
     }
 
+    // Mark Step 7 complete (signature form)
     await apiUpdateStep(currentGameNumber, 7);
     currentRowData.step_7 = "completed";
     hydrateTimelineFromRow(currentRowData);
