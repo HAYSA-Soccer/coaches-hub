@@ -6,59 +6,83 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9a
 const BASE_URL = API_URL;
 
 
-// Convert "MM/dd/yyyy" -> "yyyy-MM-dd" for <input type="date">
+// Convert sheet or ISO date → yyyy-MM-dd
 function normalizeDateForInput(value) {
   if (!value) return "";
-  // Already in correct format
+
+  // Already correct
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
 
-  const m = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (!m) return "";
-  const [, mm, dd, yyyy] = m;
-  return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
+  // MM/dd/yyyy
+  const m1 = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m1) {
+    const [, mm, dd, yyyy] = m1;
+    return `${yyyy}-${mm.padStart(2,"0")}-${dd.padStart(2,"0")}`;
+  }
+
+  // ISO format
+  const d = new Date(value);
+  if (!isNaN(d.getTime())) {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2,"0");
+    const dd = String(d.getDate()).padStart(2,"0");
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  return "";
 }
 
-// Convert "h:mm AM/PM" -> "HH:mm" for <input type="time">
+// Convert sheet or ISO time → HH:mm
 function normalizeTimeForInput(value) {
   if (!value) return "";
-  // Already in correct format
+
+  // Already correct
   if (/^\d{2}:\d{2}/.test(value)) return value;
 
-  const m = value.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-  if (!m) return "";
-  let [, hh, mm, ap] = m;
-  hh = parseInt(hh, 10);
+  // h:mm AM/PM
+  const m1 = value.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (m1) {
+    let [, hh, mm, ap] = m1;
+    hh = parseInt(hh, 10);
+    ap = ap.toUpperCase();
+    if (ap === "PM" && hh < 12) hh += 12;
+    if (ap === "AM" && hh === 12) hh = 0;
+    return `${String(hh).padStart(2,"0")}:${mm}`;
+  }
 
-  ap = ap.toUpperCase();
-  if (ap === "PM" && hh < 12) hh += 12;
-  if (ap === "AM" && hh === 12) hh = 0;
+  // ISO format
+  const d = new Date(value);
+  if (!isNaN(d.getTime())) {
+    const hh = String(d.getHours()).padStart(2,"0");
+    const mm = String(d.getMinutes()).padStart(2,"0");
+    return `${hh}:${mm}`;
+  }
 
-  return `${String(hh).padStart(2, "0")}:${mm}`;
+  return "";
 }
 
-// Convert "yyyy-MM-dd" -> "MM/dd/yyyy" for storage in sheet
+// Convert yyyy-MM-dd → MM/dd/yyyy
 function formatDateForStorage(value) {
   if (!value) return "";
   const [yyyy, mm, dd] = value.split("-");
   return `${mm}/${dd}/${yyyy}`;
 }
 
-// Convert "HH:mm" -> "h:mm AM/PM" for storage in sheet
+// Convert HH:mm → h:mm AM/PM
 function formatTimeForStorage(value) {
   if (!value) return "";
   const [hh, mm] = value.split(":");
   let h = parseInt(hh, 10);
   let ap = "AM";
-
   if (h >= 12) {
     ap = "PM";
     if (h > 12) h -= 12;
   } else if (h === 0) {
     h = 12;
   }
-
   return `${h}:${mm} ${ap}`;
 }
+
 
 
 // ===============================
