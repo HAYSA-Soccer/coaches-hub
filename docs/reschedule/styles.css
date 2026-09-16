@@ -257,7 +257,6 @@ select:focus {
   }
 }
 
-
 /* ===============================
    SUBMITTED REQUESTS — GRID VIEW
    =============================== */
@@ -317,7 +316,9 @@ select:focus {
   }
 }
 
-
+/* ===============================
+   LOADING BANNER
+   =============================== */
 .loading-banner {
   background: #eef4ff;
   border: 1px solid #c7d7ff;
@@ -329,6 +330,9 @@ select:focus {
   display: none;
 }
 
+/* ===============================
+   STEP 4 — PROPOSED OPTIONS
+   =============================== */
 .proposed-block {
   background: #f7f9fc;
   border: 1px solid #dce3f0;
@@ -345,4 +349,90 @@ select:focus {
   margin-top: 8px;
   font-size: 14px;
   color: #333;
+}
+
+/* Status color coding */
+.proposed-status.pending {
+  color: #b36b00;
+}
+
+.proposed-status.approved {
+  color: #0a7a0a;
+  font-weight: bold;
+}
+
+.proposed-status.rejected {
+  color: #b30000;
+  font-weight: bold;
+}
+
+.proposed-status.needs_change {
+  color: #b36b00;
+  font-style: italic;
+}
+
+/* ===============================
+   STEP 4 — WORKFLOW EXPLAINER
+   =============================== */
+.workflow-explainer {
+  background: #eef5ff;
+  border: 1px solid #c9daf7;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  color: #003366;
+}
+
+/* ===============================
+   STEP 4 — ALERT BANNERS
+   =============================== */
+.alert-warning {
+  background: #fff4d6;
+  border: 1px solid #f0d98a;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  color: #7a5a00;
+}
+
+.alert-approved {
+  background: #e6ffe6;
+  border: 1px solid #8fd48f;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  color: #0a7a0a;
+}
+
+/* ===============================
+   STEP 4 — DIVIDER
+   =============================== */
+.step-divider {
+  margin: 30px 0;
+  border-top: 2px solid #e0e0e0;
+}
+
+/* ===============================
+   STEP 4 — CALENDAR EMBED / BUTTON
+   =============================== */
+.calendar-embed {
+  width: 100%;
+  height: 600px;
+  border: 1px solid #dce3f0;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.calendar-button {
+  display: inline-block;
+  padding: 12px 18px;
+  background: #1976d2;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 16px;
+  margin-bottom: 20px;
 }
