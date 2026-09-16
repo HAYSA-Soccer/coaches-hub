@@ -33,33 +33,38 @@ function normalizeDateForInput(value) {
 }
 
 // Convert sheet or ISO time → HH:mm
+// Convert "MM/dd/yyyy" -> "yyyy-MM-dd" for <input type="date">
+function normalizeDateForInput(value) {
+  if (!value) return "";
+  // Already in correct format (strict)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+
+  const m = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!m) return "";
+  const [, mm, dd, yyyy] = m;
+  return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
+}
+
+// Convert "h:mm AM/PM" -> "HH:mm" for <input type="time">
 function normalizeTimeForInput(value) {
   if (!value) return "";
 
-  // Already correct
-  if (/^\d{2}:\d{2}/.test(value)) return value;
+  // Already in correct 24h format (strict, no AM/PM allowed)
+  if (/^\d{2}:\d{2}$/.test(value)) return value;
 
-  // h:mm AM/PM
-  const m1 = value.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-  if (m1) {
-    let [, hh, mm, ap] = m1;
-    hh = parseInt(hh, 10);
-    ap = ap.toUpperCase();
-    if (ap === "PM" && hh < 12) hh += 12;
-    if (ap === "AM" && hh === 12) hh = 0;
-    return `${String(hh).padStart(2,"0")}:${mm}`;
-  }
+  // Handle "h:mm AM/PM"
+  const m = value.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!m) return "";
+  let [, hh, mm, ap] = m;
+  hh = parseInt(hh, 10);
 
-  // ISO format
-  const d = new Date(value);
-  if (!isNaN(d.getTime())) {
-    const hh = String(d.getHours()).padStart(2,"0");
-    const mm = String(d.getMinutes()).padStart(2,"0");
-    return `${hh}:${mm}`;
-  }
+  ap = ap.toUpperCase();
+  if (ap === "PM" && hh < 12) hh += 12;
+  if (ap === "AM" && hh === 12) hh = 0;
 
-  return "";
+  return `${String(hh).padStart(2, "0")}:${mm}`;
 }
+
 
 // Convert yyyy-MM-dd → MM/dd/yyyy
 function formatDateForStorage(value) {
