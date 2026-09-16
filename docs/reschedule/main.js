@@ -21,9 +21,18 @@ function normalizeDateForInput(value) {
 function normalizeTimeForInput(value) {
   if (!value) return "";
 
-  // STRICT: only pure HH:mm is considered "already correct"
+  // Already HH:mm
   if (/^\d{2}:\d{2}$/.test(value)) return value;
 
+  // ISO timestamp from Sheets
+  if (value.includes("T")) {
+    const d = new Date(value);
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mm = String(d.getMinutes()).padStart(2, "0");
+    return `${hh}:${mm}`;
+  }
+
+  // h:mm AM/PM
   const m = value.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
   if (!m) return "";
   let [, hh, mm, ap] = m;
@@ -35,6 +44,7 @@ function normalizeTimeForInput(value) {
 
   return `${String(hh).padStart(2, "0")}:${mm}`;
 }
+
 
 // Convert "yyyy-MM-dd" -> "MM/dd/yyyy" for storage in sheet
 function formatDateForStorage(value) {
@@ -79,6 +89,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const next = document.getElementById("nextStepContainer");
   const back = document.getElementById("backToListContainer");
   const formSection = document.getElementById("formSection");
+
+  const backBtn = document.getElementById("backToListBtn");
+  if (backBtn) {
+    backBtn.onclick = backToList;
+  }
+
 
   if (wf) wf.style.display = "none";
   if (tl) tl.style.display = "none";
@@ -314,6 +330,31 @@ function hideLandingPage() {
   if (lookup) lookup.style.display = "none";
 }
 
+
+function backToList() {
+  const wf = document.getElementById("workflowPage");
+  const tl = document.getElementById("timelineContainer");
+  const panel = document.getElementById("panelContainer");
+  const next = document.getElementById("nextStepContainer");
+  const back = document.getElementById("backToListContainer");
+
+  if (wf) wf.style.display = "none";
+  if (tl) tl.style.display = "none";
+  if (panel) panel.style.display = "none";
+  if (next) next.style.display = "none";
+  if (back) back.style.display = "none";
+
+  const submitted = document.getElementById("submittedListContainer");
+  const lookup = document.getElementById("lookupContainer");
+
+  if (submitted) submitted.style.display = "block";
+  if (lookup) lookup.style.display = "block";
+
+  submitted.scrollIntoView({ behavior: "smooth" });
+}
+
+
+
 // ===============================
 // LOOKUP / RESUME / NEW WORKFLOW
 // ===============================
@@ -348,9 +389,15 @@ async function lookupGameNumber() {
     }
   }
 
+  hideLandingPage();          // NEW
   showWorkflowUI();
-  hydrateTimelineFromRow(currentRowData || {});
+  hydrateTimelineFromRow(row);
   goToStep(nextStep);
+  
+  // NEW: scroll workflow into view
+  const wf = document.getElementById("workflowPage");
+  if (wf) wf.scrollIntoView({ behavior: "smooth" });
+
 }
 
 async function resumeGame(gameNumber) {
@@ -375,9 +422,15 @@ async function resumeGame(gameNumber) {
     }
   }
 
+  hideLandingPage();          // NEW
   showWorkflowUI();
-  hydrateTimelineFromRow(currentRowData || {});
+  hydrateTimelineFromRow(row);
   goToStep(nextStep);
+  
+  // NEW: scroll workflow into view
+  const wf = document.getElementById("workflowPage");
+  if (wf) wf.scrollIntoView({ behavior: "smooth" });
+
 }
 
 async function startNewWorkflow(gameNumber) {
