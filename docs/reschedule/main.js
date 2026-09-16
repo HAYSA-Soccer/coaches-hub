@@ -1,13 +1,48 @@
 // ===============================
-// API LAYER
+// CONFIG / API LAYER
 // ===============================
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
+const BASE_URL = API_URL;
 
+// ===============================
+// STATE
+// ===============================
+let currentGameNumber = null;
+let currentRowData = null;
+let currentStep = 1;
+
+// ===============================
+// INIT
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+  // Hide workflow UI on landing page
+  const wf = document.getElementById("workflowPage");
+  const tl = document.getElementById("timelineContainer");
+  const panel = document.getElementById("panelContainer");
+  const next = document.getElementById("nextStepContainer");
+  const back = document.getElementById("backToListContainer");
+  const formSection = document.getElementById("formSection");
+
+  if (wf) wf.style.display = "none";
+  if (tl) tl.style.display = "none";
+  if (panel) panel.style.display = "none";
+  if (next) next.style.display = "none";
+  if (back) back.style.display = "none";
+  if (formSection) formSection.style.display = "none";
+
+  initTimeline();
+  loadSubmittedRequests();
+  initGameChangeForm();
+});
+
+// ===============================
+// API FUNCTIONS
+// ===============================
 
 // Fetch a single game row by game number
 async function apiGetGame(gameNumber) {
-  const url = `${API_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}`;
+  const url = `${BASE_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}`;
 
   console.log("apiGetGame sending:", gameNumber);
   console.log("Full URL:", url);
@@ -16,17 +51,16 @@ async function apiGetGame(gameNumber) {
     const response = await fetch(url, { method: "GET" });
     if (!response.ok) return null;
 
-    return await response.json();
+    return await response.json(); // expect { exists: true/false, data: {...} }
   } catch (err) {
     console.error("apiGetGame error:", err);
     return null;
   }
 }
 
-
 // Fetch ALL rows for landing page
 async function apiGetAllRows() {
-  const url = `${API_URL}?action=getAllRows`;
+  const url = `${BASE_URL}?action=getAllRows`;
 
   try {
     const response = await fetch(url, { method: "GET" });
@@ -40,9 +74,34 @@ async function apiGetAllRows() {
   }
 }
 
+// Create a new workflow row
+async function apiCreateRow(gameNumber) {
+  const form = new FormData();
+  form.append("action", "createRow");
+  form.append("game_number", gameNumber);
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
 
+// UNIVERSAL FIELD UPDATE
+async function apiUpdateField(gameNumber, field, value) {
+  const form = new FormData();
+  form.append("action", "updateField");
+  form.append("game_number", gameNumber);
+  form.append("field", field);
+  form.append("value", value == null ? "" : value);
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
+
+// STEP_X UPDATE (maps to step_1..step_9)
+async function apiUpdateStep(gameNumber, stepNumber) {
+  return apiUpdateField(gameNumber, `step_${stepNumber}`, "completed");
+}
+
+// DOCX download via base64 from backend
 async function apiDownloadSSSLForm(gameNumber) {
-  const url = `${API_URL}?action=generateSSSLForm&game_number=${encodeURIComponent(gameNumber)}`;
+  const url = `${BASE_URL}?action=generateSSSLForm&game_number=${encodeURIComponent(gameNumber)}`;
 
   const response = await fetch(url);
   const base64 = await response.text();
@@ -66,50 +125,13 @@ async function apiDownloadSSSLForm(gameNumber) {
   link.remove();
 }
 
-
-// ===============================================
-// INIT
-// ===============================================
-document.addEventListener("DOMContentLoaded", () => {
-  // Hide workflow UI on landing page
-  const wf = document.getElementById("workflowPage");
-  if (wf) wf.style.display = "none";
-
-  const tl = document.getElementById("timelineContainer");
-  if (tl) tl.style.display = "none";
-
-  const panel = document.getElementById("panelContainer");
-  if (panel) panel.style.display = "none";
-
-  const next = document.getElementById("nextStepContainer");
-  if (next) next.style.display = "none";
-
-  const back = document.getElementById("backToListContainer");
-  if (back) back.style.display = "none";
-
-  const formSection = document.getElementById("formSection");
-  if (formSection) formSection.style.display = "none";
-
-  initTimeline();
-  loadSubmittedRequests();
-  initGameChangeForm();
-});
-
-
-function highlightStepInTimeline(step) {
-  const steps = document.querySelectorAll(".timeline-step");
-
-  steps.forEach(el => {
-    const s = parseInt(el.getAttribute("data-step"), 10);
-
-    if (s === step) {
-      el.classList.add("active-step");
-    } else {
-      el.classList.remove("active-step");
-    }
-  });
+// ===============================
+// HELPERS
+// ===============================
+function formatDate(d) {
+  if (!d) return "";
+  return new Date(d).toLocaleDateString();
 }
-
 
 function formatTime(t) {
   if (!t) return "";
@@ -117,21 +139,10 @@ function formatTime(t) {
   return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 }
 
-
-// ===============================================
-// CONFIG + HELPERS
-// ===============================================
-
-function formatDate(d) {
-  if (!d) return "";
-  return new Date(d).toLocaleDateString();
-}
-
 function getHighestCompletedStep(row) {
   let highest = 1;
   for (let s = 1; s <= 9; s++) {
-    const val = row[`step_${s}`];
-    if (val === true || val === "true" || val === "completed") {
+    if (row[`step_${s}`] === "completed") {
       highest = s;
     }
   }
@@ -147,6 +158,17 @@ function computeStatus(row) {
   if (highest >= 6) return "Awaiting HAYSA Approval";
   if (highest >= 4) return "Awaiting Opponent";
   return "Drafting Options";
+}
+
+function getField(field) {
+  if (!currentRowData) return "";
+  return currentRowData[field] == null ? "" : currentRowData[field];
+}
+
+async function setField(field, value) {
+  if (!currentRowData) currentRowData = {};
+  currentRowData[field] = value;
+  await apiUpdateField(currentGameNumber, field, value);
 }
 
 function buildQuickView(row) {
@@ -181,22 +203,20 @@ function buildQuickView(row) {
         row.step_7,
         row.step_8,
         row.step_9
-      ].filter(v => v === true || v === "true" || v === "completed").length
+      ].filter(v => v === "completed").length
     },
 
     status: {
-      certified: row.certified === "true" || row.certified === true,
-      calendar_updated: row.calendar_updated === "true" || row.calendar_updated === true,
+      certified: row.certified === "true",
+      calendar_updated: row.calendar_updated === "true",
       haysa_status: row.haysa_status
     }
   };
 }
 
-
-// ===============================================
-// API HELPERS
-// ===============================================
-
+// ===============================
+// LANDING PAGE
+// ===============================
 async function loadSubmittedRequests() {
   const rows = await apiGetAllRows();
   const list = document.getElementById("submittedList");
@@ -205,9 +225,10 @@ async function loadSubmittedRequests() {
   list.innerHTML = "";
 
   rows
-    .filter(r => r.game_number)
-    .map(buildQuickView)
+    .filter(r => r.game_number)               // only valid rows
+    .map(buildQuickView)                      // normalize
     .forEach(item => {
+
       const div = document.createElement("div");
       div.className = "submitted-item";
 
@@ -249,121 +270,19 @@ async function loadSubmittedRequests() {
   if (container) container.style.display = "block";
 }
 
-
-async function apiCreateRow(gameNumber) {
-  const form = new FormData();
-  form.append("action", "createRow");
-  form.append("game_number", gameNumber);
-  const res = await fetch(API_URL, { method: "POST", body: form });
-  return res.json();
+function hideLandingPage() {
+  const submitted = document.getElementById("submittedListContainer");
+  const lookup = document.getElementById("lookupContainer");
+  if (submitted) submitted.style.display = "none";
+  if (lookup) lookup.style.display = "none";
 }
 
-
-// UNIVERSAL FIELD UPDATE
-async function apiUpdateField(gameNumber, field, value) {
-  const form = new FormData();
-  form.append("action", "updateField");
-  form.append("game_number", gameNumber);
-  form.append("field", field);
-  form.append("value", value == null ? "" : value);
-  const res = await fetch(API_URL, { method: "POST", body: form });
-  return res.json();
-}
-
-// STEP_X UPDATE (maps to step_1..step_9)
-async function apiUpdateStep(gameNumber, stepNumber) {
-  return apiUpdateField(gameNumber, `step_${stepNumber}`, "completed");
-}
-
-
-// ===============================================
-// STATE + FIELD HELPERS
-// ===============================================
-let currentGameNumber = null;
-let currentRowData = null;
-let currentStep = 1;
-
-function getField(field) {
-  if (!currentRowData) return "";
-  return currentRowData[field] == null ? "" : currentRowData[field];
-}
-
-async function setField(field, value) {
-  if (!currentRowData) currentRowData = {};
-  currentRowData[field] = value;
-  await apiUpdateField(currentGameNumber, field, value);
-}
-
-function prefillInput(id, field) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.value = getField(field) || "";
-}
-
-
-// ===============================================
-// TIMELINE HYDRATION
-// ===============================================
-function hydrateTimelineFromRow(row) {
-  document.querySelectorAll(".timeline-step").forEach(el => {
-    const step = Number(el.dataset.step);
-
-    el.classList.remove("completed", "locked", "current");
-
-    const complete = isStepComplete(step);
-
-    if (complete) {
-      el.classList.add("completed");
-    } else if (step === currentStep) {
-      el.classList.add("current");
-    } else {
-      el.classList.add("locked");
-    }
-  });
-}
-
-
-async function resumeGame(gameNumber) {
-  const result = await apiGetGame(gameNumber);
-
-  if (!result || !result.exists) {
-    const statusEl = document.getElementById("lookupStatus");
-    if (statusEl) statusEl.innerText = "Game not found.";
-    return;
-  }
-
-  const row = result.data;
-
-  currentGameNumber = gameNumber;
-  currentRowData = row;
-
-  hydrateFieldsFromRow(row);
-
-  let nextStep = 2;
-  for (let s = 2; s <= 9; s++) {
-    if (!isStepComplete(s)) {
-      nextStep = s;
-      break;
-    }
-  }
-
-  showWorkflowUI();
-  hydrateTimelineFromRow(row);
-  goToStep(nextStep);
-}
-
-
-function hydrateFieldsFromRow(row) {
-  console.log("hydrateFieldsFromRow called with:", row);
-  currentRowData = row;
-}
-
-
-// ===============================================
-// LOOKUP + NEW WORKFLOW
-// ===============================================
+// ===============================
+// LOOKUP / RESUME / NEW WORKFLOW
+// ===============================
 async function lookupGameNumber() {
   const input = document.getElementById("lookupGameNumber");
+  const statusEl = document.getElementById("lookupStatus");
   if (!input) return;
 
   const gameNumber = input.value.trim();
@@ -375,7 +294,6 @@ async function lookupGameNumber() {
   const result = await apiGetGame(gameNumber);
 
   if (!result || !result.exists) {
-    const statusEl = document.getElementById("lookupStatus");
     if (statusEl) statusEl.innerText = "Game not found.";
     return;
   }
@@ -400,15 +318,34 @@ async function lookupGameNumber() {
   goToStep(nextStep);
 }
 
+async function resumeGame(gameNumber) {
+  const result = await apiGetGame(gameNumber);
+  const statusEl = document.getElementById("lookupStatus");
 
-function hideLandingPage() {
-  const submitted = document.getElementById("submittedListContainer");
-  if (submitted) submitted.style.display = "none";
+  if (!result || !result.exists) {
+    if (statusEl) statusEl.innerText = "Game not found.";
+    return;
+  }
 
-  const lookup = document.getElementById("lookupContainer");
-  if (lookup) lookup.style.display = "none";
+  const row = result.data;
+
+  currentGameNumber = gameNumber;
+  currentRowData = row;
+
+  hydrateFieldsFromRow(row);
+
+  let nextStep = 2;
+  for (let s = 2; s <= 9; s++) {
+    if (!isStepComplete(s)) {
+      nextStep = s;
+      break;
+    }
+  }
+
+  showWorkflowUI();
+  hydrateTimelineFromRow(row);
+  goToStep(nextStep);
 }
-
 
 async function startNewWorkflow(gameNumber) {
   const res = await apiCreateRow(gameNumber);
@@ -416,8 +353,8 @@ async function startNewWorkflow(gameNumber) {
     alert("Error creating workflow row.");
     return;
   }
-  currentRowData = res.data || {};
   currentGameNumber = gameNumber;
+  currentRowData = res.data || {};
   beginWorkflow();
 }
 
@@ -425,28 +362,18 @@ function beginWorkflow() {
   const lookup = document.getElementById("lookupContainer");
   if (lookup) lookup.style.display = "none";
 
-  const tl = document.getElementById("timelineContainer");
-  if (tl) tl.style.display = "flex";
+  showWorkflowUI();
 
-  const panel = document.getElementById("panelContainer");
-  if (panel) panel.style.display = "block";
-
-  const next = document.getElementById("nextStepContainer");
-  if (next) next.style.display = "block";
-
-  let highestCompleted = 1;
-  for (let s = 1; s <= 9; s++) {
-    if (currentRowData[`step_${s}`] === "completed") {
-      highestCompleted = s;
-    }
-  }
-
+  // Determine highest completed step
+  let highestCompleted = getHighestCompletedStep(currentRowData || {});
   currentStep = highestCompleted;
 
-  hydrateTimelineFromRow(currentRowData);
+  // Hydrate AFTER determining correct step
+  hydrateTimelineFromRow(currentRowData || {});
   setActiveTimelineStep(currentStep);
   renderPanelForStep(currentStep);
 
+  // Prefill form fields (if gameChangeForm present)
   const form = document.getElementById("gameChangeForm");
   if (form && currentRowData) {
     const map = {
@@ -471,10 +398,30 @@ function beginWorkflow() {
   }
 }
 
+function hydrateFieldsFromRow(row) {
+  console.log("hydrateFieldsFromRow called with:", row);
+}
 
-// ===============================================
-// TIMELINE + NAVIGATION (HORIZONTAL)
-// ===============================================
+// ===============================
+// WORKFLOW UI
+// ===============================
+function showWorkflowUI() {
+  const wf = document.getElementById("workflowPage");
+  const tl = document.getElementById("timelineContainer");
+  const panel = document.getElementById("panelContainer");
+  const next = document.getElementById("nextStepContainer");
+  const back = document.getElementById("backToListContainer");
+
+  if (wf) wf.style.display = "block";
+  if (tl) tl.style.display = "flex";
+  if (panel) panel.style.display = "block";
+  if (next) next.style.display = "block";
+  if (back) back.style.display = "block";
+}
+
+// ===============================
+// TIMELINE + NAVIGATION
+// ===============================
 function initTimeline() {
   document.querySelectorAll(".timeline-step").forEach(el => {
     el.onclick = () => {
@@ -502,40 +449,39 @@ function setActiveTimelineStep(step) {
   });
 }
 
-function renderPanelForStep(step) {
-  const panel = document.getElementById("panelContainer");
-  if (!panel) return;
+function highlightStepInTimeline(step) {
+  const steps = document.querySelectorAll(".timeline-step");
 
-  switch (step) {
-    case 1:
-      renderStep1(panel);
-      break;
-    case 2:
-      renderStep2(panel);
-      break;
-    case 3:
-      renderStep3(panel);
-      break;
-    case 4:
-      renderStep4(panel);
-      break;
-    case 5:
-      renderStep5(panel);
-      break;
-    case 6:
-      renderStep6(panel);
-      break;
-    case 7:
-      renderStep7(panel);
-      break;
-    case 8:
-      renderStep8(panel);
-      break;
-    case 9:
-      renderStep9(panel);
-      break;
-    default:
-      panel.innerHTML = "<p>Select a step above.</p>";
+  steps.forEach(el => {
+    const s = parseInt(el.getAttribute("data-step"), 10);
+
+    if (s === step) {
+      el.classList.add("active-step");
+    } else {
+      el.classList.remove("active-step");
+    }
+  });
+}
+
+function hydrateTimelineFromRow(row) {
+  function mark(step, complete) {
+    const el = document.getElementById(`step_${step}`);
+    if (!el) return;
+
+    el.classList.remove("completed", "locked", "current");
+
+    if (complete) {
+      el.classList.add("completed");
+    } else if (step === currentStep) {
+      el.classList.add("current");
+    } else {
+      el.classList.add("locked");
+    }
+  }
+
+  for (let s = 2; s <= 9; s++) {
+    const complete = row[`step_${s}`] === "completed";
+    mark(s, complete);
   }
 }
 
@@ -545,8 +491,10 @@ function isStepComplete(step) {
   switch (step) {
     case 2:
       return (
-        f("age_division") &&
-        f("team_name") &&
+        f("age_group") &&
+        f("gender") &&
+        f("division") &&
+        f("coach_last_name") &&
         f("is_haysa_home") &&
         f("orig_date") &&
         f("orig_time") &&
@@ -573,10 +521,10 @@ function isStepComplete(step) {
       );
 
     case 5:
-      return f("field_requested") || f("field_confirmed") || f("field_hold_status") === "completed";
+      return f("field_confirmed") === "true";
 
     case 6:
-      return f("haysa_approval") === "approved" || f("haysa_status") === "approved";
+      return f("haysa_status") === "approved";
 
     case 7:
       return (
@@ -596,6 +544,7 @@ function isStepComplete(step) {
 }
 
 function goToStep(step) {
+  // Prevent skipping ahead
   for (let s = 2; s < step; s++) {
     if (!isStepComplete(s)) {
       alert(`You must complete Step ${s} before continuing.`);
@@ -605,8 +554,18 @@ function goToStep(step) {
 
   currentStep = step;
   const panel = document.getElementById("panelContainer");
+  if (!panel) return;
+
+  renderPanelForStep(step);
+  highlightStepInTimeline(step);
+}
+
+function renderPanelForStep(step) {
+  const panel = document.getElementById("panelContainer");
+  if (!panel) return;
 
   switch (step) {
+    case 1: renderStep1(panel); break;
     case 2: renderStep2(panel); break;
     case 3: renderStep3(panel); break;
     case 4: renderStep4(panel); break;
@@ -615,36 +574,14 @@ function goToStep(step) {
     case 7: renderStep7(panel); break;
     case 8: renderStep8(panel); break;
     case 9: renderStep9(panel); break;
+    default:
+      panel.innerHTML = "<p>Select a step above.</p>";
   }
-
-  highlightStepInTimeline(step);
 }
 
-
-// ===============================================
-// WORKFLOW UI
-// ===============================================
-function showWorkflowUI() {
-  const wf = document.getElementById("workflowPage");
-  if (wf) wf.style.display = "block";
-
-  const tl = document.getElementById("timelineContainer");
-  if (tl) tl.style.display = "flex";
-
-  const panel = document.getElementById("panelContainer");
-  if (panel) panel.style.display = "block";
-
-  const next = document.getElementById("nextStepContainer");
-  if (next) next.style.display = "block";
-
-  const back = document.getElementById("backToListContainer");
-  if (back) back.style.display = "block";
-}
-
-
-// ===============================================
+// ===============================
 // STEP PANELS
-// ===============================================
+// ===============================
 
 // STEP 1 — Start Reschedule Attempt
 function renderStep1(panel) {
@@ -663,7 +600,6 @@ function renderStep1(panel) {
     goToStep(2);
   };
 }
-
 
 // STEP 2 — Original Game Details
 function renderStep2(panel) {
@@ -711,6 +647,7 @@ function renderStep2(panel) {
   `;
 
   document.getElementById("s2_save").onclick = async () => {
+
     const ageGroup = document.getElementById("age_group").value.trim();
     const gender = document.getElementById("gender").value;
     const division = document.getElementById("division").value.trim();
@@ -727,6 +664,7 @@ function renderStep2(panel) {
       return;
     }
 
+    // Auto-build composite fields
     const ageDivision = `${ageGroup} ${gender} ${division}`;
     const teamName = `${ageGroup} ${gender} (${coachLast})`;
 
@@ -751,7 +689,6 @@ function renderStep2(panel) {
     alert("Original details saved.");
   };
 }
-
 
 // STEP 3 — Coach + Opponent Contact Info
 function renderStep3(panel) {
@@ -793,6 +730,7 @@ function renderStep3(panel) {
   `;
 
   document.getElementById("s3_save").onclick = async () => {
+
     const coachName = document.getElementById("coach_name").value.trim();
     const coachEmail = document.getElementById("coach_email").value.trim();
     const coachPhone = document.getElementById("coach_phone").value.trim();
@@ -830,9 +768,9 @@ function renderStep3(panel) {
   };
 }
 
-
 // STEP 4 — Final Game Details (New Schedule) + Comparison
 function renderStep4(panel) {
+
   const origDateDisplay = getField("orig_date") || "(none)";
   const origTimeDisplay = getField("orig_time") || "(none)";
   const origFieldDisplay = getField("orig_field") || "(none)";
@@ -939,10 +877,15 @@ function renderStep4(panel) {
   };
 }
 
-
 // STEP 5 — Field Hold (home game)
 function renderStep5(panel) {
-  const status = getField("field_hold_status") || getField("field_requested") || "";
+
+  const requested = getField("field_requested") || "";
+  const confirmed = getField("field_confirmed") || "";
+
+  let status = "";
+  if (confirmed === "true") status = "confirmed";
+  else if (requested === "true") status = "requested";
 
   panel.innerHTML = `
     <h2>Step 5 — Field Hold</h2>
@@ -951,9 +894,9 @@ function renderStep5(panel) {
     <label>Field Hold Status</label>
     <select id="field_hold_status">
       <option value="">Select…</option>
-      <option value="not_needed" ${status==="not_needed"?"selected":""}>Not Needed</option>
+      <option value="not_needed" ${status===""?"selected":""}>Not Needed</option>
       <option value="requested" ${status==="requested"?"selected":""}>Requested</option>
-      <option value="completed" ${status==="completed"?"selected":""}>Completed</option>
+      <option value="confirmed" ${status==="confirmed"?"selected":""}>Confirmed</option>
     </select>
 
     <button id="s5_save" class="primary-btn">Save Field Hold Status</button>
@@ -967,9 +910,18 @@ function renderStep5(panel) {
       return;
     }
 
-    await setField("field_hold_status", newStatus);
+    if (newStatus === "not_needed") {
+      await setField("field_requested", "");
+      await setField("field_confirmed", "");
+    } else if (newStatus === "requested") {
+      await setField("field_requested", "true");
+      await setField("field_confirmed", "");
+    } else if (newStatus === "confirmed") {
+      await setField("field_requested", "true");
+      await setField("field_confirmed", "true");
+    }
 
-    if (newStatus === "completed") {
+    if (newStatus === "confirmed") {
       await apiUpdateStep(currentGameNumber, 5);
       currentRowData.step_5 = "completed";
       hydrateTimelineFromRow(currentRowData);
@@ -979,35 +931,40 @@ function renderStep5(panel) {
   };
 }
 
-
 // STEP 6 — HAYSA Approval
 function renderStep6(panel) {
-  const approval = getField("haysa_approval") || getField("haysa_status") || "";
+
+  const approval = getField("haysa_status") || "";
+  const notes = getField("haysa_notes") || "";
 
   panel.innerHTML = `
     <h2>Step 6 — HAYSA Approval</h2>
     <p>The HAYSA board must approve this reschedule request.</p>
 
     <label>Approval Status</label>
-    <select id="haysa_approval">
+    <select id="haysa_status">
       <option value="">Select…</option>
       <option value="approved" ${approval==="approved"?"selected":""}>Approved</option>
       <option value="denied" ${approval==="denied"?"selected":""}>Denied</option>
     </select>
 
+    <label>Board Notes (optional)</label>
+    <input type="text" id="haysa_notes" value="${notes}">
+
     <button id="s6_save" class="primary-btn">Save Approval Status</button>
   `;
 
   document.getElementById("s6_save").onclick = async () => {
-    const newStatus = document.getElementById("haysa_approval").value;
+    const newStatus = document.getElementById("haysa_status").value;
+    const newNotes = document.getElementById("haysa_notes").value.trim();
 
     if (!newStatus) {
       alert("Please select an approval status.");
       return;
     }
 
-    await setField("haysa_approval", newStatus);
     await setField("haysa_status", newStatus);
+    await setField("haysa_notes", newNotes);
 
     if (newStatus === "approved") {
       await apiUpdateStep(currentGameNumber, 6);
@@ -1019,23 +976,22 @@ function renderStep6(panel) {
   };
 }
 
-
-// STEP 7 — SSSL Form Auto-Fill
+// STEP 7 — SSSL Form (auto-fill)
 function renderStep7(panel) {
+
   const fd = (name) => getField(name) || "";
 
   const isHomeOriginal = fd("is_haysa_home") === "true";
-  const isHomeFinal = fd("is_haysa_home_final") === "true";
-
   const oppTown = fd("opp_town");
   const awayTeam = fd("away_team");
   const teamName = fd("team_name");
 
+  // Determine home/away (same home flag for original + final)
   const homeTeamOriginal = isHomeOriginal ? teamName : awayTeam;
   const awayTeamOriginal = isHomeOriginal ? awayTeam : teamName;
 
-  const homeTeamFinal = isHomeFinal ? teamName : awayTeam;
-  const awayTeamFinal = isHomeFinal ? awayTeam : teamName;
+  const homeTeamFinal = homeTeamOriginal;
+  const awayTeamFinal = awayTeamOriginal;
 
   panel.innerHTML = `
     <h2>Step 7 — SSSL Form Auto‑Fill</h2>
@@ -1078,6 +1034,7 @@ function renderStep7(panel) {
   `;
 
   document.getElementById("s7_save").onclick = async () => {
+
     const certified = document.getElementById("certified").checked;
     const signedName = document.getElementById("signed_name").value.trim();
 
@@ -1102,9 +1059,9 @@ function renderStep7(panel) {
   };
 }
 
-
 // STEP 8 — Calendar Update
 function renderStep8(panel) {
+
   const updated = getField("calendar_updated") || "";
 
   panel.innerHTML = `
@@ -1141,9 +1098,9 @@ function renderStep8(panel) {
   };
 }
 
-
 // STEP 9 — Finalize Request
 function renderStep9(panel) {
+
   const row = currentRowData;
 
   function isComplete() {
@@ -1186,6 +1143,7 @@ function renderStep9(panel) {
   };
 
   document.getElementById("s9_save").onclick = async () => {
+
     if (!isComplete()) {
       alert("Some required fields are missing. Please review all steps before finalizing.");
       return;
@@ -1201,10 +1159,9 @@ function renderStep9(panel) {
   };
 }
 
-
-// ===============================================
-// SIGNATURE PAD + PDF + FORM SAVE
-// ===============================================
+// ===============================
+// SIGNATURE PAD + FORM SAVE
+// ===============================
 function initGameChangeForm() {
   const form = document.getElementById("gameChangeForm");
   const canvas = document.getElementById("signaturePad");
@@ -1272,8 +1229,22 @@ function initGameChangeForm() {
     const fd = new FormData(form);
     const signatureData = canvas.toDataURL();
 
-    // If you have generateReschedulePDF on backend, call it here via fetch or Apps Script
-    // For now, we just save fields into workflow
+    await generateReschedulePDF({
+      game_number: fd.get("game_number"),
+      team_name: fd.get("team_name"),
+      orig_date: fd.get("orig_date"),
+      orig_time: fd.get("orig_time"),
+      orig_field: fd.get("orig_field"),
+      final_date: fd.get("final_date"),
+      final_time: fd.get("final_time"),
+      final_field: fd.get("final_field"),
+      coach_name: fd.get("coach_name"),
+      coach_email: fd.get("coach_email"),
+      coach_phone: fd.get("coach_phone"),
+      opp_coach_name: fd.get("opp_coach_name"),
+      opp_coach_phone: fd.get("opp_coach_phone"),
+      signature_data: signatureData
+    });
 
     const fieldsToSave = [
       "team_name",
