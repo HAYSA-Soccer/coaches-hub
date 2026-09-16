@@ -328,3 +328,21 @@ select:focus {
   margin-bottom: 15px;
   display: none;
 }
+
+.proposed-block {
+  background: #f7f9fc;
+  border: 1px solid #dce3f0;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.proposed-block h4 {
+  margin-bottom: 10px;
+}
+
+.proposed-status {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #333;
+}
