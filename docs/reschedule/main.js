@@ -941,49 +941,90 @@ function renderStep4(panel) {
   const finalFieldDisplay = getField("final_field") || "(none)";
 
   panel.innerHTML = `
-    <div class="step-content">
+  <div class="step-content">
 
-      <h2>Step 4 — Final Game Details (New Schedule)</h2>
-      <p>Enter the agreed new game date, time, and field.</p>
+    <h2>Step 4 — Final Game Details (New Schedule)</h2>
+    <p>Enter the agreed new game date, time, and field.</p>
 
-      <h3>Original vs New</h3>
+    <h3>Original vs New</h3>
 
-      <div class="comparison-row">
-        <div>Original Date:</div>
-        <div>${origDateDisplay}</div>
-        <div>New Date:</div>
-        <div id="cmp_final_date">${finalDateDisplay}</div>
-      </div>
-
-      <div class="comparison-row">
-        <div>Original Time:</div>
-        <div>${origTimeDisplay}</div>
-        <div>New Time:</div>
-        <div id="cmp_final_time">${finalTimeDisplay}</div>
-      </div>
-
-      <div class="comparison-row">
-        <div>Original Field:</div>
-        <div>${origFieldDisplay}</div>
-        <div>New Field:</div>
-        <div id="cmp_final_field">${finalFieldDisplay}</div>
-      </div>
-
-      <h3>New Game Details</h3>
-
-      <label>New Date</label>
-      <input type="date" id="final_date" value="${finalDateInput}">
-
-      <label>New Time</label>
-      <input type="time" id="final_time" value="${finalTimeInput}">
-
-      <label>New Field</label>
-      <input type="text" id="final_field" value="${getField("final_field") || ""}">
-
-      <button id="s4_save" class="primary-btn">Save New Game Details</button>
-
+    <div class="comparison-row">
+      <div>Original Date:</div>
+      <div>${origDateDisplay}</div>
+      <div>New Date:</div>
+      <div id="cmp_final_date">${finalDateDisplay}</div>
     </div>
-  `;
+
+    <div class="comparison-row">
+      <div>Original Time:</div>
+      <div>${origTimeDisplay}</div>
+      <div>New Time:</div>
+      <div id="cmp_final_time">${finalTimeDisplay}</div>
+    </div>
+
+    <div class="comparison-row">
+      <div>Original Field:</div>
+      <div>${origFieldDisplay}</div>
+      <div>New Field:</div>
+      <div id="cmp_final_field">${finalFieldDisplay}</div>
+    </div>
+
+    <h3>New Game Details</h3>
+
+    <label>New Date</label>
+    <input type="date" id="final_date" value="${finalDateInput}">
+
+    <label>New Time</label>
+    <input type="time" id="final_time" value="${finalTimeInput}">
+
+    <label>New Field</label>
+    <input type="text" id="final_field" value="${getField("final_field") || ""}">
+
+    <button id="s4_save" class="primary-btn">Save New Game Details</button>
+
+
+    <!-- ⭐ NEW: Proposed Times Section -->
+    <h3>Proposed New Times (Optional)</h3>
+    <p>You may propose up to two possible date/time/field options for board review.</p>
+
+    <div class="proposed-block">
+      <h4>Option A</h4>
+
+      <label>Option A Date</label>
+      <input type="date" id="proposed_1_date" value="${getField("proposed_1_date") || ""}">
+
+      <label>Option A Time</label>
+      <input type="time" id="proposed_1_time" value="${getField("proposed_1_time") || ""}">
+
+      <label>Option A Field</label>
+      <input type="text" id="proposed_1_field" value="${getField("proposed_1_field") || ""}">
+
+      <div class="proposed-status">
+        Status: <strong>${getField("proposed_1_status") || "pending"}</strong>
+      </div>
+    </div>
+
+    <div class="proposed-block">
+      <h4>Option B</h4>
+
+      <label>Option B Date</label>
+      <input type="date" id="proposed_2_date" value="${getField("proposed_2_date") || ""}">
+
+      <label>Option B Time</label>
+      <input type="time" id="proposed_2_time" value="${getField("proposed_2_time") || ""}">
+
+      <label>Option B Field</label>
+      <input type="text" id="proposed_2_field" value="${getField("proposed_2_field") || ""}">
+
+      <div class="proposed-status">
+        Status: <strong>${getField("proposed_2_status") || "pending"}</strong>
+      </div>
+    </div>
+
+    <button id="s4_save_proposed" class="secondary-btn">Save Proposed Times</button>
+
+  </div>
+`;
 
   document.getElementById("s4_save").onclick = async () => {
     const newDateRaw = document.getElementById("final_date").value;
