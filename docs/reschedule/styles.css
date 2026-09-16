@@ -256,3 +256,63 @@ select:focus {
     margin-bottom: 8px;
   }
 }
+
+
+/* ===============================
+   SUBMITTED REQUESTS — GRID VIEW
+   =============================== */
+
+.submitted-grid {
+  display: grid;
+  grid-template-columns: 100px 1fr 1fr 1fr 100px 150px 120px;
+  gap: 15px;
+  padding: 15px;
+  background: #fafafa;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.sg-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.sg-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.sg-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+}
+
+.sg-sub {
+  font-size: 14px;
+  color: #555;
+  margin-top: 2px;
+}
+
+.sg-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .submitted-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .submitted-grid {
+    grid-template-columns: 1fr;
+  }
+}
