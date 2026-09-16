@@ -316,3 +316,15 @@ select:focus {
     grid-template-columns: 1fr;
   }
 }
+
+
+.loading-banner {
+  background: #eef4ff;
+  border: 1px solid #c7d7ff;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 15px;
+  color: #003366;
+  margin-bottom: 15px;
+  display: none;
+}
