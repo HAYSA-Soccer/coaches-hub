@@ -9,23 +9,28 @@
 <body>
 
   <!-- HEADER -->
-  <div class="header">
+  <header class="header">
     <h1>HAYSA Game Reschedule</h1>
-    <div class="subtitle">A guided workflow to move your SSSL game</div>
-  </div>
+    <div class="subtitle">Guided workflow to move your SSSL game</div>
+  </header>
 
   <!-- LOOKUP CARD -->
   <section class="card" id="lookupContainer">
     <h2>Lookup Game</h2>
-    <label>Enter SSSL Game Number</label>
+    <p>Enter the SSSL game number from the official schedule.</p>
+
+    <label for="lookupGameNumber">SSSL Game Number</label>
     <input type="text" id="lookupGameNumber" placeholder="e.g., 22920056">
-    <button class="primary-btn" onclick="lookupGameNumber()">Lookup</button>
+
+    <button type="button" class="primary-btn" onclick="lookupGameNumber()">Lookup</button>
+
     <div id="lookupStatus" class="info-text"></div>
   </section>
 
   <!-- Submitted Requests -->
   <section class="card" id="submittedListContainer">
     <h2>Your Submitted Requests</h2>
+    <p>Click “Resume” to continue an in‑progress reschedule workflow.</p>
     <div id="submittedList"></div>
   </section>
 
@@ -33,41 +38,43 @@
   <div id="workflowPage" style="display:none;">
 
     <!-- TIMELINE -->
-    <div id="timelineContainer" style="display:none;">
-      <div class="timeline-step" data-step="1">Start</div>
-      <div class="timeline-step" data-step="2">Original</div>
-      <div class="timeline-step" data-step="3">Opponent</div>
-      <div class="timeline-step" data-step="4">New Details</div>
-      <div class="timeline-step" data-step="5">Field Hold</div>
-      <div class="timeline-step" data-step="6">HAYSA</div>
-      <div class="timeline-step" data-step="7">SSSL Form</div>
-      <div class="timeline-step" data-step="8">Calendar</div>
-      <div class="timeline-step" data-step="9">Finalize</div>
+    <div id="timelineContainer" class="timeline" style="display:none;">
+      <div class="timeline-step" id="step_1" data-step="1">Start</div>
+      <div class="timeline-step" id="step_2" data-step="2">Original</div>
+      <div class="timeline-step" id="step_3" data-step="3">Opponent</div>
+      <div class="timeline-step" id="step_4" data-step="4">New Details</div>
+      <div class="timeline-step" id="step_5" data-step="5">Field Hold</div>
+      <div class="timeline-step" id="step_6" data-step="6">HAYSA</div>
+      <div class="timeline-step" id="step_7" data-step="7">SSSL Form</div>
+      <div class="timeline-step" id="step_8" data-step="8">Calendar</div>
+      <div class="timeline-step" id="step_9" data-step="9">Finalize</div>
     </div>
 
     <!-- PANEL -->
     <section class="card panel fade-in" id="panelContainer" style="display:none;">
+      <!-- Step content injected by main.js (renderStep1–9) -->
     </section>
 
     <!-- NEXT STEP BUTTON -->
     <div id="nextStepContainer" class="next-step-container" style="display:none;">
-      <button id="nextStepBtn" class="primary-btn">Next Step →</button>
+      <button type="button" id="nextStepBtn" class="primary-btn">Next Step →</button>
     </div>
 
     <!-- BACK TO LIST BUTTON -->
     <div id="backToListContainer" class="next-step-container" style="display:none;">
-      <button id="backToListBtn" class="secondary-btn">← Back to Submitted List</button>
+      <button type="button" id="backToListBtn" class="secondary-btn">← Back to Submitted List</button>
     </div>
 
   </div>
 
-  <!-- GAME CHANGE FORM -->
+  <!-- GAME CHANGE FORM (optional separate form + signature) -->
   <section class="card" id="formSection" style="display:none;">
     <h2>Game Change Form</h2>
+    <p>This form mirrors the SSSL reschedule details and captures a coach signature.</p>
 
     <form id="gameChangeForm">
 
-      <label>Game Number</label>
+      <label for="form_game_number">Game Number</label>
       <input type="text" name="game_number" id="form_game_number">
 
       <label>Team Name</label>
@@ -124,7 +131,6 @@
 
   <!-- Workflow logic -->
   <script src="main.js?v=4"></script>
-
 
 </body>
 </html>
