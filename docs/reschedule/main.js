@@ -1057,23 +1057,15 @@ function renderStep3(panel) {
     
 
     await setField("coach_name", coachName);
-    await setField("coach_email", coachEmail);
-    await setField("coach_phone", coachPhone);
 
     await setField("opp_coach_name", oppName);
-    await setField("opp_coach_email", oppEmail);
-    await setField("opp_coach_phone", oppPhone);
 
     await setField("away_team", awayTeam);
     await setField("opp_town", oppTown);
 
     if (
       coachName &&
-      coachEmail &&
-      coachPhone &&
       oppName &&
-      oppEmail &&
-      oppPhone &&
       awayTeam &&
       oppTown
     ) {
