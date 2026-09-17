@@ -1030,13 +1030,25 @@ function renderStep3(panel) {
     await setField("away_team", awayTeam);
     await setField("opp_town", oppTown);
 
-    await apiUpdateStep(currentGameNumber, 3);
-    currentRowData.step_3 = "completed";
+    if (    
+      coachName &&
+      coachEmail &&
+      coachPhone &&
+      oppName &&
+      oppEmail &&
+      oppPhone &&
+      awayTeam &&
+      oppTown
+    ) {
+      await apiUpdateStep(currentGameNumber, 3);
+      currentRowData.step_3 = "completed";
+    }
+    
     hydrateTimelineFromRow(currentRowData);
-
-    alert("Contact details saved.");
-  };
-}
+    
+    alert("Information saved.");
+      };
+    }
 
 
 // STEP 4 — Final Game Details (New Schedule) + Comparison
