@@ -928,11 +928,6 @@ function renderStep2(panel) {
     const origTimeRaw = document.getElementById("orig_time").value;
     const origField = document.getElementById("orig_field").value.trim();
 
-    if (!ageGroup || !gender || !division || !coachLast || !isHome ||
-        !origDateRaw || !origTimeRaw || !origField) {
-      alert("Please complete all fields before saving.");
-      return;
-    }
 
     // Convert HTML input formats → sheet formats
     const origDate = formatDateForStorage(origDateRaw);
@@ -956,11 +951,23 @@ function renderStep2(panel) {
     await setField("orig_time", origTime);
     await setField("orig_field", origField);
 
-    await apiUpdateStep(currentGameNumber, 2);
-    currentRowData.step_2 = "completed";
+    if (
+      ageGroup &&
+      gender &&
+      division &&
+      coachLast &&
+      isHome &&
+      origDateRaw &&
+      origTimeRaw &&
+      origField
+    ) {
+      await apiUpdateStep(currentGameNumber, 2);
+      currentRowData.step_2 = "completed";
+    }
+    
     hydrateTimelineFromRow(currentRowData);
-
-    alert("Original details saved.");
+    
+    alert("Information saved.");
   };
 }
 
