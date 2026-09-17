@@ -1560,7 +1560,33 @@ function renderStep9(panel) {
   `;
 
   document.getElementById("s9_download").onclick = () => {
-    window.open(`${API_URL}?action=previewSSSLForm&game_number=${row.game_number}`, "_blank");
+
+    const coachPhone =
+      document.getElementById("coach_phone_temp").value.trim();
+  
+    const oppCoachPhone =
+      document.getElementById("opp_coach_phone_temp").value.trim();
+  
+    const coachEmail =
+      document.getElementById("coach_email_temp").value.trim();
+  
+    const oppCoachEmail =
+      document.getElementById("opp_coach_email_temp").value.trim();
+  
+    if (!coachPhone || !oppCoachPhone) {
+      alert("Both phone numbers are required for the SSSL form.");
+      return;
+    }
+  
+    window.open(
+      `${API_URL}?action=previewSSSLForm` +
+      `&game_number=${row.game_number}` +
+      `&coach_phone=${encodeURIComponent(coachPhone)}` +
+      `&opp_coach_phone=${encodeURIComponent(oppCoachPhone)}` +
+      `&coach_email=${encodeURIComponent(coachEmail)}` +
+      `&opp_coach_email=${encodeURIComponent(oppCoachEmail)}`,
+      "_blank"
+    );
   };
 
 
