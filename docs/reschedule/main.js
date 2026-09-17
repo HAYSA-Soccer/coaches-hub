@@ -509,8 +509,12 @@ async function startNewWorkflow(gameNumber) {
 
   if (res?.reason === "Row already exists") {
     alert(
-      "A reschedule already exists for this game. Use Resume from the Submitted Requests list."
+      "A reschedule already exists for this game. Click Resume in the Submitted Requests list."
     );
+
+    // Optional improvement:
+    resumeGame(gameNumber);
+
     return;
   }
 
@@ -531,7 +535,6 @@ async function startNewWorkflow(gameNumber) {
 
   beginWorkflow();
 }
-
 
 
 
