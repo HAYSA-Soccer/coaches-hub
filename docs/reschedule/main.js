@@ -605,19 +605,20 @@ function hydrateTimelineFromRow(row) {
     el.classList.remove("completed", "locked", "current");
 
     if (complete) {
-      el.classList.add("completed");   // green
+      el.classList.add("completed");
     } else if (step === currentStep) {
-      el.classList.add("current");     // blue
+      el.classList.add("current");
     } else {
-      el.classList.add("locked");      // gray
+      el.classList.add("locked");
     }
   }
 
-  for (let s = 1; s <= 9; s++) {
-    const complete = isStepComplete(source, s);
+  for (let s = 2; s <= 9; s++) {
+    const complete = source[`step_${s}`] === "completed";
     mark(s, complete);
   }
 }
+
 
 function isStepComplete(step) {
   const f = (name) => getField(name);
