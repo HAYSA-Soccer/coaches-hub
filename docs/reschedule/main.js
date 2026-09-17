@@ -306,8 +306,12 @@ function buildQuickView(row) {
     },
 
     status: {
-      certified: row.certified === "true",
-      calendar_updated: row.calendar_updated === "true",
+      certified:
+        String(row.certified).toLowerCase() === "true",
+    
+      calendar_updated:
+        String(row.calendar_updated).toLowerCase() === "true",
+    
       haysa_status: row.haysa_status
     }
   };
@@ -397,27 +401,8 @@ function hideLandingPage() {
 }
 
 function backToList() {
-  const wf = document.getElementById("workflowPage");
-  const tl = document.getElementById("timelineContainer");
-  const panel = document.getElementById("panelContainer");
-  const next = document.getElementById("nextStepContainer");
-  const back = document.getElementById("backToListContainer");
-
-  if (wf) wf.style.display = "none";
-  if (tl) tl.style.display = "none";
-  if (panel) panel.style.display = "none";
-  if (next) next.style.display = "none";
-  if (back) back.style.display = "none";
-
-  const submitted = document.getElementById("submittedListContainer");
-  const lookup = document.getElementById("lookupContainer");
-
-  if (submitted) submitted.style.display = "block";
-  if (lookup) lookup.style.display = "block";
-
-  submitted.scrollIntoView({ behavior: "smooth" });
+  showLandingPage();
 }
-
 
 
 // ===============================
