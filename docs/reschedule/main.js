@@ -1530,7 +1530,26 @@ function renderStep9(panel) {
 
   panel.innerHTML = `
     <h2>Step 9 — Finalize Request</h2>
-    <p>Download the completed form and record any final notes.</p>
+    <p>
+    Download the completed form and record any final notes.
+    Private contact information entered below is used only
+    for generating the SSSL form and is not stored.
+    </p>
+    
+    <h3>Private Contact Information</h3>
+    
+    <label>Your Phone</label>
+    <input type="tel" id="coach_phone_temp">
+    
+    <label>Opponent Coach Phone</label>
+    <input type="tel" id="opp_coach_phone_temp">
+    
+    <label>Your Email (optional)</label>
+    <input type="email" id="coach_email_temp">
+    
+    <label>Opponent Coach Email (optional)</label>
+    <input type="email" id="opp_coach_email_temp">
+
 
     <button id="s9_download" class="primary-btn">Download Completed Form</button>
 
