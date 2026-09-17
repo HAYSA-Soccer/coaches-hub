@@ -21,23 +21,30 @@
 
     <label for="lookupGameNumber">SSSL Game Number</label>
     <input type="text" id="lookupGameNumber" placeholder="e.g., 22920056">
-
-    <button type="button" class="primary-btn" onclick="lookupGameNumber()">Lookup</button>
-
+    
+    <div class="button-row">
+    
+      <button
+        type="button"
+        class="primary-btn"
+        onclick="lookupGameNumber()">
+        Lookup
+      </button>
+    
+      <button
+        type="button"
+        class="secondary-btn"
+        onclick="createNewFromLookup()">
+        + New Reschedule
+      </button>
+    
+    </div>
+    
     <div id="lookupStatus" class="info-text"></div>
+    
   </section>
 
-  <!-- NEW: Start New Reschedule -->
-  <section class="card" id="newWorkflowContainer">
-    <h2>Start a New Reschedule</h2>
-  
-    <label for="newGameNumber">SSSL Game Number</label>
-    <input type="text" id="newGameNumber" placeholder="e.g., 22920056">
-  
-    <button type="button" class="primary-btn" id="newWorkflowBtn">
-      Start New Reschedule
-    </button>
-  </section>
+
 
   <!-- Submitted Requests -->
   <section class="card" id="submittedListContainer">
