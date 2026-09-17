@@ -479,16 +479,33 @@ async function resumeGame(gameNumber) {
   if (wf) wf.scrollIntoView({ behavior: "smooth" });
 }
 
+
+
+
+
+
+
 async function startNewWorkflow(gameNumber) {
   const res = await apiCreateRow(gameNumber);
+
+  console.log("CREATE ROW RESPONSE:", res);
+
   if (!res || (!res.success && !res.created)) {
     alert("Error creating workflow row.");
     return;
   }
+
   currentGameNumber = gameNumber;
   currentRowData = res.data || {};
   beginWorkflow();
 }
+
+
+
+
+
+
+
 
 function beginWorkflow() {
   const lookup = document.getElementById("lookupContainer");
