@@ -452,23 +452,27 @@ async function resumeGame(gameNumber) {
   currentGameNumber = gameNumber;
   hydrateFieldsFromRow(row);
 
-  let nextStep = 2;
-  for (let s = 2; s <= 9; s++) {
-    if (!isStepComplete(s)) {
+  // Determine next incomplete step using REAL completeness logic
+  let nextStep = 1;
+  for (let s = 1; s <= 9; s++) {
+    if (!isStepComplete(row, s)) {
       nextStep = s;
       break;
     }
   }
 
-  hideLandingPage();          // NEW
+  hideLandingPage();
   showWorkflowUI();
+
+  // Hydrate timeline using REAL completeness logic
   hydrateTimelineFromRow(row);
+
+  // Jump to correct step
   goToStep(nextStep);
-  
-  // NEW: scroll workflow into view
+
+  // Scroll workflow into view
   const wf = document.getElementById("workflowPage");
   if (wf) wf.scrollIntoView({ behavior: "smooth" });
-
 }
 
 async function startNewWorkflow(gameNumber) {
