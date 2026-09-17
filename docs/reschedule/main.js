@@ -507,16 +507,30 @@ async function startNewWorkflow(gameNumber) {
 
   console.log("CREATE ROW RESPONSE:", res);
 
-  if (!res || (!res.success && !res.created)) {
-    alert("Error creating workflow row.");
+  if (res?.reason === "Row already exists") {
+    alert(
+      "A reschedule already exists for this game. Use Resume from the Submitted Requests list."
+    );
+    return;
+  }
+
+  if (!res?.created) {
+    alert("Unable to create workflow row.");
     return;
   }
 
   currentGameNumber = gameNumber;
-  currentRowData = res.data || {};
+
+  const rowResult = await apiGetGame(gameNumber);
+
+  if (rowResult?.exists) {
+    hydrateFieldsFromRow(rowResult.data);
+  } else {
+    currentRowData = {};
+  }
+
   beginWorkflow();
 }
-
 
 
 
