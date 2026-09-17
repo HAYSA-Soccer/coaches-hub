@@ -1383,7 +1383,7 @@ function renderStep9(panel) {
   `;
 
   document.getElementById("s9_download").onclick = () => {
-    apiDownloadSSSLForm(row.game_number);
+    window.open(`${API_URL}?action=previewSSSLForm&game_number=${row.game_number}`, "_blank");
   };
 
   document.getElementById("s9_save").onclick = async () => {
