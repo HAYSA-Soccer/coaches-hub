@@ -1405,14 +1405,22 @@ function renderStep7(panel) {
     <div class="sssl-field">Time: <strong>${fd("final_time")}</strong></div>
     <div class="sssl-field">Location: <strong>${fd("final_field")}</strong></div>
 
-    <h3>Coach Contact</h3>
-    <div class="sssl-field">Coach Name: <strong>${fd("coach_name")}</strong></div>
-    <div class="sssl-field">Coach Phone: <strong>${fd("coach_phone")}</strong></div>
-
-    <h3>Opposing Coach Contact</h3>
-    <div class="sssl-field">Opposing Coach Name: <strong>${fd("opp_coach_name")}</strong></div>
-    <div class="sssl-field">Opposing Coach Email: <strong>${fd("opp_coach_email")}</strong></div>
-    <div class="sssl-field">Opposing Coach Phone: <strong>${fd("opp_coach_phone")}</strong></div>
+    <h3>Coach Information</h3>
+    <div class="sssl-field">
+      Coach Name:
+      <strong>${fd("coach_name")}</strong>
+    </div>
+    
+    <h3>Opponent Information</h3>
+    <div class="sssl-field">
+      Opposing Coach Name:
+      <strong>${fd("opp_coach_name")}</strong>
+    </div>
+    
+    <div class="sssl-field">
+      Opponent Town:
+      <strong>${fd("opp_town")}</strong>
+    </div>
 
     <h3>Certification</h3>
     <label><input type="checkbox" id="certified" ${fd("certified")==="true"?"checked":""}> I certify the opposing coach agreed to this change.</label>
