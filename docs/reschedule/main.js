@@ -1040,13 +1040,25 @@ function renderStep3(panel) {
       awayTeam &&
       oppTown
     ) {
-      await apiUpdateStep(currentGameNumber, 3);
-      currentRowData.step_3 = "completed";
-    }
-    
-    hydrateTimelineFromRow(currentRowData);
-    
-    alert("Information saved.");
+      if (
+        coachName &&
+        coachEmail &&
+        coachPhone &&
+        oppName &&
+        oppEmail &&
+        oppPhone &&
+        awayTeam &&
+        oppTown
+      ) {
+        await apiUpdateStep(currentGameNumber, 3);
+        currentRowData.step_3 = "completed";
+      }
+      
+      hydrateTimelineFromRow(currentRowData);
+      
+      alert("Information saved.");
+
+      
       };
     }
 
