@@ -108,6 +108,16 @@ document.addEventListener("DOMContentLoaded", () => {
   initGameChangeForm();
 });
 
+
+document.getElementById("newWorkflowBtn").onclick = () => {
+  const gameNumber = document.getElementById("newGameNumber").value.trim();
+  if (!gameNumber) {
+    alert("Please enter a game number.");
+    return;
+  }
+  startNewWorkflow(gameNumber);
+};
+
 // ===============================
 // API FUNCTIONS
 // ===============================
@@ -536,6 +546,19 @@ function hydrateFieldsFromRow(row) {
   currentRowData.orig_time_input  = normalizeTimeForInput(row.orig_time);
   currentRowData.final_date_input = normalizeDateForInput(row.final_date);
   currentRowData.final_time_input = normalizeTimeForInput(row.final_time);
+}
+
+
+function showLandingPage() {
+  document.getElementById("lookupContainer").style.display = "block";
+  document.getElementById("newWorkflowContainer").style.display = "block";
+  document.getElementById("submittedListContainer").style.display = "block";
+
+  document.getElementById("workflowPage").style.display = "none";
+  document.getElementById("timelineContainer").style.display = "none";
+  document.getElementById("panelContainer").style.display = "none";
+  document.getElementById("nextStepContainer").style.display = "none";
+  document.getElementById("backToListContainer").style.display = "none";
 }
 
 // ===============================
