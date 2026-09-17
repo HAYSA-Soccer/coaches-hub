@@ -1030,7 +1030,7 @@ function renderStep3(panel) {
     await setField("away_team", awayTeam);
     await setField("opp_town", oppTown);
 
-    if (    
+    if (
       coachName &&
       coachEmail &&
       coachPhone &&
@@ -1040,23 +1040,13 @@ function renderStep3(panel) {
       awayTeam &&
       oppTown
     ) {
-      if (
-        coachName &&
-        coachEmail &&
-        coachPhone &&
-        oppName &&
-        oppEmail &&
-        oppPhone &&
-        awayTeam &&
-        oppTown
-      ) {
-        await apiUpdateStep(currentGameNumber, 3);
-        currentRowData.step_3 = "completed";
-      }
-      
-      hydrateTimelineFromRow(currentRowData);
-      
-      alert("Information saved.");
+      await apiUpdateStep(currentGameNumber, 3);
+      currentRowData.step_3 = "completed";
+    }
+    
+    hydrateTimelineFromRow(currentRowData);
+    
+    alert("Information saved.");
 
       
       };
