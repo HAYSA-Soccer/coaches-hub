@@ -1014,22 +1014,10 @@ function renderStep3(panel) {
     <label>Your Name</label>
     <input type="text" id="coach_name" value="${getField("coach_name") || ""}">
 
-    <label>Your Email</label>
-    <input type="email" id="coach_email" value="${getField("coach_email") || ""}">
-
-    <label>Your Phone</label>
-    <input type="tel" id="coach_phone" value="${getField("coach_phone") || ""}">
-
     <h3>Opposing Coach Info</h3>
 
     <label>Opposing Coach Name</label>
     <input type="text" id="opp_coach_name" value="${getField("opp_coach_name") || ""}">
-
-    <label>Opposing Coach Email</label>
-    <input type="email" id="opp_coach_email" value="${getField("opp_coach_email") || ""}">
-
-    <label>Opposing Coach Phone</label>
-    <input type="tel" id="opp_coach_phone" value="${getField("opp_coach_phone") || ""}">
 
     <h3>Opponent Team Info</h3>
 
