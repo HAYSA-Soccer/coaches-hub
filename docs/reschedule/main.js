@@ -122,6 +122,21 @@ document.getElementById("newWorkflowBtn").onclick = () => {
 // API FUNCTIONS
 // ===============================
 
+
+
+async function createNewFromLookup() {
+  const gameNumber =
+    document.getElementById("lookupGameNumber").value.trim();
+
+  if (!gameNumber) {
+    alert("Enter a game number.");
+    return;
+  }
+
+  startNewWorkflow(gameNumber);
+}
+
+
 // Fetch a single game row by game number
 async function apiGetGame(gameNumber) {
   const url = `${BASE_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}`;
@@ -374,10 +389,12 @@ async function loadSubmittedRequests() {
 function hideLandingPage() {
   const submitted = document.getElementById("submittedListContainer");
   const lookup = document.getElementById("lookupContainer");
+  const newWorkflow = document.getElementById("newWorkflowContainer");
+
   if (submitted) submitted.style.display = "none";
   if (lookup) lookup.style.display = "none";
+  if (newWorkflow) newWorkflow.style.display = "none";
 }
-
 
 function backToList() {
   const wf = document.getElementById("workflowPage");
@@ -508,13 +525,16 @@ async function startNewWorkflow(gameNumber) {
 
 
 function beginWorkflow() {
-  const lookup = document.getElementById("lookupContainer");
-  if (lookup) lookup.style.display = "none";
 
+  // Hide ALL landing page content
+  hideLandingPage();
+
+  // Show workflow
   showWorkflowUI();
 
   // Highest completed step based on ROW data
   let highestCompleted = 1;
+
   if (currentRowData) {
     for (let s = 1; s <= 9; s++) {
       if (isStepCompleteRow(currentRowData, s)) {
@@ -524,6 +544,7 @@ function beginWorkflow() {
       }
     }
   }
+
   currentStep = highestCompleted;
 
   hydrateTimelineFromRow(currentRowData || {});
@@ -531,6 +552,7 @@ function beginWorkflow() {
   renderPanelForStep(currentStep);
 
   const form = document.getElementById("gameChangeForm");
+
   if (form && currentRowData) {
     const map = {
       game_number: "game_number",
@@ -547,13 +569,22 @@ function beginWorkflow() {
       opp_coach_name: "opp_coach_name",
       opp_coach_phone: "opp_coach_phone"
     };
+
     Object.keys(map).forEach(name => {
       const el = form.querySelector(`[name='${name}']`);
       if (el) el.value = getField(map[name]);
     });
   }
-}
 
+  // Scroll workflow into view
+  const workflow = document.getElementById("workflowPage");
+  if (workflow) {
+    workflow.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+}
 function hydrateFieldsFromRow(row) {
   console.log("hydrateFieldsFromRow called with:", row);
 
