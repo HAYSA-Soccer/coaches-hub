@@ -195,7 +195,7 @@ function formatTime(t) {
 function getHighestCompletedStep(row) {
   let highest = 1;
   for (let s = 1; s <= 9; s++) {
-    if (row[`step_${s}`] === "completed") {
+    if (isStepComplete(row, s)) {
       highest = s;
     }
   }
@@ -605,16 +605,16 @@ function hydrateTimelineFromRow(row) {
     el.classList.remove("completed", "locked", "current");
 
     if (complete) {
-      el.classList.add("completed");
+      el.classList.add("completed");   // green
     } else if (step === currentStep) {
-      el.classList.add("current");
+      el.classList.add("current");     // blue
     } else {
-      el.classList.add("locked");
+      el.classList.add("locked");      // gray
     }
   }
 
-  for (let s = 2; s <= 9; s++) {
-    const complete = source[`step_${s}`] === "completed";
+  for (let s = 1; s <= 9; s++) {
+    const complete = isStepComplete(source, s);
     mark(s, complete);
   }
 }
