@@ -1549,13 +1549,13 @@ function renderStep9(panel) {
     <input
       type="text"
       id="coach_contact_temp"
-      placeholder="Phone number, email, or both">
+      placeholder="Phone number or email">
     
     <label>Opponent Coach Contact Information</label>
     <input
       type="text"
       id="opp_coach_contact_temp"
-      placeholder="Phone number, email, or both">
+      placeholder="Phone number or email">
     
 
 
