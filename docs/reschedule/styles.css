@@ -436,3 +436,23 @@ select:focus {
   font-size: 16px;
   margin-bottom: 20px;
 }
+
+
+.timeline-step.completed {
+  background-color: #2ecc71; /* green */
+  color: white;
+  border-color: #27ae60;
+}
+
+.timeline-step.current {
+  background-color: #3498db; /* blue */
+  color: white;
+  border-color: #2980b9;
+}
+
+.timeline-step.locked {
+  background-color: #e0e0e0; /* gray */
+  color: #666;
+  border-color: #bdbdbd;
+}
+
