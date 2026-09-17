@@ -1538,17 +1538,33 @@ function renderStep9(panel) {
     
     <h3>Private Contact Information</h3>
     
-    <label>Your Phone</label>
-    <input type="tel" id="coach_phone_temp">
+    <h3>Private Contact Information</h3>
+
+    <p>
+    This information is used only for generating the SSSL form.
+    It is not stored in the workflow.
+    </p>
     
-    <label>Opponent Coach Phone</label>
-    <input type="tel" id="opp_coach_phone_temp">
+    <label>Your Contact Information</label>
+    <input
+      type="text"
+      id="coach_contact_temp"
+      placeholder="Phone number, email, or both">
     
-    <label>Your Email (optional)</label>
-    <input type="email" id="coach_email_temp">
+    <label>Opponent Coach Contact Information</label>
+    <input
+      type="text"
+      id="opp_coach_contact_temp"
+      placeholder="Phone number, email, or both">
     
-    <label>Opponent Coach Email (optional)</label>
-    <input type="email" id="opp_coach_email_temp">
+
+
+
+
+
+
+
+
 
 
     <button id="s9_download" class="primary-btn">Download Completed Form</button>
