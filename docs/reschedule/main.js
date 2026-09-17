@@ -1577,34 +1577,25 @@ function renderStep9(panel) {
 
   document.getElementById("s9_download").onclick = () => {
 
-    const coachPhone =
-      document.getElementById("coach_phone_temp").value.trim();
+    const coachContact =
+      document.getElementById("coach_contact_temp").value.trim();
   
-    const oppCoachPhone =
-      document.getElementById("opp_coach_phone_temp").value.trim();
+    const oppCoachContact =
+      document.getElementById("opp_coach_contact_temp").value.trim();
   
-    const coachEmail =
-      document.getElementById("coach_email_temp").value.trim();
-  
-    const oppCoachEmail =
-      document.getElementById("opp_coach_email_temp").value.trim();
-  
-    if (!coachPhone || !oppCoachPhone) {
-      alert("Both phone numbers are required for the SSSL form.");
+    if (!coachContact || !oppCoachContact) {
+      alert("Contact information is required for both coaches.");
       return;
     }
   
     window.open(
       `${API_URL}?action=previewSSSLForm` +
       `&game_number=${row.game_number}` +
-      `&coach_phone=${encodeURIComponent(coachPhone)}` +
-      `&opp_coach_phone=${encodeURIComponent(oppCoachPhone)}` +
-      `&coach_email=${encodeURIComponent(coachEmail)}` +
-      `&opp_coach_email=${encodeURIComponent(oppCoachEmail)}`,
+      `&coach_contact=${encodeURIComponent(coachContact)}` +
+      `&opp_coach_contact=${encodeURIComponent(oppCoachContact)}`,
       "_blank"
     );
   };
-
 
   document.getElementById("s9_save").onclick = async () => {
 
