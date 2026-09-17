@@ -108,16 +108,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initGameChangeForm();
 });
 
-
-document.getElementById("newWorkflowBtn").onclick = () => {
-  const gameNumber = document.getElementById("newGameNumber").value.trim();
-  if (!gameNumber) {
-    alert("Please enter a game number.");
-    return;
-  }
-  startNewWorkflow(gameNumber);
-};
-
 // ===============================
 // API FUNCTIONS
 // ===============================
