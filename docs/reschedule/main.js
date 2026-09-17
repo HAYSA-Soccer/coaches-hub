@@ -1386,6 +1386,7 @@ function renderStep9(panel) {
     window.open(`${API_URL}?action=previewSSSLForm&game_number=${row.game_number}`, "_blank");
   };
 
+
   document.getElementById("s9_save").onclick = async () => {
 
     if (!isComplete()) {
