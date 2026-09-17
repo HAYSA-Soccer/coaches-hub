@@ -419,23 +419,22 @@ async function lookupGameNumber() {
   currentGameNumber = gameNumber;
   hydrateFieldsFromRow(row);
 
-  let nextStep = 2;
-  for (let s = 2; s <= 9; s++) {
-    if (!isStepComplete(s)) {
+  // First incomplete step based on ROW data
+  let nextStep = 1;
+  for (let s = 1; s <= 9; s++) {
+    if (!isStepCompleteRow(row, s)) {
       nextStep = s;
       break;
     }
   }
 
-  hideLandingPage();          // NEW
+  hideLandingPage();
   showWorkflowUI();
   hydrateTimelineFromRow(row);
   goToStep(nextStep);
-  
-  // NEW: scroll workflow into view
+
   const wf = document.getElementById("workflowPage");
   if (wf) wf.scrollIntoView({ behavior: "smooth" });
-
 }
 
 async function resumeGame(gameNumber) {
@@ -452,10 +451,10 @@ async function resumeGame(gameNumber) {
   currentGameNumber = gameNumber;
   hydrateFieldsFromRow(row);
 
-  // Determine next incomplete step using REAL completeness logic
+  // First incomplete step based on ROW data
   let nextStep = 1;
   for (let s = 1; s <= 9; s++) {
-    if (!isStepComplete(row, s)) {
+    if (!isStepCompleteRow(row, s)) {
       nextStep = s;
       break;
     }
@@ -463,14 +462,9 @@ async function resumeGame(gameNumber) {
 
   hideLandingPage();
   showWorkflowUI();
-
-  // Hydrate timeline using REAL completeness logic
   hydrateTimelineFromRow(row);
-
-  // Jump to correct step
   goToStep(nextStep);
 
-  // Scroll workflow into view
   const wf = document.getElementById("workflowPage");
   if (wf) wf.scrollIntoView({ behavior: "smooth" });
 }
@@ -492,16 +486,23 @@ function beginWorkflow() {
 
   showWorkflowUI();
 
-  // Determine highest completed step
-  let highestCompleted = getHighestCompletedStep(currentRowData || {});
+  // Highest completed step based on ROW data
+  let highestCompleted = 1;
+  if (currentRowData) {
+    for (let s = 1; s <= 9; s++) {
+      if (isStepCompleteRow(currentRowData, s)) {
+        highestCompleted = s;
+      } else {
+        break;
+      }
+    }
+  }
   currentStep = highestCompleted;
 
-  // Hydrate AFTER determining correct step
   hydrateTimelineFromRow(currentRowData || {});
   setActiveTimelineStep(currentStep);
   renderPanelForStep(currentStep);
 
-  // Prefill form fields (if gameChangeForm present)
   const form = document.getElementById("gameChangeForm");
   if (form && currentRowData) {
     const map = {
@@ -529,15 +530,14 @@ function beginWorkflow() {
 function hydrateFieldsFromRow(row) {
   console.log("hydrateFieldsFromRow called with:", row);
 
-  // Copy backend row into our state
   currentRowData = { ...row };
 
-  // Precompute normalized inputs for the HTML controls
   currentRowData.orig_date_input  = normalizeDateForInput(row.orig_date);
   currentRowData.orig_time_input  = normalizeTimeForInput(row.orig_time);
   currentRowData.final_date_input = normalizeDateForInput(row.final_date);
   currentRowData.final_time_input = normalizeTimeForInput(row.final_time);
 }
+
 // ===============================
 // WORKFLOW UI
 // ===============================
@@ -618,12 +618,69 @@ function hydrateTimelineFromRow(row) {
   }
 
   for (let s = 1; s <= 9; s++) {
-    const complete = isStepComplete(source, s);
+    const complete = isStepCompleteRow(source, s);
     mark(s, complete);
   }
 }
 
+// ROW-BASED completeness (for timeline, lookup, resume, beginWorkflow)
+function isStepCompleteRow(r, step) {
+  switch (step) {
+    case 2:
+      return (
+        r.age_group &&
+        r.gender &&
+        r.division &&
+        r.coach_last_name &&
+        r.is_haysa_home &&
+        r.orig_date &&
+        r.orig_time &&
+        r.orig_field
+      );
 
+    case 3:
+      return (
+        r.coach_name &&
+        r.coach_email &&
+        r.coach_phone &&
+        r.opp_coach_name &&
+        r.opp_coach_email &&
+        r.opp_coach_phone &&
+        r.away_team &&
+        r.opp_town
+      );
+
+    case 4:
+      return (
+        r.final_date &&
+        r.final_time &&
+        r.final_field
+      );
+
+    case 5:
+      return r.field_confirmed === "true" || r.field_confirmed === true;
+
+    case 6:
+      return r.haysa_status === "approved";
+
+    case 7:
+      return (
+        (r.certified === "true" || r.certified === true) &&
+        r.signed_name
+      );
+
+    case 8:
+      return r.calendar_updated === "true" || r.calendar_updated === true;
+
+    case 9:
+      return r.step_9 === "completed";
+
+    default:
+      return false;
+  }
+}
+
+// FIELD-BASED completeness (for no-skipping guard in goToStep)
 function isStepComplete(step) {
   const f = (name) => getField(name);
 
@@ -683,7 +740,7 @@ function isStepComplete(step) {
 }
 
 function goToStep(step) {
-  // Prevent skipping ahead
+  // Prevent skipping ahead based on current form fields
   for (let s = 2; s < step; s++) {
     if (!isStepComplete(s)) {
       alert(`You must complete Step ${s} before continuing.`);
