@@ -1017,13 +1017,7 @@ function renderStep3(panel) {
 
     const awayTeam = document.getElementById("away_team").value.trim();
     const oppTown = document.getElementById("opp_town").value.trim();
-
-    if (!coachName || !coachEmail || !coachPhone ||
-        !oppName || !oppEmail || !oppPhone ||
-        !awayTeam || !oppTown) {
-      alert("Please complete all fields before saving.");
-      return;
-    }
+    
 
     await setField("coach_name", coachName);
     await setField("coach_email", coachEmail);
