@@ -912,7 +912,9 @@ function renderStep2(panel) {
 
     <label>Original Field</label>
     <input type="text" id="orig_field" value="${getField("orig_field") || ""}">
-
+    
+    <div id="s2_missing" class="required-note"></div>
+    
     <button id="s2_save" class="primary-btn">Save Original Details</button>
   `;
 
@@ -927,6 +929,34 @@ function renderStep2(panel) {
     const origDateRaw = document.getElementById("orig_date").value;
     const origTimeRaw = document.getElementById("orig_time").value;
     const origField = document.getElementById("orig_field").value.trim();
+
+    const missing = [];
+    
+    function check(id, value, label) {
+      const el = document.getElementById(id);
+    
+      if (!value) {
+        el.classList.add("required-missing");
+        missing.push(label);
+      } else {
+        el.classList.remove("required-missing");
+      }
+    }
+    
+    check("age_group", ageGroup, "Age Group");
+    check("gender", gender, "Gender");
+    check("division", division, "Division");
+    check("coach_last_name", coachLast, "Coach Last Name");
+    check("is_haysa_home", isHome, "Home/Away");
+    check("orig_date", origDateRaw, "Original Date");
+    check("orig_time", origTimeRaw, "Original Time");
+    check("orig_field", origField, "Original Field");
+    
+    const warningBox = document.getElementById("s2_missing");
+    
+    warningBox.innerHTML = missing.length
+      ? `⚠ Missing required fields: ${missing.join(", ")}`
+      : "";
 
 
     // Convert HTML input formats → sheet formats
