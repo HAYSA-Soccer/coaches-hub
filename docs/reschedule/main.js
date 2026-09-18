@@ -424,13 +424,11 @@ async function loadSubmittedRequests() {
 }
 
 function hideLandingPage() {
-  const submitted = document.getElementById("submittedListContainer");
-  const lookup = document.getElementById("lookupContainer");
-  const newWorkflow = document.getElementById("newWorkflowContainer");
+  const landing = document.getElementById("landingPage");
 
-  if (submitted) submitted.style.display = "none";
-  if (lookup) lookup.style.display = "none";
-  if (newWorkflow) newWorkflow.style.display = "none";
+  if (landing) {
+    landing.style.display = "none";
+  }
 }
 
 function backToList() {
@@ -634,7 +632,6 @@ function hydrateFieldsFromRow(row) {
 
 function showLandingPage() {
   document.getElementById("lookupContainer").style.display = "block";
-  document.getElementById("newWorkflowContainer").style.display = "block";
   document.getElementById("submittedListContainer").style.display = "block";
 
   document.getElementById("workflowPage").style.display = "none";
