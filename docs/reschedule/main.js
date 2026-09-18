@@ -239,6 +239,46 @@ async function setField(field, value) {
   await apiUpdateField(currentGameNumber, field, value);
 }
 
+
+function getWorkflowStatus(row) {
+
+  if (row.step_9 === "completed") {
+    return "✅ Complete";
+  }
+
+  if (
+    row.proposed_1_status === "pending" ||
+    row.proposed_2_status === "pending"
+  ) {
+    return "🟡 Awaiting Board Approval";
+  }
+
+  if (
+    row.proposed_1_status === "approved" ||
+    row.proposed_2_status === "approved"
+  ) {
+    return "🔵 Awaiting Coach Agreement";
+  }
+
+  if (
+    row.final_date &&
+    row.final_time &&
+    row.final_field &&
+    !String(row.certified).toLowerCase().includes("true")
+  ) {
+    return "🟣 Awaiting Certification";
+  }
+
+  if (
+    String(row.certified).toLowerCase() === "true"
+  ) {
+    return "🟢 Ready For SSSL Submission";
+  }
+
+  return "⚪ In Progress";
+}
+
+
 function buildQuickView(row) {
 
   // Format date
@@ -268,6 +308,8 @@ function buildQuickView(row) {
     gender: row.gender,
     division: row.division,
     coach_last_name: row.coach_last_name,
+  
+    workflow_status: getWorkflowStatus(row),
 
     orig: {
       date: fmtDate(row.orig_date),
@@ -353,8 +395,9 @@ async function loadSubmittedRequests() {
           </div>
 
           <div class="sg-col sg-progress">
-            <div class="sg-label">Progress</div>
-            <div class="sg-value">${item.progress.steps_completed}/9</div>
+          
+            <div class="sg-label">Next Action</div>
+            <div class="sg-value">${item.workflow_status}</div>
           </div>
 
           <div class="sg-col sg-status">
@@ -1021,9 +1064,6 @@ function renderStep3(panel) {
 
     <h3>Opponent Team Info</h3>
 
-    <label>Away Team Name (as shown in SSSL schedule)</label>
-    <input type="text" id="away_team" value="${getField("away_team") || ""}">
-
     <label>Opponent Town</label>
     <input type="text" id="opp_town" value="${getField("opp_town") || ""}">
 
@@ -1040,7 +1080,6 @@ function renderStep3(panel) {
     const oppEmail = document.getElementById("opp_coach_email").value.trim();
     const oppPhone = document.getElementById("opp_coach_phone").value.trim();
 
-    const awayTeam = document.getElementById("away_team").value.trim();
     const oppTown = document.getElementById("opp_town").value.trim();
     
 
@@ -1048,13 +1087,11 @@ function renderStep3(panel) {
 
     await setField("opp_coach_name", oppName);
 
-    await setField("away_team", awayTeam);
     await setField("opp_town", oppTown);
 
     if (
       coachName &&
       oppName &&
-      awayTeam &&
       oppTown
     ) {
       await apiUpdateStep(currentGameNumber, 3);
@@ -1373,7 +1410,7 @@ function renderStep7(panel) {
 
   const isHomeOriginal = fd("is_haysa_home") === "true";
   const oppTown = fd("opp_town");
-  const awayTeam = fd("away_team");
+  const awayTeam =  oppTown;
   const teamName = fd("team_name");
 
   // Determine home/away (same home flag for original + final)
