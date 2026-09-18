@@ -1071,16 +1071,15 @@ function renderStep3(panel) {
   `;
 
   document.getElementById("s3_save").onclick = async () => {
-
-    const coachName = document.getElementById("coach_name").value.trim();
-    const coachEmail = document.getElementById("coach_email").value.trim();
-    const coachPhone = document.getElementById("coach_phone").value.trim();
-
-    const oppName = document.getElementById("opp_coach_name").value.trim();
-    const oppEmail = document.getElementById("opp_coach_email").value.trim();
-    const oppPhone = document.getElementById("opp_coach_phone").value.trim();
-
-    const oppTown = document.getElementById("opp_town").value.trim();
+    
+    const coachName =
+      document.getElementById("coach_name").value.trim();
+    
+    const oppName =
+      document.getElementById("opp_coach_name").value.trim();
+    
+    const oppTown =
+      document.getElementById("opp_town").value.trim();
     
 
     await setField("coach_name", coachName);
