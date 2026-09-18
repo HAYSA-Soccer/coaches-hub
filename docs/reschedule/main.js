@@ -424,11 +424,14 @@ async function loadSubmittedRequests() {
 }
 
 function hideLandingPage() {
-  const landing = document.getElementById("landingPage");
+  const submitted =
+    document.getElementById("submittedListContainer");
 
-  if (landing) {
-    landing.style.display = "none";
-  }
+  const lookup =
+    document.getElementById("lookupContainer");
+
+  if (submitted) submitted.style.display = "none";
+  if (lookup) lookup.style.display = "none";
 }
 
 function backToList() {
