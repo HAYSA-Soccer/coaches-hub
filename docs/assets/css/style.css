@@ -512,3 +512,43 @@ section {
     margin-bottom: 25px;
     font-size: 32px;
 }
+
+/* ===============================
+   FEATURED RESCHEDULE CENTER
+   =============================== */
+
+.featured-reschedule {
+    width: 95%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+.featured-reschedule-card {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    background: #173d77;
+    color: white;
+    padding: 35px;
+    border-radius: 12px;
+    font-size: 2rem;
+    font-weight: 700;
+    border-top: 5px solid #f58232;
+    box-shadow: 0 3px 10px rgba(0,0,0,.15);
+}
+
+.featured-reschedule-card:hover {
+    background: #23498a;
+}
+
+.resources-section {
+    width: 95%;
+    max-width: 1200px;
+    margin: 0 auto 40px auto;
+}
+
+.resources-section h2 {
+    text-align: center;
+    color: #173d77;
+    margin-bottom: 20px;
+}
