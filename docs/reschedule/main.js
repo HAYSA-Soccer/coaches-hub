@@ -747,12 +747,7 @@ function isStepCompleteRow(r, step) {
     case 3:
       return (
         r.coach_name &&
-        r.coach_email &&
-        r.coach_phone &&
         r.opp_coach_name &&
-        r.opp_coach_email &&
-        r.opp_coach_phone &&
-        r.away_team &&
         r.opp_town
       );
 
@@ -806,12 +801,7 @@ function isStepComplete(step) {
     case 3:
       return (
         f("coach_name") &&
-        f("coach_email") &&
-        f("coach_phone") &&
         f("opp_coach_name") &&
-        f("opp_coach_email") &&
-        f("opp_coach_phone") &&
-        f("away_team") &&
         f("opp_town")
       );
 
