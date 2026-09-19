@@ -570,4 +570,7 @@ section {
 .featured-card span {
     color: #dfe8ff;
 }
-``
+
+.featured-card::before {
+content: "📅";
+}
