@@ -556,34 +556,18 @@ section {
 
 /* Featured Reschedule Center */
 
-.featured-reschedule {
-    max-width: 1100px;
-    margin: 30px auto;
-    padding: 0 20px;
-}
-
-.featured-reschedule-card {
-    display: block;
-    text-decoration: none;
+.featured-card {
+    grid-column: 1 / -1;
     background: #173d77;
     color: white;
-    padding: 30px;
-    border-radius: 12px;
-    text-align: center;
-    border-top: 5px solid #ff7f32;
-    box-shadow: 0 3px 10px rgba(0,0,0,.15);
-    transition: 0.2s ease;
+    border-left: 8px solid #ff7f32;
 }
 
-.featured-reschedule-card:hover {
+.featured-card:hover {
     background: #23498a;
-    transform: translateY(-2px);
 }
 
-.featured-reschedule-card span {
-    display: block;
-    margin-top: 10px;
-    font-size: 1rem;
-    font-weight: normal;
-    color: #e0e0e0;
+.featured-card span {
+    color: #dfe8ff;
 }
+``
