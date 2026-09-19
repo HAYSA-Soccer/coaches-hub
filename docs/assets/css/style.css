@@ -590,3 +590,25 @@ section {
 .featured-card::after {
     display: none;
 }
+
+.featured-btn {
+    display: inline-block;
+
+    margin-top: 20px;
+
+    padding: 12px 24px;
+
+    background: #ff7f32;
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 6px;
+
+    font-weight: bold;
+}
+
+.featured-btn:hover {
+    background: #e66f28;
+}
