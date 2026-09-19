@@ -558,6 +558,7 @@ section {
 
 .featured-card {
     grid-column: 1 / -1;
+    text-align: center;
 
     background: linear-gradient(
         135deg,
@@ -569,7 +570,7 @@ section {
 
     border-radius: 12px;
 
-    padding: 35px;
+    padding: 50px;
 
     border-left: 8px solid #ff7f32;
 }
