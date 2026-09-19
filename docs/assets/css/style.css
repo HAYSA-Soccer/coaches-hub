@@ -608,8 +608,6 @@ section {
 .featured-badge {
     display: inline-block;
 
-    margin-bottom: 15px;
-
     background: rgba(255,255,255,.15);
 
     padding: 6px 12px;
@@ -619,4 +617,6 @@ section {
     font-size: .8rem;
 
     letter-spacing: 1px;
+
+    margin-bottom: 20px;
 }
