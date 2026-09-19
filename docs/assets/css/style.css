@@ -585,38 +585,3 @@ section {
     color: #dfe8ff;
     max-width: 800px;
 }
-
-.featured-btn {
-    display: inline-block;
-
-    background: #ff7f32;
-    color: white;
-
-    padding: 12px 20px;
-
-    border-radius: 6px;
-
-    text-decoration: none;
-
-    font-weight: bold;
-}
-
-.featured-btn:hover {
-    background: #e66f28;
-}
-
-.featured-badge {
-    display: inline-block;
-
-    background: rgba(255,255,255,.15);
-
-    padding: 6px 12px;
-
-    border-radius: 20px;
-
-    font-size: .8rem;
-
-    letter-spacing: 1px;
-
-    margin-bottom: 20px;
-}
