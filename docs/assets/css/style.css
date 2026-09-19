@@ -585,3 +585,8 @@ section {
     color: #dfe8ff;
     max-width: 800px;
 }
+
+.featured-card::before,
+.featured-card::after {
+    display: none;
+}
