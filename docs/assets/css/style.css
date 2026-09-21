@@ -128,15 +128,31 @@ section {
 }
 
 .list-card {
-    padding: 16px; /* tighter */
-    border-radius: 8px;
-    gap: 6px;
+    background: white;
+    border-radius: 10px;
+    padding: 18px; /* compact */
+    text-decoration: none;
+    color: #003366;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: 0.25s ease;
 }
 
 .list-card::before {
-    font-size: 24px; /* smaller icon */
-    width: 40px;
-    height: 40px;
+    content: "⚽";
+    font-size: 28px; /* slightly smaller */
+    background: #ff7f32;
+    color: white;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 4px;
 }
 
@@ -469,10 +485,11 @@ section {
 }
 
 .featured-btn {
-    padding: 8px 16px; /* tighter */
+    padding: 8px 16px;
     font-size: 0.9rem;
     border-radius: 6px;
 }
+
 
 
 .featured-btn:hover {
@@ -595,32 +612,37 @@ section {
 
 .home-layout {
     max-width: 1000px;
-    margin: 20px auto 20px auto;
+    margin: 20px auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px; /* tighter */
+    gap: 18px;
 }
+
 
 
 .ops-card {
-    background: white;
-    color: #003366;
-    border-radius: 8px;
-    padding: 18px; /* tighter */
-    border: 1px solid rgba(0,0,0,0.08);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    background: #173d77;
+    color: white;
+    border-radius: 10px;
+    padding: 20px; /* compact but still roomy */
+    border-left: 6px solid #ff7f32;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .ops-card h2 {
-    margin: 0 0 8px 0;
-    font-size: 1.2rem; /* smaller */
+    margin: 0;
+    font-size: 1.3rem;
 }
 
 .ops-card p {
-    margin: 0 0 12px 0;
-    font-size: 0.9rem; /* smaller */
-    color: #444;
+    margin: 0;
+    font-size: 0.95rem;
+    color: #dfe8ff;
 }
+
 
 
 .resources-column {
