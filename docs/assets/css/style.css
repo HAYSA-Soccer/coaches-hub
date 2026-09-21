@@ -624,21 +624,24 @@ section {
 }
 
 .ops-card {
-    background: linear-gradient(135deg, #173d77, #23498a);
-    color: white;
-    border-radius: 12px;
-    padding: 30px;
-    border-left: 8px solid #ff7f32;
-    text-align: left;
+    background: white;
+    color: #003366;
+    border-radius: 10px;
+    padding: 24px;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
 }
 
+
 .ops-card h2 {
-    margin: 0 0 12px 0;
+    margin: 0 0 10px 0;
+    font-size: 1.4rem;
+    color: #003366;
 }
 
 .ops-card p {
-    margin: 0 0 18px 0;
-    color: #dfe8ff;
+    margin: 0 0 16px 0;
+    color: #444;
 }
 
 .resources-column {
