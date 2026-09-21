@@ -128,36 +128,18 @@ section {
 }
 
 .list-card {
-    background: white;
-    border-radius: 10px;
-    padding: 22px 20px;
-    text-decoration: none;
-    color: #003366;
-    font-weight: bold;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-    transition: 0.25s ease;
-    position: relative;
-    overflow: hidden;
+    padding: 16px; /* tighter */
+    border-radius: 8px;
+    gap: 6px;
 }
 
 .list-card::before {
-    content: "⚽";
-    font-size: 32px;
-    background: #ff7f32;
-    color: white;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    font-size: 24px; /* smaller icon */
+    width: 40px;
+    height: 40px;
+    margin-bottom: 4px;
 }
+
 
 .list-card span {
     font-weight: normal;
@@ -487,15 +469,11 @@ section {
 }
 
 .featured-btn {
-    display: inline-block;
-    background: #f58232;
-    color: white;
-    text-decoration: none;
-    padding: 14px 28px;
-    border-radius: 8px;
-    font-weight: 700;
-    transition: 0.2s ease;
+    padding: 8px 16px; /* tighter */
+    font-size: 0.9rem;
+    border-radius: 6px;
 }
+
 
 .featured-btn:hover {
     background: #e16918;
@@ -616,33 +594,34 @@ section {
 }
 
 .home-layout {
-    max-width: 1100px;
-    margin: 30px auto 40px auto;
+    max-width: 1000px;
+    margin: 20px auto 20px auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    gap: 16px; /* tighter */
 }
+
 
 .ops-card {
     background: white;
     color: #003366;
-    border-radius: 10px;
-    padding: 24px;
+    border-radius: 8px;
+    padding: 18px; /* tighter */
     border: 1px solid rgba(0,0,0,0.08);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
 
-
 .ops-card h2 {
-    margin: 0 0 10px 0;
-    font-size: 1.4rem;
-    color: #003366;
+    margin: 0 0 8px 0;
+    font-size: 1.2rem; /* smaller */
 }
 
 .ops-card p {
-    margin: 0 0 16px 0;
+    margin: 0 0 12px 0;
+    font-size: 0.9rem; /* smaller */
     color: #444;
 }
+
 
 .resources-column {
     display: flex;
