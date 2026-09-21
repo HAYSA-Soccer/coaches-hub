@@ -557,7 +557,9 @@ section {
 /* Featured Reschedule Center */
 
 .featured-card {
-    grid-column: 1 / -1;
+    /* Allow grid to control width */
+    grid-column: span 2;
+
     text-align: center;
 
     background: linear-gradient(
@@ -567,23 +569,25 @@ section {
     );
 
     color: white;
-
     border-radius: 12px;
 
-    padding: 50px;
+    /* Tighter, less hero-like */
+    padding: 30px;
 
     border-left: 8px solid #ff7f32;
 }
 
 .featured-card h2 {
-    margin: 0 0 15px 0;
+    margin: 0 0 12px 0;
     color: white;
 }
 
 .featured-card p {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     color: #dfe8ff;
-    max-width: 800px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .featured-card::before,
@@ -593,20 +597,18 @@ section {
 
 .featured-btn {
     display: inline-block;
+    margin-top: 16px;
 
-    margin-top: 20px;
-
-    padding: 12px 24px;
+    padding: 10px 22px;
 
     background: #ff7f32;
-
     color: white;
 
     text-decoration: none;
-
     border-radius: 6px;
-
     font-weight: bold;
+
+    transition: background 0.2s ease;
 }
 
 .featured-btn:hover {
