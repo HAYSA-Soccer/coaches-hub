@@ -64,6 +64,54 @@ function createNewFromSearchInputs() {
 }
 
 
+function showSingleMatchConfirmation(match) {
+  const container = document.getElementById("gameSelectionContainer");
+
+  container.innerHTML = `
+    <div class="match-card">
+      <h3>We found a matching game</h3>
+
+      <div><strong>Team:</strong> ${match.team_name}</div>
+      <div><strong>Opponent:</strong> ${match.opp_town}</div>
+      <div><strong>Original Date:</strong> ${normalizeDateForInput(match.orig_date)}</div>
+      <div><strong>Original Time:</strong> ${normalizeTimeForInput(match.orig_time)}</div>
+      <div><strong>Field:</strong> ${match.orig_field}</div>
+      <div><strong>Game #:</strong> ${match.game_number}</div>
+
+      <div class="button-row">
+        <button class="primary-btn" onclick="startNewWorkflow('${match.game_number}')">
+          Use This Game
+        </button>
+
+        <button class="secondary-btn" onclick="createNewFromSearchInputs()">
+          Create New Case Instead
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function createNewFromSearchInputs() {
+  const age_group = document.getElementById("sr_age_group").value.trim();
+  const gender = document.getElementById("sr_gender").value.trim();
+  const division = document.getElementById("sr_division").value.trim();
+  const orig_date = document.getElementById("sr_orig_date").value.trim();
+  const orig_time = document.getElementById("sr_orig_time").value.trim();
+  const opp_town = document.getElementById("sr_opp_town").value.trim();
+
+  createWorkflowFromSearchFields({
+    age_group,
+    gender,
+    division,
+    orig_date,
+    orig_time,
+    opp_town
+  });
+}
+
+
+
+
 // Convert "h:mm AM/PM" -> "HH:mm" for <input type="time">
 function normalizeTimeForInput(value) {
   if (!value) return "";
