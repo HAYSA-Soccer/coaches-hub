@@ -497,6 +497,109 @@ async function lookupGameNumber() {
   await startNewWorkflow(gameNumber);
 }
 
+
+
+async function startRescheduleFromForm() {
+  console.log("Search button clicked");
+
+  const age_group = document.getElementById("sr_age_group").value.trim();
+  const gender = document.getElementById("sr_gender").value.trim();
+  const division = document.getElementById("sr_division").value.trim();
+  const orig_date = document.getElementById("sr_orig_date").value.trim();
+  const orig_time = document.getElementById("sr_orig_time").value.trim();
+  const opp_town = document.getElementById("sr_opp_town").value.trim();
+
+  const params = new URLSearchParams({
+    action: "searchRows",
+    age_group,
+    gender,
+    division,
+    orig_date,
+    orig_time,
+    opp_town
+  });
+
+  const url = `${BASE_URL}?${params.toString()}`;
+  console.log("Search URL:", url);
+
+  const response = await fetch(url);
+  const result = await response.json();
+  console.log("Search result:", result);
+
+  const matches = result.rows || [];
+
+  // CASE 1 — EXACT MATCH
+  if (matches.length === 1) {
+    startNewWorkflow(matches[0].game_number);
+    return;
+  }
+
+  // CASE 2 — MULTIPLE MATCHES
+  if (matches.length > 1) {
+    showGameSelection(matches);
+    return;
+  }
+
+  // CASE 3 — NO MATCHES FOUND
+  const confirmCreate = confirm(
+    "No matching game was found.\n\n" +
+    "Would you like to create a NEW reschedule case using the details you entered?"
+  );
+
+  if (!confirmCreate) {
+    document.getElementById("searchStatus").innerText =
+      "No matches found. Please adjust your search.";
+    return;
+  }
+
+  await createWorkflowFromSearchFields({
+    age_group,
+    gender,
+    division,
+    orig_date,
+    orig_time,
+    opp_town
+  });
+}
+
+
+async function createWorkflowFromSearchFields(fields) {
+  const pseudoGameNumber = "SRCH-" + Date.now();
+
+  const res = await apiCreateRow(pseudoGameNumber);
+
+  if (!res?.created) {
+    alert("Unable to create workflow row.");
+    return;
+  }
+
+  currentGameNumber = pseudoGameNumber;
+
+  currentRowData = {
+    game_number: pseudoGameNumber,
+    age_group: fields.age_group,
+    gender: fields.gender,
+    division: fields.division,
+    opp_town: fields.opp_town,
+    orig_date: formatDateForStorage(fields.orig_date),
+    orig_time: formatTimeForStorage(fields.orig_time),
+    orig_field: "(Unknown)"
+  };
+
+  await setField("age_group", fields.age_group);
+  await setField("gender", fields.gender);
+  await setField("division", fields.division);
+  await setField("opp_town", fields.opp_town);
+
+  await setField("orig_date", formatDateForStorage(fields.orig_date));
+  await setField("orig_time", formatTimeForStorage(fields.orig_time));
+  await setField("orig_field", "(Unknown)");
+
+  beginWorkflow();
+}
+
+
+
 async function resumeGame(gameNumber) {
   const result = await apiGetGame(gameNumber);
   const statusEl = document.getElementById("lookupStatus");
