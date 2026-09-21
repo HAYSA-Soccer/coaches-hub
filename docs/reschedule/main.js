@@ -660,8 +660,10 @@ async function startRescheduleFromForm() {
 
 
 async function createWorkflowFromSearchFields(fields) {
+  // Create a unique pseudo game number for search-created cases
   const pseudoGameNumber = "SRCH-" + Date.now();
 
+  // Create the new workflow row in the sheet
   const res = await apiCreateRow(pseudoGameNumber);
 
   if (!res?.created) {
@@ -669,8 +671,18 @@ async function createWorkflowFromSearchFields(fields) {
     return;
   }
 
+  // Set the active game number
   currentGameNumber = pseudoGameNumber;
 
+  // ---------------------------------------------
+  // AUTO‑COMPLETE STEP 1 FOR ALL NEW CASES
+  // ---------------------------------------------
+  await apiUpdateStep(pseudoGameNumber, 1);
+  currentRowData = { step_1: "completed" };
+
+  // ---------------------------------------------
+  // Build the initial row data object
+  // ---------------------------------------------
   currentRowData = {
     game_number: pseudoGameNumber,
     age_group: fields.age_group,
@@ -679,9 +691,13 @@ async function createWorkflowFromSearchFields(fields) {
     opp_town: fields.opp_town,
     orig_date: formatDateForStorage(fields.orig_date),
     orig_time: formatTimeForStorage(fields.orig_time),
-    orig_field: "(Unknown)"
+    orig_field: "(Unknown)",
+    step_1: "completed"
   };
 
+  // ---------------------------------------------
+  // Save all fields to the sheet
+  // ---------------------------------------------
   await setField("age_group", fields.age_group);
   await setField("gender", fields.gender);
   await setField("division", fields.division);
@@ -691,6 +707,9 @@ async function createWorkflowFromSearchFields(fields) {
   await setField("orig_time", formatTimeForStorage(fields.orig_time));
   await setField("orig_field", "(Unknown)");
 
+  // ---------------------------------------------
+  // Begin workflow at Step 2 (Step 1 is complete)
+  // ---------------------------------------------
   beginWorkflow();
 }
 
@@ -754,18 +773,23 @@ async function startNewWorkflow(gameNumber) {
     alert("Unable to create workflow row.");
     return;
   }
-
+  
   currentGameNumber = gameNumber;
-
+  
+  // AUTO-COMPLETE STEP 1 FOR NEW CASES
+  await apiUpdateStep(gameNumber, 1);
+  currentRowData.step_1 = "completed";
+  
   const rowResult = await apiGetGame(gameNumber);
-
+  
   if (rowResult?.exists) {
     hydrateFieldsFromRow(rowResult.data);
   } else {
     currentRowData = {};
   }
-
+  
   beginWorkflow();
+
 }
 
 
