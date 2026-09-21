@@ -455,32 +455,46 @@ async function lookupGameNumber() {
 
   const result = await apiGetGame(gameNumber);
 
-  if (!result || !result.exists) {
-    if (statusEl) statusEl.innerText = "Game not found.";
+  // CASE 1 — FOUND → resume workflow
+  if (result && result.exists) {
+    const row = result.data;
+
+    currentGameNumber = gameNumber;
+    hydrateFieldsFromRow(row);
+
+    // First incomplete step
+    let nextStep = 1;
+    for (let s = 1; s <= 9; s++) {
+      if (!isStepCompleteRow(row, s)) {
+        nextStep = s;
+        break;
+      }
+    }
+
+    hideLandingPage();
+    showWorkflowUI();
+    hydrateTimelineFromRow(row);
+    goToStep(nextStep);
+
+    const wf = document.getElementById("workflowPage");
+    if (wf) wf.scrollIntoView({ behavior: "smooth" });
+
     return;
   }
 
-  const row = result.data;
+  // CASE 2 — NOT FOUND → ask to create new case
+  const confirmCreate = confirm(
+    "No matching game was found.\n\n" +
+    "Would you like to create a NEW reschedule case using this game number?"
+  );
 
-  currentGameNumber = gameNumber;
-  hydrateFieldsFromRow(row);
-
-  // First incomplete step based on ROW data
-  let nextStep = 1;
-  for (let s = 1; s <= 9; s++) {
-    if (!isStepCompleteRow(row, s)) {
-      nextStep = s;
-      break;
-    }
+  if (!confirmCreate) {
+    statusEl.innerText = "Game not found.";
+    return;
   }
 
-  hideLandingPage();
-  showWorkflowUI();
-  hydrateTimelineFromRow(row);
-  goToStep(nextStep);
-
-  const wf = document.getElementById("workflowPage");
-  if (wf) wf.scrollIntoView({ behavior: "smooth" });
+  // Create new workflow row using the game number
+  await startNewWorkflow(gameNumber);
 }
 
 async function resumeGame(gameNumber) {
