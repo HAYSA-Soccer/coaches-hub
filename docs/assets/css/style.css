@@ -614,3 +614,35 @@ section {
 .featured-btn:hover {
     background: #e66f28;
 }
+
+.home-layout {
+    max-width: 1100px;
+    margin: 30px auto 40px auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 24px;
+}
+
+.ops-card {
+    background: linear-gradient(135deg, #173d77, #23498a);
+    color: white;
+    border-radius: 12px;
+    padding: 30px;
+    border-left: 8px solid #ff7f32;
+    text-align: left;
+}
+
+.ops-card h2 {
+    margin: 0 0 12px 0;
+}
+
+.ops-card p {
+    margin: 0 0 18px 0;
+    color: #dfe8ff;
+}
+
+.resources-column {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
