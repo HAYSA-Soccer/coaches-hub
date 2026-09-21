@@ -32,7 +32,7 @@ function showSingleMatchConfirmation(match) {
       <div><strong>Game #:</strong> ${match.game_number}</div>
 
       <div class="button-row">
-        <button class="primary-btn" onclick="startNewWorkflow('${match.game_number}')">
+        <button class="primary-btn" onclick="useExistingOrStartNew('${match.game_number}')">
           Use This Game
         </button>
 
@@ -79,7 +79,7 @@ function showSingleMatchConfirmation(match) {
       <div><strong>Game #:</strong> ${match.game_number}</div>
 
       <div class="button-row">
-        <button class="primary-btn" onclick="startNewWorkflow('${match.game_number}')">
+        <button class="primary-btn" onclick="useExistingOrStartNew('${match.game_number}')">
           Use This Game
         </button>
 
@@ -90,6 +90,18 @@ function showSingleMatchConfirmation(match) {
     </div>
   `;
 }
+
+
+
+function useExistingOrStartNew(gameNumber) {
+  if (workflowExists(gameNumber)) {
+    resumeWorkflow(gameNumber);   // ← SAME function used by Submitted Requests
+  } else {
+    startNewWorkflow(gameNumber);
+  }
+}
+
+
 
 function createNewFromSearchInputs() {
   const age_group = document.getElementById("sr_age_group").value.trim();
