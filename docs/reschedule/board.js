@@ -95,7 +95,6 @@ function passesFilter(bucket) {
 function updateField(gameNumber, field, value) {
   fetch(`${API_BASE}?action=updateField`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       game_number: gameNumber,
       field: field,
