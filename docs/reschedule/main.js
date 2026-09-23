@@ -930,11 +930,18 @@ function showWorkflowWithoutStarting() {
   // Update timeline UI
   updateTimelineUI(currentRowData);
 
-  // Skip Step 1 (auto-completed)
+  // Determine next step (skip Step 1)
   const nextStep = findNextIncompleteStepSkippingStep1(currentRowData);
 
-  // Highlight the correct step
+  // Highlight that step
   highlightStep(nextStep);
+
+  // ⭐ CRITICAL: Render the step content
+  renderStep(nextStep);
+
+  // Show the Next Step button
+  const nextBtn = document.getElementById("nextStepContainer");
+  if (nextBtn) nextBtn.style.display = "block";
 }
 
 
