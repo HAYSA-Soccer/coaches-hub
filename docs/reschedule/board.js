@@ -12,12 +12,10 @@ function loadBoardData() {
   fetch(`${API_BASE}?action=getAllRows`)
     .then(r => r.json())
     .then(data => {
-      allRows = data.rows || data; // adapt to your payload
+      allRows = data.rows || data;
       renderBoardDashboard();
     })
-    .catch(err => {
-      console.error("Error loading board data", err);
-    });
+    .catch(err => console.error("Error loading board data", err));
 }
 
 function setFilter(filter) {
@@ -25,90 +23,87 @@ function setFilter(filter) {
   renderBoardDashboard();
 }
 
+/* ---------------------------------------------------------
+   STATUS ENGINE — matches your real workflow
+--------------------------------------------------------- */
 function computeBoardStatus(row) {
-  const step = {
-    s1: row.step_1,
-    s2: row.step_2,
-    s3: row.step_3,
-    s4: row.step_4,
-    s5: row.step_5,
-    s6: row.step_6,
-    s7: row.step_7,
-    s8: row.step_8,
-    s9: row.step_9
-  };
+  const status = {};
 
+  // 1. Registrar contacted (pre-step)
+  status.registrar_contacted =
+    String(row.field_requested).toLowerCase() === "true";
+
+  // 2. Opponent contacted
+  status.opponent_contacted =
+    row.step_1 === "completed" || row.step_2 === "completed";
+
+  // 3. Agreement reached
+  status.agreement_reached = row.step_3 === "completed";
+
+  // 4. HAYSA approval
   const haysa = (row.haysa_status || "").toLowerCase();
-  const certified = String(row.certified || "").toLowerCase() === "true";
-  const calendarUpdated = String(row.calendar_updated || "").toLowerCase() === "true";
+  status.haysa_approved = haysa === "approved";
+  status.haysa_rejected = haysa === "rejected";
 
-  // Completed / closed out
-  if (step.s9 === "completed") {
-    return {
-      label: "Completed",
-      detail: "SSSL approved and workflow closed",
-      bucket: "completed",
-      pillClass: "completed"
-    };
+  // 5. Field hold (home games only)
+  status.field_hold =
+    String(row.field_confirmed).toLowerCase() === "true";
+
+  // 6. Sent to SSSL
+  status.sent_to_sssl = row.step_7 === "completed";
+
+  // 7. SSSL approval
+  status.sssl_approved = row.step_9 === "completed";
+
+  // 8. TeamSideline updated
+  status.ts_updated =
+    String(row.calendar_updated).toLowerCase() === "true";
+
+  // Determine bucket
+  if (status.sssl_approved && status.ts_updated) {
+    status.bucket = "completed";
+    status.label = "Completed";
+    status.detail = "Fully approved and updated in TS";
+    status.pillClass = "completed";
+  }
+  else if (status.sent_to_sssl && !status.sssl_approved) {
+    status.bucket = "pending_sssl";
+    status.label = "Pending SSSL";
+    status.detail = "Awaiting SSSL approval";
+    status.pillClass = "pending";
+  }
+  else if (status.haysa_approved && !status.sent_to_sssl) {
+    status.bucket = "ready_sssl";
+    status.label = "Ready for SSSL";
+    status.detail = "HAYSA approved — board must send to SSSL";
+    status.pillClass = "ready";
+  }
+  else if (status.agreement_reached && !status.haysa_approved) {
+    status.bucket = "needs_action";
+    status.label = "Needs HAYSA Review";
+    status.detail = "Coach submitted — HAYSA must review";
+    status.pillClass = "needs";
+  }
+  else {
+    status.bucket = "needs_action";
+    status.label = "In Progress";
+    status.detail = "Coach still working through steps";
+    status.pillClass = "needs";
   }
 
-  // Pending SSSL (sent but not finalized)
-  if (step.s7 === "completed" && step.s9 !== "completed") {
-    return {
-      label: "Pending SSSL",
-      detail: "Sent to SSSL, awaiting approval",
-      bucket: "pending_sssl",
-      pillClass: "pending"
-    };
-  }
-
-  // Ready for SSSL (HAYSA approved, not yet sent)
-  if (haysa === "approved" && step.s7 !== "completed") {
-    return {
-      label: "Ready for SSSL",
-      detail: "HAYSA approved — board should send to SSSL",
-      bucket: "ready_sssl",
-      pillClass: "ready"
-    };
-  }
-
-  // Coach submitted, needs HAYSA review
-  if (step.s3 === "completed" && haysa === "") {
-    return {
-      label: "Needs HAYSA Review",
-      detail: "Coach has submitted; board/HAYSA must review",
-      bucket: "needs_action",
-      pillClass: "needs"
-    };
-  }
-
-  // In progress / coach still working
-  if (step.s1 === "completed" || step.s2 === "completed" || step.s3 !== "completed") {
-    return {
-      label: "In Progress",
-      detail: "Coach still working through steps",
-      bucket: "needs_action",
-      pillClass: "needs"
-    };
-  }
-
-  return {
-    label: "Unknown",
-    detail: "Status could not be determined",
-    bucket: "needs_action",
-    pillClass: "needs"
-  };
+  return status;
 }
 
-function passesFilter(statusBucket) {
-  if (currentFilter === "all") return true;
-  if (currentFilter === "needs_action") return statusBucket === "needs_action";
-  if (currentFilter === "pending_sssl") return statusBucket === "pending_sssl";
-  if (currentFilter === "ready_sssl") return statusBucket === "ready_sssl";
-  if (currentFilter === "completed") return statusBucket === "completed";
-  return true;
+function passesFilter(bucket) {
+  return (
+    currentFilter === "all" ||
+    currentFilter === bucket
+  );
 }
 
+/* ---------------------------------------------------------
+   RENDER DASHBOARD
+--------------------------------------------------------- */
 function renderBoardDashboard() {
   const active = document.getElementById("boardDashboard");
   const completed = document.getElementById("boardCompleted");
@@ -130,8 +125,6 @@ function renderBoardDashboard() {
     const finalDate = row.final_date || "";
     const finalTime = row.final_time || "";
     const finalField = row.final_field || "";
-
-    const notes = row.notes || "";
 
     div.innerHTML = `
       <div>
@@ -161,8 +154,10 @@ function renderBoardDashboard() {
         <div class="board-label">Status</div>
         <span class="status-pill ${status.pillClass}">${status.label}</span>
         <div class="board-sub">${status.detail}</div>
-        <div class="board-sub">Certified: ${row.certified || "FALSE"} | Calendar: ${row.calendar_updated || "FALSE"}</div>
-        <div class="board-sub">HAYSA: ${row.haysa_status || "—"}</div>
+
+        <div class="checklist">
+          ${renderChecklist(status)}
+        </div>
       </div>
 
       <div class="board-action">
@@ -183,13 +178,48 @@ function renderBoardDashboard() {
   });
 }
 
-// Opens the coach workflow page for that game
+/* ---------------------------------------------------------
+   CHECKLIST RENDERER
+--------------------------------------------------------- */
+function renderChecklist(status) {
+  function item(label, value, type = "warn") {
+    const cls =
+      value ? "check-ok" :
+      type === "bad" ? "check-bad" :
+      "check-warn";
+
+    const symbol =
+      value ? "✔" :
+      type === "bad" ? "✖" :
+      "—";
+
+    return `
+      <div class="check-item">
+        <div class="check-label">${label}</div>
+        <div class="check-status ${cls}">${symbol}</div>
+      </div>
+    `;
+  }
+
+  return `
+    ${item("Registrar Contacted", status.registrar_contacted)}
+    ${item("Opponent Contacted", status.opponent_contacted)}
+    ${item("Agreement Reached", status.agreement_reached)}
+    ${item("HAYSA Approved", status.haysa_approved, status.haysa_rejected ? "bad" : "warn")}
+    ${item("Field Hold Placed", status.field_hold)}
+    ${item("Sent to SSSL", status.sent_to_sssl)}
+    ${item("SSSL Approved", status.sssl_approved)}
+    ${item("TS Updated", status.ts_updated)}
+  `;
+}
+
+/* ---------------------------------------------------------
+   ACTIONS
+--------------------------------------------------------- */
 function resumeGame(gameNumber) {
-  // If you have a query-param based loader, adapt this:
   window.location.href = `index.html?game=${encodeURIComponent(gameNumber)}`;
 }
 
-// Simple prompt-based notes editor using `notes` column
 function editBoardNotes(gameNumber) {
   const row = allRows.find(r => String(r.game_number) === String(gameNumber));
   const current = row ? (row.notes || "") : "";
