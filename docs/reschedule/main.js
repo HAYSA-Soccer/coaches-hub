@@ -1441,7 +1441,6 @@ function renderPanelForStep(step) {
     case 5: renderStep5(panel); break;
     case 6: renderStep6(panel); break;
     case 7: renderStep7(panel); break;
-    case 8: renderStep8(panel); break;
     case 9: renderStep9(panel); break;
     default:
       panel.innerHTML = "<p>Select a step above.</p>";
