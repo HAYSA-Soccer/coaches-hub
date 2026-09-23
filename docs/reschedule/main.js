@@ -1036,19 +1036,51 @@ async function startRescheduleFromForm() {
 
 
 async function createWorkflowFromSearchFields(fields) {
-  // Create a unique pseudo game number for search-created cases
-  const pseudoGameNumber = "SRCH-" + Date.now();
-
-  // Create the new workflow row in the sheet
-  const res = await apiCreateRow(pseudoGameNumber);
+  // Create a new workflow row with NO game number yet
+  const res = await apiCreateRow("");
 
   if (!res?.created) {
     alert("Unable to create workflow row.");
     return;
   }
 
-  // Set the active game number
-  currentGameNumber = pseudoGameNumber;
+  // Set the active game number (blank for now)
+  currentGameNumber = "";
+
+  // Build initial row data
+  currentRowData = {
+    game_number: "",
+    age_group: fields.age_group,
+    gender: fields.gender,
+    division: fields.division,
+    opp_town: fields.opp_town,
+    orig_date: formatDateForStorage(fields.orig_date),
+    orig_time: formatTimeForStorage(fields.orig_time),
+    orig_field: "(Unknown)",
+    step_1: "",   // Step 1 NOT complete yet
+    step_2: "",
+    step_3: "",
+    step_4: "",
+    step_5: "",
+    step_6: "",
+    step_7: "",
+    step_8: ""
+  };
+
+  // Save initial fields to sheet
+  await setField("age_group", fields.age_group);
+  await setField("gender", fields.gender);
+  await setField("division", fields.division);
+  await setField("opp_town", fields.opp_town);
+
+  await setField("orig_date", formatDateForStorage(fields.orig_date));
+  await setField("orig_time", formatTimeForStorage(fields.orig_time));
+  await setField("orig_field", "(Unknown)");
+
+  // Begin workflow at Step 1 (game number still required)
+  beginWorkflow();
+}
+
 
   // ---------------------------------------------
   // AUTO‑COMPLETE STEP 1 FOR ALL NEW CASES
