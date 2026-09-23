@@ -161,8 +161,8 @@ function renderBoardDashboard() {
         <span class="status-pill ${status.pillClass}">${status.label}</span>
         <div class="board-sub">${status.detail}</div>
 
-        <div class="checklist">
-          ${renderChecklist(status)}
+        <div class="checklist-bar">
+          ${renderChecklist(status, row.game_number)}
         </div>
       </div>
 
@@ -174,10 +174,6 @@ function renderBoardDashboard() {
         <button class="secondary-btn" onclick="editBoardNotes('${row.game_number}')">
           Edit Notes
         </button>
-
-        <hr>
-
-        ${renderBoardActions(row, status)}
       </div>
     `;
 
@@ -190,10 +186,11 @@ function renderBoardDashboard() {
 }
 
 /* ---------------------------------------------------------
-   CHECKLIST RENDERER
+   CHECKLIST RENDERER — horizontal tiny pills
 --------------------------------------------------------- */
-function renderChecklist(status) {
-  function item(label, value, type = "warn") {
+function renderChecklist(status, gameNumber) {
+
+  function pill(label, value, field, type = "warn") {
     const cls =
       value ? "check-ok" :
       type === "bad" ? "check-bad" :
@@ -205,67 +202,22 @@ function renderChecklist(status) {
       "—";
 
     return `
-      <div class="check-item">
-        <div class="check-label">${label}</div>
-        <div class="check-status ${cls}">${symbol}</div>
+      <div class="check-pill ${cls}"
+           onclick="updateField('${gameNumber}', '${field}', '${value ? "FALSE" : "TRUE"}')">
+        ${label} ${symbol}
       </div>
     `;
   }
 
   return `
-    ${item("Registrar Contacted", status.registrar_contacted)}
-    ${item("Opponent Contacted", status.opponent_contacted)}
-    ${item("Agreement Reached", status.agreement_reached)}
-    ${item("HAYSA Approved", status.haysa_approved, status.haysa_rejected ? "bad" : "warn")}
-    ${item("Field Hold Placed", status.field_hold)}
-    ${item("Sent to SSSL", status.sent_to_sssl)}
-    ${item("SSSL Approved", status.sssl_approved)}
-    ${item("TS Updated", status.ts_updated)}
-  `;
-}
-
-/* ---------------------------------------------------------
-   BOARD ACTION BUTTONS
---------------------------------------------------------- */
-function renderBoardActions(row, status) {
-  const g = row.game_number;
-
-  return `
-    <button class="secondary-btn" onclick="updateField('${g}', 'field_requested', 'TRUE')">
-      Mark Registrar Contacted
-    </button>
-
-    <button class="secondary-btn" onclick="updateField('${g}', 'step_1', 'completed')">
-      Mark Opponent Contacted
-    </button>
-
-    <button class="secondary-btn" onclick="updateField('${g}', 'step_3', 'completed')">
-      Mark Agreement Reached
-    </button>
-
-    <button class="secondary-btn" onclick="updateField('${g}', 'haysa_status', 'approved')">
-      Approve HAYSA
-    </button>
-
-    <button class="secondary-btn" onclick="updateField('${g}', 'haysa_status', 'rejected')">
-      Reject HAYSA
-    </button>
-
-    <button class="secondary-btn" onclick="updateField('${g}', 'field_confirmed', 'TRUE')">
-      Place Field Hold
-    </button>
-
-    <button class="secondary-btn" onclick="updateField('${g}', 'step_7', 'completed')">
-      Send to SSSL
-    </button>
-
-    <button class="secondary-btn" onclick="updateField('${g}', 'step_9', 'completed')">
-      Mark SSSL Approved
-    </button>
-
-    <button class="secondary-btn" onclick="updateField('${g}', 'calendar_updated', 'TRUE')">
-      Mark TS Updated
-    </button>
+    ${pill("Registrar", status.registrar_contacted, "field_requested")}
+    ${pill("Opponent", status.opponent_contacted, "step_1")}
+    ${pill("Agreement", status.agreement_reached, "step_3")}
+    ${pill("HAYSA", status.haysa_approved, "haysa_status", status.haysa_rejected ? "bad" : "warn")}
+    ${pill("Hold", status.field_hold, "field_confirmed")}
+    ${pill("SSSL", status.sent_to_sssl, "step_7")}
+    ${pill("SSSL OK", status.sssl_approved, "step_9")}
+    ${pill("TS", status.ts_updated, "calendar_updated")}
   `;
 }
 
