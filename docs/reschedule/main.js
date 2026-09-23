@@ -1290,7 +1290,18 @@ function renderPanelForStep(step) {
     default:
       panel.innerHTML = "<p>Select a step above.</p>";
   }
+
+  // Hide Next Step button on final step
+  if (step === 9) {
+    document.getElementById("nextStepContainer").style.display = "none";
+  } else {
+    document.getElementById("nextStepContainer").style.display = "block";
+  }
+
+  // Always show Back button
+  document.getElementById("backToListContainer").style.display = "block";
 }
+
 
 // ===============================
 // STEP PANELS
