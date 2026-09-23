@@ -478,18 +478,6 @@ select:focus {
   color: #664d03;
 }
 
-.schedule-helper {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 16px;
-}
-
-.schedule-helper p {
-  margin: 8px 0;
-}
-
 .find-number-helper {
   margin-top: 32px;
   padding: 16px;
