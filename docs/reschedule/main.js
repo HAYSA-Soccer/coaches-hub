@@ -1688,13 +1688,30 @@ function renderStep4(panel) {
       <p>Enter the final agreed date, time, and field once both coaches approve.</p>
 
       <label>Final Date</label>
-      <input type="date" id="final_date">
+      <input type="date" id="final_date" value="${getField("final_date") || ""}">
 
       <label>Final Time</label>
-      <input type="time" id="final_time">
+      <input type="time" id="final_time" value="${getField("final_time") || ""}">
 
       <label>Final Field</label>
-      <input type="text" id="final_field" placeholder="e.g., Holbrook Turf">
+
+      <select id="final_field_select">
+        <option value="">Select a field category…</option>
+
+        <option value="Holbrook HS Turf">Holbrook HS Turf</option>
+        <option value="Sumner/Sean Joyce Fields">Sumner/Sean Joyce Fields</option>
+        <option value="Brookville Fields">Brookville Fields</option>
+        <option value="Avon Butler Fields">Avon Butler Fields</option>
+
+        <option value="__custom__">Other (Away Game)</option>
+      </select>
+
+      <input
+        type="text"
+        id="final_field_custom"
+        placeholder="Enter away field"
+        style="display:none; margin-top:8px;"
+      >
 
       <button class="primary-btn" onclick="saveFinalDetails()">
         Save Final Details
@@ -1724,13 +1741,13 @@ function renderStep4(panel) {
       <div class="option-block">
         <h4>Option 1</h4>
         <label>Date</label>
-        <input type="date" id="opt1_date">
+        <input type="date" id="opt1_date" value="${getField("opt1_date") || ""}">
 
         <label>Time</label>
-        <input type="time" id="opt1_time">
+        <input type="time" id="opt1_time" value="${getField("opt1_time") || ""}">
 
         <label>Field</label>
-        <input type="text" id="opt1_field">
+        <input type="text" id="opt1_field" value="${getField("opt1_field") || ""}">
 
         <button class="secondary-btn" onclick="saveOption(1)">
           Save Option 1
@@ -1740,13 +1757,13 @@ function renderStep4(panel) {
       <div class="option-block">
         <h4>Option 2</h4>
         <label>Date</label>
-        <input type="date" id="opt2_date">
+        <input type="date" id="opt2_date" value="${getField("opt2_date") || ""}">
 
         <label>Time</label>
-        <input type="time" id="opt2_time">
+        <input type="time" id="opt2_time" value="${getField("opt2_time") || ""}">
 
         <label>Field</label>
-        <input type="text" id="opt2_field">
+        <input type="text" id="opt2_field" value="${getField("opt2_field") || ""}">
 
         <button class="secondary-btn" onclick="saveOption(2)">
           Save Option 2
@@ -1754,62 +1771,85 @@ function renderStep4(panel) {
       </div>
     </div>
   `;
+
+  // Restore selected field category if already saved
+  const savedField = getField("final_field") || "";
+  const select = document.getElementById("final_field_select");
+  const custom = document.getElementById("final_field_custom");
+
+  if (
+    savedField === "Holbrook HS Turf" ||
+    savedField === "Sumner/Sean Joyce Fields" ||
+    savedField === "Brookville Fields" ||
+    savedField === "Avon Butler Fields"
+  ) {
+    select.value = savedField;
+  } else if (savedField) {
+    select.value = "__custom__";
+    custom.style.display = "block";
+    custom.value = savedField;
+  }
+
+  // Show/hide custom field input
+  select.onchange = () => {
+    const sel = select.value;
+    custom.style.display = sel === "__custom__" ? "block" : "none";
+  };
 }
 
 
 
 // STEP 5 — Field Hold (home game)
+// STEP 5 — Field Hold (auto-handled)
 function renderStep5(panel) {
 
-  const requested = getField("field_requested") || "";
-  const confirmed = getField("field_confirmed") || "";
+  const finalField = getField("final_field") || "";
 
-  let status = "";
-  if (confirmed === "true" || confirmed === true) status = "confirmed";
-  else if (requested === "true" || requested === true) status = "requested";
+  // Home-field categories (same as Step 4)
+  const HOME_CATEGORIES = [
+    "Holbrook HS Turf",
+    "Sumner/Sean Joyce Fields",
+    "Brookville Fields",
+    "Avon Butler Fields"
+  ];
+
+  const isHome = HOME_CATEGORIES.includes(finalField);
+
+  let message = "";
+  if (isHome) {
+    message = `
+      <p>
+        A field hold request has been automatically sent to the board based on
+        the final game details you entered in Step 4.
+      </p>
+      <p>
+        The board will temporarily reserve the field until SSSL approves the
+        reschedule and it is officially updated in TeamSideline.
+      </p>
+    `;
+  } else {
+    message = `
+      <p>
+        No field hold is required because the rescheduled game will be played
+        at an away location.
+      </p>
+    `;
+  }
 
   panel.innerHTML = `
     <h2>Step 5 — Field Hold</h2>
-    <p>If required, request a field hold for the new game location.</p>
-
-    <label>Field Hold Status</label>
-    <select id="field_hold_status">
-      <option value="">Select…</option>
-      <option value="not_needed" ${status===""?"selected":""}>Not Needed</option>
-      <option value="requested" ${status==="requested"?"selected":""}>Requested</option>
-      <option value="confirmed" ${status==="confirmed"?"selected":""}>Confirmed</option>
-    </select>
-
-    <button id="s5_save" class="primary-btn">Save Field Hold Status</button>
+    ${message}
+    <p class="info-text">
+      This step is informational only. No action is required from the coach.
+    </p>
   `;
 
-  document.getElementById("s5_save").onclick = async () => {
-    const newStatus = document.getElementById("field_hold_status").value;
-
-    if (!newStatus) {
-      alert("Please select a field hold status.");
-      return;
-    }
-
-    if (newStatus === "not_needed") {
-      await setField("field_requested", "");
-      await setField("field_confirmed", "");
-    } else if (newStatus === "requested") {
-      await setField("field_requested", "true");
-      await setField("field_confirmed", "");
-    } else if (newStatus === "confirmed") {
-      await setField("field_requested", "true");
-      await setField("field_confirmed", "true");
-    }
-
-    if (newStatus === "confirmed") {
-      await apiUpdateStep(currentGameNumber, 5);
-      currentRowData.step_5 = "completed";
-      hydrateTimelineFromRow(currentRowData);
-    }
-
-    alert("Field hold status saved.");
-  };
+  // Auto-complete Step 5
+  if (currentRowData.step_5 !== "completed") {
+    apiUpdateStep(currentGameNumber, 5);
+    currentRowData.step_5 = "completed";
+    hydrateTimelineFromRow(currentRowData);
+  }
 }
 
 
