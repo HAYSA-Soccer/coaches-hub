@@ -570,6 +570,24 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
 }
 
 
+async function loadGameWithoutStartingWorkflow(gameNumber) {
+  console.log("Loading game without starting workflow:", gameNumber);
+
+  currentGameNumber = gameNumber;
+
+  const rowResult = await apiGetGame(gameNumber);
+
+  if (!rowResult?.exists) {
+    alert("Unable to load game data.");
+    return;
+  }
+
+  hydrateFieldsFromRow(rowResult.data);
+
+  // NEW: show workflow UI without starting it
+  showWorkflowWithoutStarting();
+}
+
 
 async function lookupGameNumber() {
   const input = document.getElementById("lookupGameNumber");
@@ -869,7 +887,35 @@ async function startNewWorkflow(gameNumber) {
 }
 
 
+function showWorkflowWithoutStarting() {
+  console.log("Showing workflow without starting step progression");
 
+  // Show the workflow container
+  document.getElementById("workflowContainer").style.display = "block";
+
+  // Hydrate timeline UI
+  updateTimelineUI(currentRowData);
+
+  // Highlight the first meaningful incomplete step (skip step 1)
+  const nextStep = findNextIncompleteStepSkippingStep1(currentRowData);
+
+  highlightStep(nextStep);
+
+  // Do NOT call beginWorkflow()
+  // Do NOT scroll
+  // Do NOT auto-start any step
+}
+
+
+
+function findNextIncompleteStepSkippingStep1(row) {
+  for (let s = 2; s <= 9; s++) {
+    if (row[`step_${s}`] !== "completed") {
+      return s;
+    }
+  }
+  return 9; // fallback
+}
 
 
 
