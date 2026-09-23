@@ -1082,6 +1082,12 @@ function setActiveTimelineStep(step) {
   });
 }
 
+function highlightStep(stepNumber) {
+  const el = document.getElementById(`step_${stepNumber}`);
+  if (el) el.classList.add("active");
+}
+
+
 function highlightStepInTimeline(step) {
   const steps = document.querySelectorAll(".timeline-step");
 
