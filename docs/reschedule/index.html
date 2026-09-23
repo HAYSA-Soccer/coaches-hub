@@ -14,92 +14,97 @@
     <div class="subtitle">Guided workflow to move your SSSL game</div>
   </header>
 
-  <!-- LOOKUP CARD -->
-  <section class="card" id="lookupContainer">
-    <h2>Lookup Game</h2>
+  <!-- UNIFIED START RESCHEDULE CARD -->
+  <section class="card" id="startContainer">
+    <h2>Start a Reschedule</h2>
 
-    <div class="schedule-helper">
+    <p>Begin by entering your SSSL Game Number <strong>OR</strong> search by team details.</p>
 
-      <strong>Need your game number?</strong>
-    
+    <!-- OPTION A — GAME NUMBER -->
+    <div class="section">
+      <h3>Option A — Use Game Number</h3>
+
+      <label for="lookupGameNumber">SSSL Game Number</label>
+      <input type="text" id="lookupGameNumber" placeholder="e.g., 12345">
+
+      <div class="button-row">
+        <button type="button" class="primary-btn" onclick="lookupGameNumber()">Lookup & Start</button>
+        <button type="button" class="secondary-btn" onclick="createNewFromLookup()">+ New Reschedule</button>
+      </div>
+
+      <div id="lookupStatus" class="info-text"></div>
+    </div>
+
+    <hr>
+
+    <!-- OPTION B — TEAM SEARCH -->
+    <div class="section">
+      <h3>Option B — Search by Team Details</h3>
+
+      <div class="grid-two">
+        <div>
+          <label>Age Group</label>
+          <input type="text" id="sr_age_group" placeholder="e.g., 5/6, 7/8">
+        </div>
+
+        <div>
+          <label>Gender</label>
+          <select id="sr_gender">
+            <option value="">Select…</option>
+            <option value="Girls">Girls</option>
+            <option value="Boys">Boys</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Division</label>
+          <input type="text" id="sr_division" placeholder="e.g., Presidents, 6.2">
+        </div>
+
+        <div>
+          <label>Original Date</label>
+          <input type="date" id="sr_orig_date">
+        </div>
+
+        <div>
+          <label>Original Time</label>
+          <input type="time" id="sr_orig_time">
+        </div>
+
+        <div>
+          <label>Opponent Town</label>
+          <input type="text" id="sr_opp_town" placeholder="e.g., Abington">
+        </div>
+      </div>
+
+      <button type="button" class="primary-btn" onclick="startRescheduleFromForm()">
+        Search & Start Reschedule
+      </button>
+
+      <div id="searchStatus" class="info-text"></div>
+      <div id="gameSelectionContainer" class="selection-list"></div>
+    </div>
+
+    <hr>
+
+    <!-- FIND GAME NUMBER -->
+    <div class="section">
+      <h3>Need help finding your game number?</h3>
+
       <p>You can use either of the official SSSL tools:</p>
-    
+
       <a class="secondary-btn"
          href="https://www.southshoresoccer.com/Schedules"
          target="_blank">
          SSSL Schedule List (searchable)
       </a>
-    
+
       <a class="secondary-btn"
          href="https://sssl.sportspilot.com/Scheduler/public/default.aspx"
          target="_blank">
-         Visual Game Calendar (no search, browse by date)
+         Visual Game Calendar (browse by date)
       </a>
-    
     </div>
-
-
-    <label for="lookupGameNumber">SSSL Game Number</label>
-    <input type="text" id="lookupGameNumber" placeholder="e.g., Enter SSSL Game # Here">
-
-    <div class="button-row">
-      <button type="button" class="primary-btn" onclick="lookupGameNumber()">Lookup</button>
-      <button type="button" class="secondary-btn" onclick="createNewFromLookup()">+ New Reschedule</button>
-    </div>
-
-    <div id="lookupStatus" class="info-text"></div>
-  </section>
-
-  <!-- MULTI-CRITERIA START RESCHEDULE -->
-  <section class="card" id="searchContainer">
-    <h2>Start Reschedule (Search)</h2>
-
-    <p>Don’t know the game number? Search by team details instead.</p>
-
-    <div class="grid-two">
-      <div>
-        <label>Age Group</label>
-        <input type="text" id="sr_age_group" placeholder="e.g., 5/6, 7/8">
-      </div>
-
-      <div>
-        <label>Gender</label>
-        <select id="sr_gender">
-          <option value="">Select…</option>
-          <option value="Girls">Girls</option>
-          <option value="Boys">Boys</option>
-        </select>
-      </div>
-
-      <div>
-        <label>Division</label>
-        <input type="text" id="sr_division" placeholder="e.g., Presidents, 6.2">
-      </div>
-
-      <div>
-        <label>Original Date</label>
-        <input type="date" id="sr_orig_date">
-      </div>
-
-      <div>
-        <label>Original Time</label>
-        <input type="time" id="sr_orig_time">
-      </div>
-
-      <div>
-        <label>Opponent Town</label>
-        <input type="text" id="sr_opp_town" placeholder="e.g., Abington">
-      </div>
-    </div>
-
-    <button type="button" class="primary-btn" onclick="startRescheduleFromForm()">
-      Search & Start Reschedule
-    </button>
-
-    <div id="searchStatus" class="info-text"></div>
-
-    <!-- MULTIPLE MATCHES APPEAR HERE -->
-    <div id="gameSelectionContainer" class="selection-list"></div>
   </section>
 
   <!-- Submitted Requests -->
@@ -128,7 +133,7 @@
 
     <!-- PANEL -->
     <section class="card panel fade-in" id="panelContainer" style="display:none;">
-      <!-- Step content injected by main.js (renderStep1–9) -->
+      <!-- Step content injected by main.js -->
     </section>
 
     <!-- NEXT STEP BUTTON -->
@@ -143,7 +148,7 @@
 
   </div>
 
-  <!-- GAME CHANGE FORM (optional separate form + signature) -->
+  <!-- GAME CHANGE FORM -->
   <section class="card" id="formSection" style="display:none;">
     <h2>Game Change Form</h2>
     <p>This form mirrors the SSSL reschedule details and captures a coach signature.</p>
