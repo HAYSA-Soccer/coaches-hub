@@ -654,3 +654,12 @@ section {
 .ops-card-lite {
     border-left: 6px solid #ff7f32; /* subtle ops accent */
 }
+
+
+.find-number-helper {
+  margin-top: 32px;
+  padding: 16px;
+  background: #f7f7f7;
+  border-radius: 8px;
+}
+
