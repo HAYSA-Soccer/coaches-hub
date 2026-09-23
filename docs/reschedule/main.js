@@ -549,6 +549,28 @@ function backToList() {
 // ===============================
 // LOOKUP / RESUME / NEW WORKFLOW
 // ===============================
+async function loadGameWithoutStartingWorkflow(gameNumber) {
+  console.log("Loading game without starting workflow:", gameNumber);
+
+  currentGameNumber = gameNumber;
+
+  // Fetch the row from the backend
+  const rowResult = await apiGetGame(gameNumber);
+
+  if (!rowResult?.exists) {
+    alert("Unable to load game data.");
+    return;
+  }
+
+  // Hydrate the fields but DO NOT start the workflow
+  hydrateFieldsFromRow(rowResult.data);
+
+  // Show the summary card again (optional)
+  // Or simply leave the UI as-is until the user clicks "I want to proceed"
+}
+
+
+
 async function lookupGameNumber() {
   const input = document.getElementById("lookupGameNumber");
   const statusEl = document.getElementById("lookupStatus");
