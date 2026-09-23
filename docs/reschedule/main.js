@@ -886,6 +886,28 @@ async function startNewWorkflow(gameNumber) {
 }
 
 
+function updateTimelineUI(row) {
+  // Clear all timeline step states
+  for (let s = 1; s <= 9; s++) {
+    const el = document.getElementById(`step_${s}`);
+    if (!el) continue;
+
+    el.classList.remove("completed");
+    el.classList.remove("active");
+  }
+
+  // Mark completed steps
+  for (let s = 1; s <= 9; s++) {
+    if (row[`step_${s}`] === "completed") {
+      const el = document.getElementById(`step_${s}`);
+      if (el) el.classList.add("completed");
+    }
+  }
+}
+
+
+
+
 function showWorkflowWithoutStarting() {
   console.log("Showing workflow without starting step progression");
 
