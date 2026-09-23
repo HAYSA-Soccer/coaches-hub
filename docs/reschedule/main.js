@@ -2030,6 +2030,7 @@ function renderStep5(panel) {
     </p>
   `;
 
+  // Step 5 should ALWAYS be complete
   if (currentRowData.step_5 !== "completed") {
     apiUpdateStep(currentGameNumber, 5);
     currentRowData.step_5 = "completed";
