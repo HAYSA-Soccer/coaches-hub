@@ -1324,25 +1324,35 @@ function showWorkflowUI() {
 // TIMELINE + NAVIGATION
 // ===============================
 function initTimeline() {
+  // Clicking timeline steps still works
   document.querySelectorAll(".timeline-step").forEach(el => {
     el.onclick = () => {
-      currentStep = Number(el.dataset.step);
-      setActiveTimelineStep(currentStep);
-      renderPanelForStep(currentStep);
+      const step = Number(el.dataset.step);
+      goToStep(step);
     };
   });
 
+  // Unified NEXT button
   const nextBtn = document.getElementById("nextStepBtn");
   if (nextBtn) {
-    nextBtn.onclick = async () => {
+    nextBtn.onclick = () => {
       if (currentStep < 9) {
-        currentStep++;
-        setActiveTimelineStep(currentStep);
-        renderPanelForStep(currentStep);
+        goToStep(currentStep + 1);
+      }
+    };
+  }
+
+  // Unified BACK button
+  const prevBtn = document.getElementById("prevStepBtn");
+  if (prevBtn) {
+    prevBtn.onclick = () => {
+      if (currentStep > 1) {
+        goToStep(currentStep - 1);
       }
     };
   }
 }
+
 
 
 function setActiveTimelineStep(step) {
