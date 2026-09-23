@@ -605,6 +605,48 @@ async function lookupGameNumber() {
 }
 
 
+function showGameSelection(matches) {
+  const container = document.getElementById("gameSelectionContainer");
+
+  container.innerHTML = `
+    <h3>Select the correct game</h3>
+    <p>Multiple games match your search. Choose the one you want to reschedule.</p>
+  `;
+
+  matches.forEach(m => {
+    const div = document.createElement("div");
+    div.className = "match-card";
+
+    div.innerHTML = `
+      <div><strong>Team:</strong> ${m.team_name}</div>
+      <div><strong>Opponent:</strong> ${m.opp_town}</div>
+      <div><strong>Date:</strong> ${displayDate(m.orig_date)}</div>
+      <div><strong>Time:</strong> ${displayTime(m.orig_time)}</div>
+      <div><strong>Field:</strong> ${m.orig_field}</div>
+      <div><strong>Game #:</strong> ${m.game_number}</div>
+
+      <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${m.game_number}')">
+        Use This Game
+      </button>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+function displayDate(d) {
+  return d ? new Date(d).toLocaleDateString("en-US") : "(none)";
+}
+
+function displayTime(t) {
+  return t ? new Date(t).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit"
+  }) : "(none)";
+}
+
+
+
 
 async function startRescheduleFromForm() {
   console.log("Search button clicked");
