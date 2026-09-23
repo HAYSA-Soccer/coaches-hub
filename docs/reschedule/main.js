@@ -93,6 +93,19 @@ function showSingleMatchConfirmation(match) {
 
 
 
+async function resumeWorkflow(gameNumber) {
+  const row = await apiGetRow(gameNumber);   // ← load from sheet
+
+  currentRowData = row;                      // ← MUST happen BEFORE rendering
+
+  hydrateTimelineFromRow(currentRowData);    // timeline updates correctly
+
+  showWorkflowPage();                        // show UI
+
+  renderStep(currentRowData.current_step);   // Step 4 now hydrates correctly
+}
+
+
 function useExistingOrStartNew(gameNumber) {
   if (workflowExists(gameNumber)) {
     resumeWorkflow(gameNumber);   // ← SAME function used by Submitted Requests
@@ -975,42 +988,15 @@ async function resumeGame(gameNumber) {
 
 
 async function startNewWorkflow(gameNumber) {
-  const res = await apiCreateRow(gameNumber);
+  const row = await apiCreateRow(gameNumber);
 
-  console.log("CREATE ROW RESPONSE:", res);
+  currentRowData = row;                      // ← MUST happen BEFORE rendering
 
-  if (res?.reason === "Row already exists") {
-    alert(
-      "A reschedule already exists for this game. Click Resume in the Submitted Requests list."
-    );
+  hydrateTimelineFromRow(currentRowData);
 
-    // Optional improvement:
-    resumeGame(gameNumber);
+  showWorkflowPage();
 
-    return;
-  }
-
-  if (!res?.created) {
-    alert("Unable to create workflow row.");
-    return;
-  }
-  
-  currentGameNumber = gameNumber;
-  
-  // AUTO-COMPLETE STEP 1 FOR NEW CASES
-  await apiUpdateStep(gameNumber, 1);
-  currentRowData.step_1 = "completed";
-  
-  const rowResult = await apiGetGame(gameNumber);
-  
-  if (rowResult?.exists) {
-    hydrateFieldsFromRow(rowResult.data);
-  } else {
-    currentRowData = {};
-  }
-  
-  beginWorkflow();
-
+  renderStep(1);
 }
 
 
