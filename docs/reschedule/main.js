@@ -1263,6 +1263,8 @@ function beginWorkflow() {
     });
   }
 }
+
+
 function hydrateFieldsFromRow(row) {
   console.log("hydrateFieldsFromRow called with:", row);
 
@@ -1422,7 +1424,7 @@ function isStepCompleteRow(r, step) {
       );
 
     case 5:
-      return r.field_confirmed === "true" || r.field_confirmed === true;
+      return r.step_5 === "completed";
 
     case 6:
       return r.haysa_status === "approved";
@@ -1476,7 +1478,7 @@ function isStepComplete(step) {
       );
 
     case 5:
-      return f("field_confirmed") === "true" || f("field_confirmed") === true;
+      return f("step_5") === "completed";
 
     case 6:
       return f("haysa_status") === "approved";
