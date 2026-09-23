@@ -1799,13 +1799,12 @@ function renderStep4(panel) {
 
 
 
-// STEP 5 — Field Hold (home game)
 // STEP 5 — Field Hold (auto-handled)
 function renderStep5(panel) {
 
   const finalField = getField("final_field") || "";
 
-  // Home-field categories (same as Step 4)
+  // EXACT categories from Step 4 dropdown
   const HOME_CATEGORIES = [
     "Holbrook HS Turf",
     "Sumner/Sean Joyce Fields",
@@ -1851,6 +1850,7 @@ function renderStep5(panel) {
     hydrateTimelineFromRow(currentRowData);
   }
 }
+
 
 
 
