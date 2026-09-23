@@ -29,37 +29,28 @@ function setFilter(filter) {
 function computeBoardStatus(row) {
   const status = {};
 
-  // 1. Registrar contacted (pre-step)
   status.registrar_contacted =
     String(row.field_requested).toLowerCase() === "true";
 
-  // 2. Opponent contacted
   status.opponent_contacted =
     row.step_1 === "completed" || row.step_2 === "completed";
 
-  // 3. Agreement reached
   status.agreement_reached = row.step_3 === "completed";
 
-  // 4. HAYSA approval
   const haysa = (row.haysa_status || "").toLowerCase();
   status.haysa_approved = haysa === "approved";
   status.haysa_rejected = haysa === "rejected";
 
-  // 5. Field hold (home games only)
   status.field_hold =
     String(row.field_confirmed).toLowerCase() === "true";
 
-  // 6. Sent to SSSL
   status.sent_to_sssl = row.step_7 === "completed";
 
-  // 7. SSSL approval
   status.sssl_approved = row.step_9 === "completed";
 
-  // 8. TeamSideline updated
   status.ts_updated =
     String(row.calendar_updated).toLowerCase() === "true";
 
-  // Determine bucket
   if (status.sssl_approved && status.ts_updated) {
     status.bucket = "completed";
     status.label = "Completed";
@@ -95,10 +86,25 @@ function computeBoardStatus(row) {
 }
 
 function passesFilter(bucket) {
-  return (
-    currentFilter === "all" ||
-    currentFilter === bucket
-  );
+  return currentFilter === "all" || currentFilter === bucket;
+}
+
+/* ---------------------------------------------------------
+   UPDATE HELPERS — board actions write back to sheet
+--------------------------------------------------------- */
+function updateField(gameNumber, field, value) {
+  fetch(`${API_BASE}?action=updateField`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      game_number: gameNumber,
+      field: field,
+      value: value
+    })
+  })
+    .then(r => r.json())
+    .then(() => loadBoardData())
+    .catch(err => console.error("Error updating field", err));
 }
 
 /* ---------------------------------------------------------
@@ -164,9 +170,14 @@ function renderBoardDashboard() {
         <button class="primary-btn" onclick="resumeGame('${row.game_number}')">
           Resume
         </button>
+
         <button class="secondary-btn" onclick="editBoardNotes('${row.game_number}')">
           Edit Notes
         </button>
+
+        <hr>
+
+        ${renderBoardActions(row, status)}
       </div>
     `;
 
@@ -210,6 +221,51 @@ function renderChecklist(status) {
     ${item("Sent to SSSL", status.sent_to_sssl)}
     ${item("SSSL Approved", status.sssl_approved)}
     ${item("TS Updated", status.ts_updated)}
+  `;
+}
+
+/* ---------------------------------------------------------
+   BOARD ACTION BUTTONS
+--------------------------------------------------------- */
+function renderBoardActions(row, status) {
+  const g = row.game_number;
+
+  return `
+    <button class="secondary-btn" onclick="updateField('${g}', 'field_requested', 'TRUE')">
+      Mark Registrar Contacted
+    </button>
+
+    <button class="secondary-btn" onclick="updateField('${g}', 'step_1', 'completed')">
+      Mark Opponent Contacted
+    </button>
+
+    <button class="secondary-btn" onclick="updateField('${g}', 'step_3', 'completed')">
+      Mark Agreement Reached
+    </button>
+
+    <button class="secondary-btn" onclick="updateField('${g}', 'haysa_status', 'approved')">
+      Approve HAYSA
+    </button>
+
+    <button class="secondary-btn" onclick="updateField('${g}', 'haysa_status', 'rejected')">
+      Reject HAYSA
+    </button>
+
+    <button class="secondary-btn" onclick="updateField('${g}', 'field_confirmed', 'TRUE')">
+      Place Field Hold
+    </button>
+
+    <button class="secondary-btn" onclick="updateField('${g}', 'step_7', 'completed')">
+      Send to SSSL
+    </button>
+
+    <button class="secondary-btn" onclick="updateField('${g}', 'step_9', 'completed')">
+      Mark SSSL Approved
+    </button>
+
+    <button class="secondary-btn" onclick="updateField('${g}', 'calendar_updated', 'TRUE')">
+      Mark TS Updated
+    </button>
   `;
 }
 
