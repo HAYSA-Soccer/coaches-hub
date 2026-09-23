@@ -24,32 +24,23 @@ function setFilter(filter) {
 }
 
 /* ---------------------------------------------------------
-   STATUS ENGINE — matches your real workflow
+   STATUS ENGINE
 --------------------------------------------------------- */
 function computeBoardStatus(row) {
   const status = {};
 
-  status.registrar_contacted =
-    String(row.field_requested).toLowerCase() === "true";
-
-  status.opponent_contacted =
-    row.step_1 === "completed" || row.step_2 === "completed";
-
+  status.registrar_contacted = String(row.field_requested).toLowerCase() === "true";
+  status.opponent_contacted = row.step_1 === "completed" || row.step_2 === "completed";
   status.agreement_reached = row.step_3 === "completed";
 
   const haysa = (row.haysa_status || "").toLowerCase();
   status.haysa_approved = haysa === "approved";
   status.haysa_rejected = haysa === "rejected";
 
-  status.field_hold =
-    String(row.field_confirmed).toLowerCase() === "true";
-
+  status.field_hold = String(row.field_confirmed).toLowerCase() === "true";
   status.sent_to_sssl = row.step_7 === "completed";
-
   status.sssl_approved = row.step_9 === "completed";
-
-  status.ts_updated =
-    String(row.calendar_updated).toLowerCase() === "true";
+  status.ts_updated = String(row.calendar_updated).toLowerCase() === "true";
 
   if (status.sssl_approved && status.ts_updated) {
     status.bucket = "completed";
@@ -90,7 +81,7 @@ function passesFilter(bucket) {
 }
 
 /* ---------------------------------------------------------
-   UPDATE HELPERS — board actions write back to sheet
+   SIMPLE POST — NO HEADERS (fixes CORS)
 --------------------------------------------------------- */
 function updateField(gameNumber, field, value) {
   fetch(`${API_BASE}?action=updateField`, {
@@ -185,7 +176,7 @@ function renderBoardDashboard() {
 }
 
 /* ---------------------------------------------------------
-   CHECKLIST RENDERER — horizontal tiny pills
+   HORIZONTAL CHECKLIST PILLS
 --------------------------------------------------------- */
 function renderChecklist(status, gameNumber) {
 
@@ -235,7 +226,6 @@ function editBoardNotes(gameNumber) {
 
   fetch(`${API_BASE}?action=updateNotes`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       game_number: gameNumber,
       notes: updated
