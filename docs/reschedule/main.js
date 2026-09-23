@@ -1771,6 +1771,10 @@ function renderStep3(panel) {
 
 
 // STEP 4 — Final Game Details (New Schedule) + Comparison
+// ===============================
+// STEP 4 — RENDER + SAVE
+// ===============================
+
 function renderStep4(panel) {
   panel.innerHTML = `
     <h2>Step 4 — Choose & Confirm New Game Time</h2>
@@ -1871,7 +1875,9 @@ function renderStep4(panel) {
     </div>
   `;
 
-  // Restore selected field category if already saved
+  // ===============================
+  // HYDRATE FINAL FIELD SELECT
+  // ===============================
   const savedField = getField("final_field") || "";
   const select = document.getElementById("final_field_select");
   const custom = document.getElementById("final_field_custom");
@@ -1889,14 +1895,23 @@ function renderStep4(panel) {
     custom.value = savedField;
   }
 
-  // Hydrate Final Date + Final Time using HTML-friendly formats
+  select.onchange = () => {
+    const sel = select.value;
+    custom.style.display = sel === "__custom__" ? "block" : "none";
+  };
+
+  // ===============================
+  // HYDRATE FINAL DATE/TIME
+  // ===============================
   document.getElementById("final_date").value =
     convertToHtmlDate(getField("final_date"));
 
   document.getElementById("final_time").value =
     convertToHtmlTime(getField("final_time"));
 
-  // Hydrate proposed options
+  // ===============================
+  // HYDRATE PROPOSED OPTIONS
+  // ===============================
   document.getElementById("opt1_date").value =
     convertToHtmlDate(getField("opt1_date"));
   document.getElementById("opt1_time").value =
@@ -1910,14 +1925,60 @@ function renderStep4(panel) {
     convertToHtmlTime(getField("opt2_time"));
   document.getElementById("opt2_field").value =
     getField("opt2_field") || "";
-
-  // Show/hide custom field input
-  select.onchange = () => {
-    const sel = select.value;
-    custom.style.display = sel === "__custom__" ? "block" : "none";
-  };
 }
 
+
+// ===============================
+// SAVE FINAL DETAILS
+// ===============================
+async function saveFinalDetails() {
+  const dateHtml = document.getElementById("final_date").value;
+  const timeHtml = document.getElementById("final_time").value;
+
+  const finalDate = convertFromHtmlDate(dateHtml);
+  const finalTime = convertFromHtmlTime(timeHtml);
+
+  const select = document.getElementById("final_field_select");
+  const custom = document.getElementById("final_field_custom");
+
+  const finalField =
+    select.value === "__custom__" ? custom.value : select.value;
+
+  await apiUpdateFinal(currentGameNumber, finalDate, finalTime, finalField);
+
+  alert("Final details saved.");
+}
+
+
+// ===============================
+// SAVE OPTION 1 / OPTION 2
+// ===============================
+async function saveOption(optionNumber) {
+  const dateHtml = document.getElementById(`opt${optionNumber}_date`).value;
+  const timeHtml = document.getElementById(`opt${optionNumber}_time`).value;
+  const field = document.getElementById(`opt${optionNumber}_field`).value;
+
+  const dateSheet = convertFromHtmlDate(dateHtml);
+  const timeSheet = convertFromHtmlTime(timeHtml);
+
+  const opt1 = {
+    date: optionNumber === 1 ? dateSheet : getField("opt1_date"),
+    time: optionNumber === 1 ? timeSheet : getField("opt1_time"),
+    field: optionNumber === 1 ? field : getField("opt1_field"),
+    status: getField("opt1_status") || ""
+  };
+
+  const opt2 = {
+    date: optionNumber === 2 ? dateSheet : getField("opt2_date"),
+    time: optionNumber === 2 ? timeSheet : getField("opt2_time"),
+    field: optionNumber === 2 ? field : getField("opt2_field"),
+    status: getField("opt2_status") || ""
+  };
+
+  await apiUpdateOptions(currentGameNumber, opt1, opt2, {});
+
+  alert(`Option ${optionNumber} saved.`);
+}
 
 
 
