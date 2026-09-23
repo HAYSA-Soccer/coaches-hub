@@ -1083,12 +1083,6 @@ async function createWorkflowFromSearchFields(fields) {
 
 
   // ---------------------------------------------
-  // AUTO‑COMPLETE STEP 1 FOR ALL NEW CASES
-  // ---------------------------------------------
-  await apiUpdateStep(pseudoGameNumber, 1);
-  currentRowData = { step_1: "completed" };
-
-  // ---------------------------------------------
   // Build the initial row data object
   // ---------------------------------------------
   currentRowData = {
