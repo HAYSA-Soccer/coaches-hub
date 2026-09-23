@@ -2013,18 +2013,16 @@ function renderStep9(panel) {
   panel.innerHTML = `
     <h2>Step 9 — Finalize Request</h2>
     <p>
-    Download the completed form and record any final notes.
-    Private contact information entered below is used only
-    for generating the SSSL form and is not stored.
+      Download the completed form and record any final notes.
+      Private contact information entered below is used only
+      for generating the SSSL form and is not stored.
     </p>
-    
-    <h3>Private Contact Information</h3>
     
     <h3>Private Contact Information</h3>
 
     <p>
-    This information is used only for generating the SSSL form.
-    It is not stored in the workflow.
+      This information is used only for generating the SSSL form.
+      It is not stored in the workflow.
     </p>
     
     <label>Your Contact Information</label>
@@ -2038,18 +2036,11 @@ function renderStep9(panel) {
       type="text"
       id="opp_coach_contact_temp"
       placeholder="Phone number or email">
-    
-
-
-
-
-
-
-
-
-
 
     <button id="s9_download" class="primary-btn">Download Completed Form</button>
+
+    <!-- ⭐ NEW: SSSL Summary Button -->
+    <button id="s9_summary" class="secondary-btn">Generate SSSL Summary</button>
 
     <label>Board Notes (optional)</label>
     <input type="text" id="notes" value="${getField("notes") || ""}">
@@ -2079,6 +2070,12 @@ function renderStep9(panel) {
     );
   };
 
+  // ⭐ NEW: SSSL Summary Handler
+  document.getElementById("s9_summary").onclick = () => {
+    const text = generateSSSLEmailSummary(row);
+    window.prompt("Copy the SSSL email summary:", text);
+  };
+
   document.getElementById("s9_save").onclick = async () => {
 
     if (!isComplete()) {
@@ -2095,7 +2092,6 @@ function renderStep9(panel) {
     alert("Request marked complete.");
   };
 }
-
 // ===============================
 // SIGNATURE PAD + FORM SAVE
 // ===============================
