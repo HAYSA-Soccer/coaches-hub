@@ -455,6 +455,28 @@ function autoMoveApprovedOption(optionNumber) {
 // ===============================
 // HELPERS
 // ===============================
+function convertToHtmlDate(mmddyyyy) {
+  if (!mmddyyyy) return "";
+  const [mm, dd, yyyy] = mmddyyyy.split("/");
+  return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
+}
+
+function convertToHtmlTime(timeStr) {
+  if (!timeStr) return "";
+  const [time, modifier] = timeStr.split(" ");
+  let [hours, minutes] = time.split(":");
+
+  if (modifier === "PM" && hours !== "12") {
+    hours = String(Number(hours) + 12);
+  }
+  if (modifier === "AM" && hours === "12") {
+    hours = "00";
+  }
+
+  return `${hours}:${minutes}`;
+}
+
+
 function formatDate(d) {
   if (!d) return "";
   return new Date(d).toLocaleDateString();
@@ -1795,8 +1817,12 @@ function renderStep4(panel) {
   }
 
   // Hydrate Final Date + Final Time AFTER field hydration
-  document.getElementById("final_date").value = getField("final_date") || "";
-  document.getElementById("final_time").value = getField("final_time") || "";
+  document.getElementById("final_date").value =
+    convertToHtmlDate(getField("final_date"));
+  
+  document.getElementById("final_time").value =
+    convertToHtmlTime(getField("final_time"));
+
 
   // Show/hide custom field input
   select.onchange = () => {
