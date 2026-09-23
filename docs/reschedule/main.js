@@ -911,7 +911,16 @@ function updateTimelineUI(row) {
 function showWorkflowWithoutStarting() {
   console.log("Showing workflow without starting step progression");
 
-  // Show the main workflow wrapper
+  // Hide search + lookup + submitted list
+  const lookup = document.getElementById("lookupContainer");
+  const search = document.getElementById("searchContainer");
+  const submitted = document.getElementById("submittedListContainer");
+
+  if (lookup) lookup.style.display = "none";
+  if (search) search.style.display = "none";
+  if (submitted) submitted.style.display = "none";
+
+  // Show workflow page
   const page = document.getElementById("workflowPage");
   if (!page) {
     console.error("workflowPage not found in DOM");
@@ -919,29 +928,37 @@ function showWorkflowWithoutStarting() {
   }
   page.style.display = "block";
 
-  // Show the timeline
+  // Show timeline
   const timeline = document.getElementById("timelineContainer");
   if (timeline) timeline.style.display = "flex";
 
-  // Show the panel container
+  // Show panel
   const panel = document.getElementById("panelContainer");
   if (panel) panel.style.display = "block";
 
-  // Update timeline UI
+  // Update timeline
   updateTimelineUI(currentRowData);
 
   // Determine next step (skip Step 1)
   const nextStep = findNextIncompleteStepSkippingStep1(currentRowData);
 
-  // Highlight that step
+  // Highlight step
   highlightStep(nextStep);
 
-  // ⭐ CRITICAL: Render the step content using your actual dispatcher
+  // Render step content
   renderPanelForStep(nextStep);
 
-  // Show the Next Step button
+  // Show next step button
   const nextBtn = document.getElementById("nextStepContainer");
   if (nextBtn) nextBtn.style.display = "block";
+
+  // Scroll user to workflow
+  setTimeout(() => {
+    page.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }, 50);
 }
 
 
