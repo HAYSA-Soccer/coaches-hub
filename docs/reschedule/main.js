@@ -1435,9 +1435,6 @@ function isStepCompleteRow(r, step) {
         r.signed_name
       );
 
-    case 8:
-      return r.calendar_updated === "true" || r.calendar_updated === true;
-
     case 9:
       return r.step_9 === "completed";
 
@@ -1488,9 +1485,6 @@ function isStepComplete(step) {
         (f("certified") === "true" || f("certified") === true) &&
         f("signed_name")
       );
-
-    case 8:
-      return f("calendar_updated") === "true" || f("calendar_updated") === true;
 
     case 9:
       return f("step_9") === "completed";
@@ -2192,48 +2186,6 @@ function renderStep7(panel) {
     alert("SSSL form details saved.");
   };
 }
-
-
-
-// STEP 8 — Calendar Update
-function renderStep8(panel) {
-
-  const updated = getField("calendar_updated") || "";
-
-  panel.innerHTML = `
-    <h2>Step 8 — Calendar Update</h2>
-    <p>Confirm that the new game date/time/location has been added to your calendar.</p>
-
-    <label>Calendar Updated?</label>
-    <select id="calendar_updated">
-      <option value="">Select…</option>
-      <option value="true" ${updated==="true"?"selected":""}>Yes</option>
-      <option value="false" ${updated==="false"?"selected":""}>No</option>
-    </select>
-
-    <button id="s8_save" class="primary-btn">Save Calendar Update Status</button>
-  `;
-
-  document.getElementById("s8_save").onclick = async () => {
-    const newStatus = document.getElementById("calendar_updated").value;
-
-    if (!newStatus) {
-      alert("Please select a calendar update status.");
-      return;
-    }
-
-    await setField("calendar_updated", newStatus);
-
-    if (newStatus === "true") {
-      await apiUpdateStep(currentGameNumber, 8);
-      currentRowData.step_8 = "completed";
-      hydrateTimelineFromRow(currentRowData);
-    }
-
-    alert("Calendar update status saved.");
-  };
-}
-
 
 
 // STEP 9 — Finalize Request
