@@ -936,8 +936,8 @@ function showWorkflowWithoutStarting() {
   // Highlight that step
   highlightStep(nextStep);
 
-  // ⭐ CRITICAL: Render the step content
-  renderStep(nextStep);
+  // ⭐ CRITICAL: Render the step content using your actual dispatcher
+  renderPanelForStep(nextStep);
 
   // Show the Next Step button
   const nextBtn = document.getElementById("nextStepContainer");
