@@ -714,6 +714,16 @@ function displayTime(t) {
   }) : "(none)";
 }
 
+// Hook up Back to List button
+const backBtn = document.getElementById("backToListBtn");
+if (backBtn) backBtn.onclick = backToList;
+
+// BACK TO LIST BUTTON HOOKUP
+document.addEventListener("DOMContentLoaded", () => {
+  const backBtn = document.getElementById("backToListBtn");
+  if (backBtn) backBtn.onclick = backToList;
+});
+
 
 
 
@@ -1050,14 +1060,29 @@ function hydrateFieldsFromRow(row) {
 
 
 function showLandingPage() {
-  document.getElementById("lookupContainer").style.display = "block";
+  // Show unified start card + submitted list
+  document.getElementById("startContainer").style.display = "block";
   document.getElementById("submittedListContainer").style.display = "block";
 
+  // Hide workflow UI
   document.getElementById("workflowPage").style.display = "none";
   document.getElementById("timelineContainer").style.display = "none";
   document.getElementById("panelContainer").style.display = "none";
   document.getElementById("nextStepContainer").style.display = "none";
   document.getElementById("backToListContainer").style.display = "none";
+}
+
+function hideLandingPage() {
+  // Hide unified start card + submitted list
+  const start = document.getElementById("startContainer");
+  const submitted = document.getElementById("submittedListContainer");
+
+  if (start) start.style.display = "none";
+  if (submitted) submitted.style.display = "none";
+}
+
+function backToList() {
+  showLandingPage();
 }
 
 // ===============================
