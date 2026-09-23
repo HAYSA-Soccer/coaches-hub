@@ -1944,7 +1944,18 @@ async function saveFinalDetails() {
   const finalField =
     select.value === "__custom__" ? custom.value : select.value;
 
+  // Save Step 4 final details
   await apiUpdateFinal(currentGameNumber, finalDate, finalTime, finalField);
+
+  // ===============================
+  // AUTO-COMPLETE STEP 5 IMMEDIATELY
+  // ===============================
+  // Step 5 is ALWAYS informational-only and ALWAYS complete
+  if (currentRowData.step_5 !== "completed") {
+    await apiUpdateStep(currentGameNumber, 5);
+    currentRowData.step_5 = "completed";
+    hydrateTimelineFromRow(currentRowData);
+  }
 
   alert("Final details saved.");
 }
