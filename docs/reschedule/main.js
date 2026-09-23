@@ -326,7 +326,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const wf = document.getElementById("workflowPage");
   const tl = document.getElementById("timelineContainer");
   const panel = document.getElementById("panelContainer");
-  const next = document.getElementById("nextStepContainer");
   const back = document.getElementById("backToListContainer");
   const formSection = document.getElementById("formSection");
 
@@ -335,11 +334,9 @@ document.addEventListener("DOMContentLoaded", () => {
     backBtn.onclick = backToList;
   }
 
-
   if (wf) wf.style.display = "none";
   if (tl) tl.style.display = "none";
   if (panel) panel.style.display = "none";
-  if (next) next.style.display = "none";
   if (back) back.style.display = "none";
   if (formSection) formSection.style.display = "none";
 
@@ -1540,12 +1537,6 @@ function renderPanelForStep(step) {
       panel.innerHTML = "<p>Select a step above.</p>";
   }
 
-  // Hide Next Step button on final step
-  if (step === 9) {
-    document.getElementById("nextStepContainer").style.display = "none";
-  } else {
-    document.getElementById("nextStepContainer").style.display = "block";
-  }
 
   // Always show Back button
   document.getElementById("backToListContainer").style.display = "block";
