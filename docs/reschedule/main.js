@@ -1790,13 +1790,16 @@ function renderStep4(panel) {
     custom.value = savedField;
   }
 
+  // Hydrate Final Date + Final Time AFTER field hydration
+  document.getElementById("final_date").value = getField("final_date") || "";
+  document.getElementById("final_time").value = getField("final_time") || "";
+
   // Show/hide custom field input
   select.onchange = () => {
     const sel = select.value;
     custom.style.display = sel === "__custom__" ? "block" : "none";
   };
 }
-
 
 
 
