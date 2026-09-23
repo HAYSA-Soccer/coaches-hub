@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HAYSA Board Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <header class="header">
+    <h1>HAYSA Board Dashboard</h1>
+    <div class="subtitle">
+      Oversight view of all reschedule workflows
+    </div>
+  </header>
+
+  <section class="card">
+    <h2>Filters</h2>
+    <div class="button-row">
+      <button class="secondary-btn" onclick="setFilter('all')">All</button>
+      <button class="secondary-btn" onclick="setFilter('needs_action')">Needs Action</button>
+      <button class="secondary-btn" onclick="setFilter('pending_sssl')">Pending SSSL</button>
+      <button class="secondary-btn" onclick="setFilter('ready_sssl')">Ready for SSSL</button>
+      <button class="secondary-btn" onclick="setFilter('completed')">Completed</button>
+    </div>
+  </section>
+
+  <section class="card" id="boardDashboardContainer">
+    <h2>Active Cases</h2>
+    <div id="boardDashboard"></div>
+
+    <h3 style="margin-top:30px;">Completed Cases</h3>
+    <div id="boardCompleted"></div>
+  </section>
+
+  <script src="board.js?v=1"></script>
+</body>
+</html>
