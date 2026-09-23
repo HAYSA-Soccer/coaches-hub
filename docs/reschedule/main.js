@@ -1036,7 +1036,6 @@ async function startRescheduleFromForm() {
 
 
 async function createWorkflowFromSearchFields(fields) {
-  // Create a new workflow row with NO game number yet
   const res = await apiCreateRow("");
 
   if (!res?.created) {
@@ -1044,10 +1043,8 @@ async function createWorkflowFromSearchFields(fields) {
     return;
   }
 
-  // Set the active game number (blank for now)
   currentGameNumber = "";
 
-  // Build initial row data
   currentRowData = {
     game_number: "",
     age_group: fields.age_group,
@@ -1057,7 +1054,7 @@ async function createWorkflowFromSearchFields(fields) {
     orig_date: formatDateForStorage(fields.orig_date),
     orig_time: formatTimeForStorage(fields.orig_time),
     orig_field: "(Unknown)",
-    step_1: "",   // Step 1 NOT complete yet
+    step_1: "",
     step_2: "",
     step_3: "",
     step_4: "",
@@ -1067,7 +1064,6 @@ async function createWorkflowFromSearchFields(fields) {
     step_8: ""
   };
 
-  // Save initial fields to sheet
   await setField("age_group", fields.age_group);
   await setField("gender", fields.gender);
   await setField("division", fields.division);
@@ -1077,41 +1073,6 @@ async function createWorkflowFromSearchFields(fields) {
   await setField("orig_time", formatTimeForStorage(fields.orig_time));
   await setField("orig_field", "(Unknown)");
 
-  // Begin workflow at Step 1 (game number still required)
-  beginWorkflow();
-}
-
-
-  // ---------------------------------------------
-  // Build the initial row data object
-  // ---------------------------------------------
-  currentRowData = {
-    game_number: pseudoGameNumber,
-    age_group: fields.age_group,
-    gender: fields.gender,
-    division: fields.division,
-    opp_town: fields.opp_town,
-    orig_date: formatDateForStorage(fields.orig_date),
-    orig_time: formatTimeForStorage(fields.orig_time),
-    orig_field: "(Unknown)",
-    step_1: "completed"
-  };
-
-  // ---------------------------------------------
-  // Save all fields to the sheet
-  // ---------------------------------------------
-  await setField("age_group", fields.age_group);
-  await setField("gender", fields.gender);
-  await setField("division", fields.division);
-  await setField("opp_town", fields.opp_town);
-
-  await setField("orig_date", formatDateForStorage(fields.orig_date));
-  await setField("orig_time", formatTimeForStorage(fields.orig_time));
-  await setField("orig_field", "(Unknown)");
-
-  // ---------------------------------------------
-  // Begin workflow at Step 2 (Step 1 is complete)
-  // ---------------------------------------------
   beginWorkflow();
 }
 
