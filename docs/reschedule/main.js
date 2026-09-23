@@ -280,7 +280,7 @@ function renderBoardDashboard(rows) {
 
 function computeBoardStatus(row) {
   // Finalized
-  if (row.step_9 === "completed") {
+  if (row.step_8 === "completed") {
     return { label: "Complete", detail: "SSSL approved — no further action" };
   }
 
@@ -418,7 +418,7 @@ async function apiUpdateField(gameNumber, field, value) {
   return res.json();
 }
 
-// STEP_X UPDATE (maps to step_1..step_9)
+// STEP_X UPDATE (maps to step_1..step_8)
 async function apiUpdateStep(gameNumber, stepNumber) {
   return apiUpdateField(gameNumber, `step_${stepNumber}`, "completed");
 }
@@ -560,7 +560,7 @@ function formatTime(t) {
 
 function getHighestCompletedStep(row) {
   let highest = 1;
-  for (let s = 1; s <= 9; s++) {
+  for (let s = 1; s <= 8; s++) {
     if (isStepComplete(row, s)) {
       highest = s;
     }
@@ -571,7 +571,7 @@ function getHighestCompletedStep(row) {
 function computeStatus(row) {
   const highest = getHighestCompletedStep(row);
 
-  if (highest >= 9) return "Finalized";
+  if (highest >= 8) return "Finalized";
   if (highest >= 7) return "SSSL Form Ready";          // Step 7
   if (highest >= 6) return "Awaiting HAYSA Approval";  // Step 6
   if (highest >= 4) return "Awaiting Opponent";        // Step 4
@@ -592,7 +592,7 @@ async function setField(field, value) {
 
 function getWorkflowStatus(row) {
 
-  if (row.step_9 === "completed") {
+  if (row.step_8 === "completed") {
     return "✅ Complete";
   }
 
@@ -682,8 +682,7 @@ function buildQuickView(row) {
         row.step_5,
         row.step_6,
         row.step_7,
-        row.step_8,
-        row.step_9
+        row.step_8
       ].filter(v => v === "completed").length
     },
 
@@ -877,7 +876,7 @@ async function lookupGameNumber() {
 
     // First incomplete step
     let nextStep = 1;
-    for (let s = 1; s <= 9; s++) {
+    for (let s = 1; s <= 8; s++) {
       if (!isStepCompleteRow(row, s)) {
         nextStep = s;
         break;
@@ -1148,12 +1147,12 @@ function showWorkflowWithoutStarting() {
 
 
 function findNextIncompleteStepSkippingStep1(row) {
-  for (let s = 2; s <= 9; s++) {
+  for (let s = 2; s <= 8; s++) {
     if (row[`step_${s}`] !== "completed") {
       return s;
     }
   }
-  return 9; // fallback
+  return 8; // fallback
 }
 
 
@@ -1170,7 +1169,7 @@ function beginWorkflow() {
   let highestCompleted = 1;
 
   if (currentRowData) {
-    for (let s = 1; s <= 9; s++) {
+    for (let s = 1; s <= 8; s++) {
       if (isStepCompleteRow(currentRowData, s)) {
         highestCompleted = s;
       } else {
@@ -1267,7 +1266,7 @@ function initTimeline() {
   const nextBtn = document.getElementById("nextStepBtn");
   if (nextBtn) {
     nextBtn.onclick = () => {
-      if (currentStep < 9) {
+      if (currentStep < 8) {
         goToStep(currentStep + 1);
       }
     };
@@ -1305,7 +1304,7 @@ function hydrateTimelineFromRow(row) {
     }
   }
 
-  for (let s = 1; s <= 9; s++) {
+  for (let s = 1; s <= 8; s++) {
     const complete = isStepCompleteRow(source, s);
     mark(s, complete);
   }
@@ -1352,8 +1351,8 @@ function isStepCompleteRow(r, step) {
         r.signed_name
       );
 
-    case 9:
-      return r.step_9 === "completed";
+    case 8:
+      return r.step_8 === "completed";
 
     default:
       return false;
@@ -1403,8 +1402,8 @@ function isStepComplete(step) {
         f("signed_name")
       );
 
-    case 9:
-      return f("step_9") === "completed";
+    case 8:
+      return f("step_8") === "completed";
 
     default:
       return false;
@@ -1440,7 +1439,7 @@ function renderPanelForStep(step) {
     case 5: renderStep5(panel); break;
     case 6: renderStep6(panel); break;
     case 7: renderStep7(panel); break;
-    case 9: renderStep9(panel); break;
+    case 8: renderStep8(panel); break;
     default:
       panel.innerHTML = "<p>Select a step above.</p>";
   }
@@ -2098,8 +2097,8 @@ function renderStep7(panel) {
 }
 
 
-// STEP 9 — Finalize Request
-function renderStep9(panel) {
+// STEP 8 — Finalize Request
+function renderStep8(panel) {
 
   const row = currentRowData;
 
@@ -2129,7 +2128,7 @@ function renderStep9(panel) {
   const summaryText = generateSSSLEmailSummary(row);
 
   panel.innerHTML = `
-    <h2>Step 9 — Finalize Request</h2>
+    <h2>Step 8 — Finalize Request</h2>
     <p>
       Download the completed form and record any final notes.
       Private contact information entered below is used only
@@ -2149,20 +2148,20 @@ function renderStep9(panel) {
     <label>Opponent Coach Contact Information</label>
     <input type="text" id="opp_coach_contact_temp" placeholder="Phone number or email">
 
-    <button id="s9_download" class="primary-btn">Download Completed Form</button>
+    <button id="s8_download" class="primary-btn">Download Completed Form</button>
 
     <!-- ⭐ NEW: SSSL Summary Preview + Copy Button -->
     <h3>SSSL Email Summary</h3>
     <pre id="sssl_summary_box" class="summary-box">${summaryText}</pre>
-    <button id="s9_summary" class="secondary-btn">Copy SSSL Summary</button>
+    <button id="s8_summary" class="secondary-btn">Copy SSSL Summary</button>
 
     <label>Board Notes (optional)</label>
     <input type="text" id="notes" value="${getField("notes") || ""}">
 
-    <button id="s9_save" class="secondary-btn">Mark Request Complete</button>
+    <button id="s8_save" class="secondary-btn">Mark Request Complete</button>
   `;
 
-  document.getElementById("s9_download").onclick = () => {
+  document.getElementById("s8_download").onclick = () => {
 
     const coachContact = document.getElementById("coach_contact_temp").value.trim();
     const oppCoachContact = document.getElementById("opp_coach_contact_temp").value.trim();
@@ -2182,12 +2181,12 @@ function renderStep9(panel) {
   };
 
   // ⭐ Copy-to-Clipboard handler
-  document.getElementById("s9_summary").onclick = () => {
+  document.getElementById("s8_summary").onclick = () => {
     copyToClipboard(summaryText);
     alert("SSSL summary copied to clipboard.");
   };
 
-  document.getElementById("s9_save").onclick = async () => {
+  document.getElementById("s8_save").onclick = async () => {
 
     if (!isComplete()) {
       alert("Some required fields are missing. Please review all steps before finalizing.");
@@ -2196,8 +2195,8 @@ function renderStep9(panel) {
 
     await setField("notes", document.getElementById("notes").value);
 
-    await apiUpdateStep(currentGameNumber, 9);
-    currentRowData.step_9 = "completed";
+    await apiUpdateStep(currentGameNumber, 8);
+    currentRowData.step_8 = "completed";
     hydrateTimelineFromRow(currentRowData);
 
     alert("Request marked complete.");
