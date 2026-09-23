@@ -14,10 +14,9 @@
     <div class="subtitle">Guided workflow to move your SSSL game</div>
   </header>
 
-  <!-- UNIFIED START RESCHEDULE CARD -->
+  <!-- START RESCHEDULE -->
   <section class="card" id="startContainer">
     <h2>Start a Reschedule</h2>
-
     <p>Begin by entering your SSSL Game Number <strong>OR</strong> search by team details.</p>
 
     <!-- OPTION A — GAME NUMBER -->
@@ -28,8 +27,8 @@
       <input type="text" id="lookupGameNumber" placeholder="e.g., 12345">
 
       <div class="button-row">
-        <button type="button" class="primary-btn" onclick="lookupGameNumber()">Lookup & Start</button>
-        <button type="button" class="secondary-btn" onclick="createNewFromLookup()">+ New Reschedule</button>
+        <button class="primary-btn" onclick="lookupGameNumber()">Lookup & Start</button>
+        <button class="secondary-btn" onclick="createNewFromLookup()">+ New Reschedule</button>
       </div>
 
       <div id="lookupStatus" class="info-text"></div>
@@ -77,9 +76,7 @@
         </div>
       </div>
 
-      <button type="button" class="primary-btn" onclick="startRescheduleFromForm()">
-        Search & Start Reschedule
-      </button>
+      <button class="primary-btn" onclick="startRescheduleFromForm()">Search & Start Reschedule</button>
 
       <div id="searchStatus" class="info-text"></div>
       <div id="gameSelectionContainer" class="selection-list"></div>
@@ -88,9 +85,8 @@
     <hr>
 
     <!-- FIND GAME NUMBER -->
-    <div class="section">
+    <div class="section find-number-helper">
       <h3>Need help finding your game number?</h3>
-
       <p>You can use either of the official SSSL tools:</p>
 
       <a class="secondary-btn"
@@ -107,7 +103,7 @@
     </div>
   </section>
 
-  <!-- Submitted Requests -->
+  <!-- SUBMITTED REQUESTS -->
   <section class="card" id="submittedListContainer">
     <h2>Submitted Requests</h2>
     <div id="submittedLoading" class="loading-banner">Loading reschedules…</div>
@@ -138,12 +134,12 @@
 
     <!-- NEXT STEP BUTTON -->
     <div id="nextStepContainer" class="next-step-container" style="display:none;">
-      <button type="button" id="nextStepBtn" class="primary-btn">Next Step →</button>
+      <button class="primary-btn" id="nextStepBtn">Next Step →</button>
     </div>
 
-    <!-- BACK TO LIST BUTTON -->
+    <!-- BACK BUTTON -->
     <div id="backToListContainer" class="next-step-container" style="display:none;">
-      <button type="button" id="backToListBtn" class="secondary-btn">← Back to Submitted List</button>
+      <button class="secondary-btn" id="backToListBtn">← Back to Submitted List</button>
     </div>
 
   </div>
@@ -155,7 +151,7 @@
 
     <form id="gameChangeForm">
 
-      <label for="form_game_number">Game Number</label>
+      <label>Game Number</label>
       <input type="text" name="game_number" id="form_game_number">
 
       <label>Team Name</label>
