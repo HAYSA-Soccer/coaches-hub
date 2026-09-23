@@ -1802,17 +1802,21 @@ function renderStep4(panel) {
 // STEP 5 — Field Hold (auto-handled)
 function renderStep5(panel) {
 
-  const finalField = getField("final_field") || "";
+  const finalField = (getField("final_field") || "").toLowerCase();
 
-  // EXACT categories from Step 4 dropdown
-  const HOME_CATEGORIES = [
-    "Holbrook HS Turf",
-    "Sumner/Sean Joyce Fields",
-    "Brookville Fields",
-    "Avon Butler Fields"
+  const HOME_KEYWORDS = [
+    "holbrook",
+    "haysa",
+    "sumner",
+    "sean joyce",
+    "brookville",
+    "avon",
+    "butler"
   ];
 
-  const isHome = HOME_CATEGORIES.includes(finalField);
+  const isHome = HOME_KEYWORDS.some(keyword =>
+    finalField.includes(keyword)
+  );
 
   let message = "";
   if (isHome) {
@@ -1843,13 +1847,13 @@ function renderStep5(panel) {
     </p>
   `;
 
-  // Auto-complete Step 5
   if (currentRowData.step_5 !== "completed") {
     apiUpdateStep(currentGameNumber, 5);
     currentRowData.step_5 = "completed";
     hydrateTimelineFromRow(currentRowData);
   }
 }
+
 
 
 
