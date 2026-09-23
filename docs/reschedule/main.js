@@ -1514,7 +1514,7 @@ function goToStep(step) {
   if (!panel) return;
 
   renderPanelForStep(step);
-  highlightStepInTimeline(step);
+  hydrateTimelineFromRow(currentRowData);
 }
 
 function renderPanelForStep(step) {
