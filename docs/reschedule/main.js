@@ -101,7 +101,7 @@ async function resumeWorkflow(gameNumber) {
     return;
   }
 
-  currentRowData = result.row;   // THIS is the correct row
+  currentRowData = result.row;   // ← CRITICAL
 
   hydrateTimelineFromRow(currentRowData);
 
@@ -113,9 +113,10 @@ async function resumeWorkflow(gameNumber) {
 
 
 
+
 function useExistingOrStartNew(gameNumber) {
   if (workflowExists(gameNumber)) {
-    resumeWorkflow(gameNumber);   // ← SAME function used by Submitted Requests
+    resumeWorkflow(gameNumber);
   } else {
     startNewWorkflow(gameNumber);
   }
@@ -127,7 +128,7 @@ async function apiGetRow(gameNumber) {
   form.append("game_number", gameNumber);
 
   const res = await fetch(API_URL, { method: "POST", body: form });
-  return res.json();   // MUST return the row object
+  return res.json();
 }
 
 
@@ -1003,7 +1004,16 @@ async function resumeGame(gameNumber) {
 
 
 async function startNewWorkflow(gameNumber) {
-  const row = await apiCreateRow(gameNumber);
+  const result = await apiCreateRow(gameNumber);
+
+  currentRowData = result.row;   // MUST exist
+
+  hydrateTimelineFromRow(currentRowData);
+
+  showWorkflowPage();
+
+  renderStep(1);
+}
 
   currentRowData = row;                      // ← MUST happen BEFORE rendering
 
