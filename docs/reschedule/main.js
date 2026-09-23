@@ -94,16 +94,23 @@ function showSingleMatchConfirmation(match) {
 
 
 async function resumeWorkflow(gameNumber) {
-  const row = await apiGetRow(gameNumber);   // ← load from sheet
+  const result = await apiGetRow(gameNumber);
 
-  currentRowData = row;                      // ← MUST happen BEFORE rendering
+  if (!result || !result.exists) {
+    alert("Unable to load workflow row.");
+    return;
+  }
 
-  hydrateTimelineFromRow(currentRowData);    // timeline updates correctly
+  currentRowData = result.row;   // THIS is the correct row
 
-  showWorkflowPage();                        // show UI
+  hydrateTimelineFromRow(currentRowData);
 
-  renderStep(currentRowData.current_step);   // Step 4 now hydrates correctly
+  showWorkflowPage();
+
+  renderStep(currentRowData.current_step || 1);
 }
+
+
 
 
 function useExistingOrStartNew(gameNumber) {
@@ -114,6 +121,14 @@ function useExistingOrStartNew(gameNumber) {
   }
 }
 
+async function apiGetRow(gameNumber) {
+  const form = new FormData();
+  form.append("action", "getRow");
+  form.append("game_number", gameNumber);
+
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();   // MUST return the row object
+}
 
 
 function createNewFromSearchInputs() {
