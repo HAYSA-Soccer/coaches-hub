@@ -1182,34 +1182,8 @@ function beginWorkflow() {
 
   currentStep = highestCompleted;
 
-  hydrateTimelineFromRow(currentRowData || {});
-  setActiveTimelineStep(currentStep);
-  renderPanelForStep(currentStep);
-
-  const form = document.getElementById("gameChangeForm");
-
-  if (form && currentRowData) {
-    const map = {
-      game_number: "game_number",
-      team_name: "team_name",
-      orig_date: "orig_date",
-      orig_time: "orig_time",
-      orig_field: "orig_field",
-      final_date: "final_date",
-      final_time: "final_time",
-      final_field: "final_field",
-      coach_name: "coach_name",
-      coach_email: "coach_email",
-      coach_phone: "coach_phone",
-      opp_coach_name: "opp_coach_name",
-      opp_coach_phone: "opp_coach_phone"
-    };
-
-    Object.keys(map).forEach(name => {
-      const el = form.querySelector(`[name='${name}']`);
-      if (el) el.value = getField(map[name]);
-    });
-  }
+  // ⭐ Unified navigation — replaces ALL old timeline + panel calls
+  goToStep(currentStep);
 
   // Scroll workflow into view
   const workflow = document.getElementById("workflowPage");
@@ -1220,6 +1194,7 @@ function beginWorkflow() {
     });
   }
 }
+
 
 
 function hydrateFieldsFromRow(row) {
@@ -1312,31 +1287,6 @@ function initTimeline() {
 
 
 
-function setActiveTimelineStep(step) {
-  document.querySelectorAll(".timeline-step").forEach(el => {
-    el.classList.toggle("active", Number(el.dataset.step) === step);
-  });
-}
-
-function highlightStep(stepNumber) {
-  const el = document.getElementById(`step_${stepNumber}`);
-  if (el) el.classList.add("active");
-}
-
-
-function highlightStepInTimeline(step) {
-  const steps = document.querySelectorAll(".timeline-step");
-
-  steps.forEach(el => {
-    const s = parseInt(el.getAttribute("data-step"), 10);
-
-    if (s === step) {
-      el.classList.add("active-step");
-    } else {
-      el.classList.remove("active-step");
-    }
-  });
-}
 
 function hydrateTimelineFromRow(row) {
   const source = row || currentRowData || {};
