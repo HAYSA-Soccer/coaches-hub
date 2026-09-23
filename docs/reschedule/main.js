@@ -455,6 +455,21 @@ function autoMoveApprovedOption(optionNumber) {
 // ===============================
 // HELPERS
 // ===============================
+
+// =============== Update step 4 button =========================
+async function apiUpdateFinal(gameNumber, finalDate, finalTime, finalField) {
+  const form = new FormData();
+  form.append("action", "updateFinal");
+  form.append("game_number", gameNumber);
+  form.append("final_date", finalDate);
+  form.append("final_time", finalTime);
+  form.append("final_field", finalField);
+
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
+
+// =========================================================
 function convertToHtmlDate(mmddyyyy) {
   if (!mmddyyyy) return "";
   const [mm, dd, yyyy] = mmddyyyy.split("/");
