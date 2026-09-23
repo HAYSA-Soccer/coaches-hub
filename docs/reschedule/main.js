@@ -839,42 +839,8 @@ async function createWorkflowFromSearchFields(fields) {
 
 
 async function resumeGame(gameNumber) {
-  const result = await apiGetGame(gameNumber);
-  const statusEl = document.getElementById("lookupStatus");
-
-  if (!result || !result.exists) {
-    if (statusEl) statusEl.innerText = "Game not found.";
-    return;
-  }
-
-  const row = result.data;
-
-  currentGameNumber = gameNumber;
-  hydrateFieldsFromRow(row);
-  
-  // Detect board approval
-  if (row.opt1_status === "approved") autoMoveApprovedOption(1);
-  if (row.opt2_status === "approved") autoMoveApprovedOption(2);
-
-
-  // First incomplete step based on ROW data
-  let nextStep = 1;
-  for (let s = 1; s <= 9; s++) {
-    if (!isStepCompleteRow(row, s)) {
-      nextStep = s;
-      break;
-    }
-  }
-
-  hideLandingPage();
-  showWorkflowUI();
-  hydrateTimelineFromRow(row);
-  goToStep(nextStep);
-
-  const wf = document.getElementById("workflowPage");
-  if (wf) wf.scrollIntoView({ behavior: "smooth" });
+  await loadGameWithoutStartingWorkflow(gameNumber);
 }
-
 
 
 
