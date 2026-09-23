@@ -476,6 +476,64 @@ function convertToHtmlTime(timeStr) {
   return `${hours}:${minutes}`;
 }
 
+//============= REVERSE TIMEDATE CONVERTERS =================
+
+function convertFromHtmlDate(yyyy_mm_dd) {
+  if (!yyyy_mm_dd) return "";
+  const [yyyy, mm, dd] = yyyy_mm_dd.split("-");
+  return `${mm}/${dd}/${yyyy}`;
+}
+
+function convertFromHtmlTime(hhmm) {
+  if (!hhmm) return "";
+  let [hours, minutes] = hhmm.split(":");
+  let modifier = "AM";
+
+  if (Number(hours) >= 12) {
+    modifier = "PM";
+    if (Number(hours) > 12) {
+      hours = String(Number(hours) - 12);
+    }
+  } else if (Number(hours) === 0) {
+    hours = "12";
+  }
+
+  return `${hours}:${minutes} ${modifier}`;
+}
+
+// ========================================================
+
+
+async function saveFinalDetails() {
+  const rawDate = document.getElementById("final_date").value;
+  const rawTime = document.getElementById("final_time").value;
+
+  const finalDate = convertFromHtmlDate(rawDate);
+  const finalTime = convertFromHtmlTime(rawTime);
+
+  // Determine field value (select or custom)
+  const select = document.getElementById("final_field_select");
+  const custom = document.getElementById("final_field_custom");
+
+  const finalField =
+    select.value === "__custom__" ? custom.value : select.value;
+
+  if (!finalDate || !finalTime || !finalField) {
+    alert("Please complete all final details before saving.");
+    return;
+  }
+
+  await apiUpdateFinal(currentGameNumber, finalDate, finalTime, finalField);
+
+  // Update local row data
+  currentRowData.final_date = finalDate;
+  currentRowData.final_time = finalTime;
+  currentRowData.final_field = finalField;
+
+  alert("Final details saved.");
+}
+
+
 
 function formatDate(d) {
   if (!d) return "";
@@ -1714,10 +1772,10 @@ function renderStep4(panel) {
       <p>Enter the final agreed date, time, and field once both coaches approve.</p>
 
       <label>Final Date</label>
-      <input type="date" id="final_date" value="${getField("final_date") || ""}">
+      <input type="date" id="final_date">
 
       <label>Final Time</label>
-      <input type="time" id="final_time" value="${getField("final_time") || ""}">
+      <input type="time" id="final_time">
 
       <label>Final Field</label>
 
@@ -1767,13 +1825,13 @@ function renderStep4(panel) {
       <div class="option-block">
         <h4>Option 1</h4>
         <label>Date</label>
-        <input type="date" id="opt1_date" value="${getField("opt1_date") || ""}">
+        <input type="date" id="opt1_date">
 
         <label>Time</label>
-        <input type="time" id="opt1_time" value="${getField("opt1_time") || ""}">
+        <input type="time" id="opt1_time">
 
         <label>Field</label>
-        <input type="text" id="opt1_field" value="${getField("opt1_field") || ""}">
+        <input type="text" id="opt1_field">
 
         <button class="secondary-btn" onclick="saveOption(1)">
           Save Option 1
@@ -1783,13 +1841,13 @@ function renderStep4(panel) {
       <div class="option-block">
         <h4>Option 2</h4>
         <label>Date</label>
-        <input type="date" id="opt2_date" value="${getField("opt2_date") || ""}">
+        <input type="date" id="opt2_date">
 
         <label>Time</label>
-        <input type="time" id="opt2_time" value="${getField("opt2_time") || ""}">
+        <input type="time" id="opt2_time">
 
         <label>Field</label>
-        <input type="text" id="opt2_field" value="${getField("opt2_field") || ""}">
+        <input type="text" id="opt2_field">
 
         <button class="secondary-btn" onclick="saveOption(2)">
           Save Option 2
@@ -1816,13 +1874,27 @@ function renderStep4(panel) {
     custom.value = savedField;
   }
 
-  // Hydrate Final Date + Final Time AFTER field hydration
+  // Hydrate Final Date + Final Time using HTML-friendly formats
   document.getElementById("final_date").value =
     convertToHtmlDate(getField("final_date"));
-  
+
   document.getElementById("final_time").value =
     convertToHtmlTime(getField("final_time"));
 
+  // Hydrate proposed options
+  document.getElementById("opt1_date").value =
+    convertToHtmlDate(getField("opt1_date"));
+  document.getElementById("opt1_time").value =
+    convertToHtmlTime(getField("opt1_time"));
+  document.getElementById("opt1_field").value =
+    getField("opt1_field") || "";
+
+  document.getElementById("opt2_date").value =
+    convertToHtmlDate(getField("opt2_date"));
+  document.getElementById("opt2_time").value =
+    convertToHtmlTime(getField("opt2_time"));
+  document.getElementById("opt2_field").value =
+    getField("opt2_field") || "";
 
   // Show/hide custom field input
   select.onchange = () => {
@@ -1830,6 +1902,7 @@ function renderStep4(panel) {
     custom.style.display = sel === "__custom__" ? "block" : "none";
   };
 }
+
 
 
 
