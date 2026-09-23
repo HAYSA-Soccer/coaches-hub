@@ -2010,6 +2010,8 @@ function renderStep9(panel) {
     return required.every(f => row[f] && row[f] !== "" && row[f] !== "TBD");
   }
 
+  const summaryText = generateSSSLEmailSummary(row);
+
   panel.innerHTML = `
     <h2>Step 9 — Finalize Request</h2>
     <p>
@@ -2026,21 +2028,17 @@ function renderStep9(panel) {
     </p>
     
     <label>Your Contact Information</label>
-    <input
-      type="text"
-      id="coach_contact_temp"
-      placeholder="Phone number or email">
+    <input type="text" id="coach_contact_temp" placeholder="Phone number or email">
     
     <label>Opponent Coach Contact Information</label>
-    <input
-      type="text"
-      id="opp_coach_contact_temp"
-      placeholder="Phone number or email">
+    <input type="text" id="opp_coach_contact_temp" placeholder="Phone number or email">
 
     <button id="s9_download" class="primary-btn">Download Completed Form</button>
 
-    <!-- ⭐ NEW: SSSL Summary Button -->
-    <button id="s9_summary" class="secondary-btn">Generate SSSL Summary</button>
+    <!-- ⭐ NEW: SSSL Summary Preview + Copy Button -->
+    <h3>SSSL Email Summary</h3>
+    <pre id="sssl_summary_box" class="summary-box">${summaryText}</pre>
+    <button id="s9_summary" class="secondary-btn">Copy SSSL Summary</button>
 
     <label>Board Notes (optional)</label>
     <input type="text" id="notes" value="${getField("notes") || ""}">
@@ -2050,11 +2048,8 @@ function renderStep9(panel) {
 
   document.getElementById("s9_download").onclick = () => {
 
-    const coachContact =
-      document.getElementById("coach_contact_temp").value.trim();
-  
-    const oppCoachContact =
-      document.getElementById("opp_coach_contact_temp").value.trim();
+    const coachContact = document.getElementById("coach_contact_temp").value.trim();
+    const oppCoachContact = document.getElementById("opp_coach_contact_temp").value.trim();
   
     if (!coachContact || !oppCoachContact) {
       alert("Contact information is required for both coaches.");
@@ -2070,10 +2065,10 @@ function renderStep9(panel) {
     );
   };
 
-  // ⭐ NEW: SSSL Summary Handler
+  // ⭐ Copy-to-Clipboard handler
   document.getElementById("s9_summary").onclick = () => {
-    const text = generateSSSLEmailSummary(row);
-    window.prompt("Copy the SSSL email summary:", text);
+    copyToClipboard(summaryText);
+    alert("SSSL summary copied to clipboard.");
   };
 
   document.getElementById("s9_save").onclick = async () => {
@@ -2092,6 +2087,9 @@ function renderStep9(panel) {
     alert("Request marked complete.");
   };
 }
+
+
+
 // ===============================
 // SIGNATURE PAD + FORM SAVE
 // ===============================
