@@ -177,6 +177,29 @@ function formatTimeForStorage(value) {
   return `${h}:${mm} ${ap}`;
 }
 
+
+// Generate Email Summary =======================================
+
+function generateSSSLEmailSummary(row) {
+  return `
+Subject: Reschedule Request – Game #${row.game_number}
+
+Attached is the completed reschedule form for:
+
+Game Number: ${row.game_number}
+Teams: ${row.team_name} vs ${row.opp_town}
+Original: ${row.orig_date} at ${row.orig_time} (${row.orig_field})
+New: ${row.final_date} at ${row.final_time} (${row.final_field})
+  `.trim();
+}
+
+
+function showSSSLEmailSummary(row) {
+  const text = generateSSSLEmailSummary(row);
+  window.prompt("Copy the SSSL email summary:", text);
+}
+
+
 // ---------------------------------------------------------------
 // =================== BOARD SUMMARY VIEW ========================
 // ---------------------------------------------------------------
