@@ -727,3 +727,35 @@ select:focus {
   opacity: 1;
   text-decoration: underline;
 }
+
+.top-links {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  display: flex;
+  gap: 14px;
+  padding: 6px 20px;
+
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+
+  border-bottom: 1px solid #e0e0e0;
+
+  font-size: 13px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.top-links a {
+  color: #003366;
+  text-decoration: none;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.top-links a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
