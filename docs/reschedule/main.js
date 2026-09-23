@@ -1172,9 +1172,7 @@ function showWorkflowWithoutStarting() {
   // Render step content
   renderPanelForStep(nextStep);
 
-  // Show next step button
-  const nextBtn = document.getElementById("nextStepContainer");
-  if (nextBtn) nextBtn.style.display = "block";
+  // ⭐ NO nextStepContainer ANYWHERE
 
   // Scroll user to workflow
   setTimeout(() => {
@@ -1184,6 +1182,7 @@ function showWorkflowWithoutStarting() {
     });
   }, 50);
 }
+
 
 
 
