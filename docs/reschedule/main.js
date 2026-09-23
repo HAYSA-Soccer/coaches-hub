@@ -572,10 +572,9 @@ function computeStatus(row) {
   const highest = getHighestCompletedStep(row);
 
   if (highest >= 9) return "Finalized";
-  if (highest >= 8) return "Calendar Updated";
-  if (highest >= 7) return "SSSL Form Ready";
-  if (highest >= 6) return "Awaiting HAYSA Approval";
-  if (highest >= 4) return "Awaiting Opponent";
+  if (highest >= 7) return "SSSL Form Ready";          // Step 7
+  if (highest >= 6) return "Awaiting HAYSA Approval";  // Step 6
+  if (highest >= 4) return "Awaiting Opponent";        // Step 4
   return "Drafting Options";
 }
 
