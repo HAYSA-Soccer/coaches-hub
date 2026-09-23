@@ -554,7 +554,6 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
 
   currentGameNumber = gameNumber;
 
-  // Fetch the row from the backend
   const rowResult = await apiGetGame(gameNumber);
 
   if (!rowResult?.exists) {
@@ -562,12 +561,12 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
     return;
   }
 
-  // Hydrate the fields but DO NOT start the workflow
   hydrateFieldsFromRow(rowResult.data);
 
-  // Show the summary card again (optional)
-  // Or simply leave the UI as-is until the user clicks "I want to proceed"
+  // Show workflow UI
+  showWorkflowWithoutStarting();
 }
+
 
 
 async function loadGameWithoutStartingWorkflow(gameNumber) {
@@ -890,21 +889,32 @@ async function startNewWorkflow(gameNumber) {
 function showWorkflowWithoutStarting() {
   console.log("Showing workflow without starting step progression");
 
-  // Show the workflow container
-  document.getElementById("workflowContainer").style.display = "block";
+  // Show the main workflow wrapper
+  const page = document.getElementById("workflowPage");
+  if (!page) {
+    console.error("workflowPage not found in DOM");
+    return;
+  }
+  page.style.display = "block";
 
-  // Hydrate timeline UI
+  // Show the timeline
+  const timeline = document.getElementById("timelineContainer");
+  if (timeline) timeline.style.display = "flex";
+
+  // Show the panel container
+  const panel = document.getElementById("panelContainer");
+  if (panel) panel.style.display = "block";
+
+  // Update timeline UI
   updateTimelineUI(currentRowData);
 
-  // Highlight the first meaningful incomplete step (skip step 1)
+  // Skip Step 1 (auto-completed)
   const nextStep = findNextIncompleteStepSkippingStep1(currentRowData);
 
+  // Highlight the correct step
   highlightStep(nextStep);
-
-  // Do NOT call beginWorkflow()
-  // Do NOT scroll
-  // Do NOT auto-start any step
 }
+
 
 
 
