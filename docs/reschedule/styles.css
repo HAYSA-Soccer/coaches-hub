@@ -497,3 +497,37 @@ select:focus {
   border-radius: 8px;
 }
 
+/* ===============================
+   SECTION SPACING (NEW)
+   =============================== */
+.section {
+  margin-bottom: 32px;
+}
+
+/* Prevent last section from adding extra space */
+.section:last-child {
+  margin-bottom: 0;
+}
+
+/* Add spacing under the grid */
+.grid-two {
+  margin-bottom: 24px;
+}
+
+/* ===============================
+   FIND GAME NUMBER HELPER (NEW)
+   =============================== */
+.find-number-helper {
+  margin-top: 32px;
+  padding: 16px;
+  background: #f7f7f7;
+  border-radius: 8px;
+}
+
+.find-number-helper a {
+  display: inline-block;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+
