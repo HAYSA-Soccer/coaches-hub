@@ -517,33 +517,40 @@ function convertFromHtmlTime(hhmm) {
 
 
 async function saveFinalDetails() {
-  const rawDate = document.getElementById("final_date").value;
-  const rawTime = document.getElementById("final_time").value;
+  const dateHtml = document.getElementById("final_date").value;
+  const timeHtml = document.getElementById("final_time").value;
 
-  const finalDate = convertFromHtmlDate(rawDate);
-  const finalTime = convertFromHtmlTime(rawTime);
+  const finalDate = convertFromHtmlDate(dateHtml);
+  const finalTime = convertFromHtmlTime(timeHtml);
 
-  // Determine field value (select or custom)
   const select = document.getElementById("final_field_select");
   const custom = document.getElementById("final_field_custom");
 
   const finalField =
     select.value === "__custom__" ? custom.value : select.value;
 
-  if (!finalDate || !finalTime || !finalField) {
-    alert("Please complete all final details before saving.");
-    return;
-  }
-
+  // Save to Google Sheet
   await apiUpdateFinal(currentGameNumber, finalDate, finalTime, finalField);
 
-  // Update local row data
+  // ⭐ Save to local workflow object (THIS WAS MISSING)
   currentRowData.final_date = finalDate;
   currentRowData.final_time = finalTime;
   currentRowData.final_field = finalField;
+  currentRowData.step_4 = "completed";
+
+  // Refresh timeline
+  hydrateTimelineFromRow(currentRowData);
+
+  // Auto-complete Step 5
+  if (currentRowData.step_5 !== "completed") {
+    await apiUpdateStep(currentGameNumber, 5);
+    currentRowData.step_5 = "completed";
+    hydrateTimelineFromRow(currentRowData);
+  }
 
   alert("Final details saved.");
 }
+
 
 
 
