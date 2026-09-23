@@ -177,6 +177,87 @@ function formatTimeForStorage(value) {
   return `${h}:${mm} ${ap}`;
 }
 
+// ---------------------------------------------------------------
+// =================== BOARD SUMMARY VIEW ========================
+// ---------------------------------------------------------------
+
+function renderBoardDashboard(rows) {
+  const container = document.getElementById("boardDashboard");
+  container.innerHTML = "";
+
+  rows.forEach(row => {
+    const status = computeBoardStatus(row);
+
+    const div = document.createElement("div");
+    div.className = "submitted-grid";
+
+    div.innerHTML = `
+      <div class="sg-col">
+        <div class="sg-label">Game #</div>
+        <div class="sg-value">${row.game_number}</div>
+      </div>
+
+      <div class="sg-col">
+        <div class="sg-label">Team</div>
+        <div class="sg-value">${row.team_name}</div>
+        <div class="sg-sub">${row.age_group} ${row.gender} — ${row.division}</div>
+      </div>
+
+      <div class="sg-col">
+        <div class="sg-label">Original</div>
+        <div class="sg-value">${row.orig_date} @ ${row.orig_time}</div>
+        <div class="sg-sub">${row.orig_field}</div>
+      </div>
+
+      <div class="sg-col">
+        <div class="sg-label">Status</div>
+        <div class="sg-value">${status.label}</div>
+        <div class="sg-sub">${status.detail}</div>
+      </div>
+
+      <div class="sg-action">
+        <button class="primary-btn" onclick="resumeGame('${row.game_number}')">
+          Open
+        </button>
+      </div>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+function computeBoardStatus(row) {
+  // Finalized
+  if (row.step_9 === "completed") {
+    return { label: "Complete", detail: "SSSL approved — no further action" };
+  }
+
+  // Sent to SSSL
+  if (row.step_7 === "completed") {
+    return { label: "Pending SSSL", detail: "Awaiting SSSL approval" };
+  }
+
+  // HAYSA approved
+  if (row.step_6 === "completed") {
+    return { label: "Ready to Send", detail: "HAYSA approved — send packet to SSSL" };
+  }
+
+  // Options approved
+  if (row.opt1_status === "approved" || row.opt2_status === "approved") {
+    return { label: "HAYSA Review", detail: "Option approved — waiting for HAYSA final check" };
+  }
+
+  // Coach submitted
+  if (row.step_3 === "completed") {
+    return { label: "Coach Submitted", detail: "Board review required" };
+  }
+
+  return { label: "In Progress", detail: "Coach still entering details" };
+}
+
+// ===========================================
+
+
 
 // ===============================
 // STATE
