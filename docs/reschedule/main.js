@@ -1344,6 +1344,7 @@ function initTimeline() {
   }
 }
 
+
 function setActiveTimelineStep(step) {
   document.querySelectorAll(".timeline-step").forEach(el => {
     el.classList.toggle("active", Number(el.dataset.step) === step);
