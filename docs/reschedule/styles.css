@@ -634,3 +634,42 @@ select:focus {
   background: #eceff1;
   color: #37474f;
 }
+
+.checklist-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.check-pill {
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid #ddd;
+  background: #f9f9f9;
+}
+
+.check-ok {
+  background: #e6f7e6;
+  color: #0a6b0a;
+}
+
+.check-warn {
+  background: #fff9e6;
+  color: #7a5a00;
+}
+
+.check-bad {
+  background: #ffe6e6;
+  color: #8a0000;
+}
+
+.check-na {
+  background: #f0f0f0;
+  color: #555;
+}
+
