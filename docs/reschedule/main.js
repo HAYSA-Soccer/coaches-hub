@@ -1015,14 +1015,7 @@ async function startNewWorkflow(gameNumber) {
   renderStep(1);
 }
 
-  currentRowData = row;                      // ← MUST happen BEFORE rendering
 
-  hydrateTimelineFromRow(currentRowData);
-
-  showWorkflowPage();
-
-  renderStep(1);
-}
 
 
 function updateTimelineUI(row) {
