@@ -740,13 +740,19 @@ async function loadSubmittedRequests() {
       
           <div class="row-bottom">
             <span class="next"><strong>Next:</strong> ${item.workflow_status}</span>
+          
             <span class="status">
               <strong>Status:</strong>
               C:${item.status.certified ? "Y" : "N"} • 
               Cal:${item.status.calendar_updated ? "Y" : "N"} • 
               H:${item.status.haysa_status || "—"}
             </span>
+          
+            <span class="notes">
+              <strong>Notes:</strong> ${item.notes || "—"}
+            </span>
           </div>
+
       
         </div>
       `;
