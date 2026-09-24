@@ -725,50 +725,32 @@ async function loadSubmittedRequests() {
       div.className = "submitted-item";
 
       div.innerHTML = `
-        <div class="reschedule-card">
+        <div class="reschedule-card compact">
       
-          <div class="card-header">
-            <div class="game-number">Game #${item.game_number}</div>
-            <button type="button" class="primary-btn" onclick="resumeGame('${item.game_number}')">Resume</button>
+          <div class="card-left">
+            <div class="row1">
+              <span class="game">#${item.game_number}</span>
+              <span class="team">${item.team_name} — ${item.age_group} ${item.gender} ${item.division}</span>
+            </div>
+      
+            <div class="row2">
+              <span class="orig"><strong>Orig:</strong> ${item.orig.date} ${item.orig.time} • ${item.orig.field}</span>
+              <span class="final"><strong>Final:</strong> ${item.final.date || "—"} ${item.final.time || ""} • ${item.final.field || ""}</span>
+            </div>
+      
+            <div class="row3">
+              <span class="next"><strong>Next:</strong> ${item.workflow_status}</span>
+              <span class="status">
+                <strong>Status:</strong>
+                C:${item.status.certified ? "Y" : "N"} • 
+                Cal:${item.status.calendar_updated ? "Y" : "N"} • 
+                H:${item.status.haysa_status || "—"}
+              </span>
+            </div>
           </div>
       
-          <div class="card-body">
-      
-            <div class="left">
-              <div class="team">
-                <strong>${item.team_name}</strong><br>
-                ${item.age_group} ${item.gender} ${item.division}
-              </div>
-      
-              <div class="next-action">
-                <strong>Next Action:</strong> ${item.workflow_status}
-              </div>
-      
-              <div class="status">
-                <strong>Status:</strong>
-                Certified: ${item.status.certified ? "Yes" : "No"} •
-                Calendar: ${item.status.calendar_updated ? "Yes" : "No"} •
-                HAYSA: ${item.status.haysa_status || "—"}
-              </div>
-            </div>
-      
-            <div class="right">
-              <table class="dates-table">
-                <tr>
-                  <th>Original</th>
-                  <th>Final</th>
-                </tr>
-                <tr>
-                  <td>${item.orig.date} — ${item.orig.time}</td>
-                  <td>${item.final.date || "—"} — ${item.final.time || ""}</td>
-                </tr>
-                <tr>
-                  <td>${item.orig.field}</td>
-                  <td>${item.final.field || ""}</td>
-                </tr>
-              </table>
-            </div>
-      
+          <div class="card-right">
+            <button type="button" class="primary-btn" onclick="resumeGame('${item.game_number}')">Resume</button>
           </div>
       
         </div>
