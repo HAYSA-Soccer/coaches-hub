@@ -725,50 +725,52 @@ async function loadSubmittedRequests() {
       div.className = "submitted-item";
 
       div.innerHTML = `
-        <div class="submitted-grid">
-
-          <div class="sg-col sg-game">
-            <div class="sg-label">Game #</div>
-            <div class="sg-value">${item.game_number}</div>
-          </div>
-
-          <div class="sg-col sg-team">
-            <div class="sg-label">Team</div>
-            <div class="sg-value">${item.team_name}</div>
-            <div class="sg-sub">${item.age_group} ${item.gender} ${item.division}</div>
-          </div>
-
-          <div class="sg-col sg-original">
-            <div class="sg-label">Original</div>
-            <div class="sg-value">${item.orig.date}</div>
-            <div class="sg-sub">${item.orig.time} — ${item.orig.field}</div>
-          </div>
-
-          <div class="sg-col sg-final">
-            <div class="sg-label">Final</div>
-            <div class="sg-value">${item.final.date}</div>
-            <div class="sg-sub">${item.final.time} — ${item.final.field}</div>
-          </div>
-
-          <div class="sg-col sg-progress">
-          
-            <div class="sg-label">Next Action</div>
-            <div class="sg-value">${item.workflow_status}</div>
-          </div>
-
-          <div class="sg-col sg-status">
-            <div class="sg-label">Status</div>
-            <div class="sg-sub">
-              Certified: ${item.status.certified ? "Yes" : "No"}<br>
-              Calendar: ${item.status.calendar_updated ? "Yes" : "No"}<br>
-              HAYSA: ${item.status.haysa_status || "—"}
-            </div>
-          </div>
-
-          <div class="sg-col sg-action">
+        <div class="reschedule-card">
+      
+          <div class="card-header">
+            <div class="game-number">Game #${item.game_number}</div>
             <button type="button" class="primary-btn" onclick="resumeGame('${item.game_number}')">Resume</button>
           </div>
-
+      
+          <div class="card-body">
+      
+            <div class="left">
+              <div class="team">
+                <strong>${item.team_name}</strong><br>
+                ${item.age_group} ${item.gender} ${item.division}
+              </div>
+      
+              <div class="next-action">
+                <strong>Next Action:</strong> ${item.workflow_status}
+              </div>
+      
+              <div class="status">
+                <strong>Status:</strong>
+                Certified: ${item.status.certified ? "Yes" : "No"} •
+                Calendar: ${item.status.calendar_updated ? "Yes" : "No"} •
+                HAYSA: ${item.status.haysa_status || "—"}
+              </div>
+            </div>
+      
+            <div class="right">
+              <table class="dates-table">
+                <tr>
+                  <th>Original</th>
+                  <th>Final</th>
+                </tr>
+                <tr>
+                  <td>${item.orig.date} — ${item.orig.time}</td>
+                  <td>${item.final.date || "—"} — ${item.final.time || ""}</td>
+                </tr>
+                <tr>
+                  <td>${item.orig.field}</td>
+                  <td>${item.final.field || ""}</td>
+                </tr>
+              </table>
+            </div>
+      
+          </div>
+      
         </div>
       `;
 
