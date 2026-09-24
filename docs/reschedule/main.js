@@ -726,10 +726,11 @@ async function loadSubmittedRequests() {
           
             <span class="status">
               <strong>Status:</strong>
-              C:${item.status.certified ? "Y" : "N"} • 
-              Cal:${item.status.calendar_updated ? "Y" : "N"} • 
-              H:${item.status.haysa_status || "—"}
+              Certified: ${item.status.certified ? "Yes" : "No"} • 
+              Calendar Updated: ${item.status.calendar_updated ? "Yes" : "No"} • 
+              HAYSA: ${item.status.haysa_status || "—"}
             </span>
+
           
             <span class="notes">
               <strong>Notes:</strong> ${item.notes || "—"}
