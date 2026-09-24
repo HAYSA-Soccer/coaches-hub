@@ -835,3 +835,54 @@ select:focus {
   font-size: 14px;
 }
 
+.reschedule-card.compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.row1, .row2, .row3 {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.game {
+  font-weight: 600;
+  color: #333;
+}
+
+.team {
+  color: #555;
+}
+
+.orig, .final, .next, .status {
+  color: #444;
+  white-space: nowrap;
+}
+
+.card-right {
+  display: flex;
+  align-items: center;
+}
+
+.primary-btn {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+}
+
