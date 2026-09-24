@@ -638,24 +638,22 @@ function getWorkflowStatus(row) {
 
 function buildQuickView(row) {
 
-  // Format date
+  // Normalize date
   const fmtDate = (d) => {
-    if (!d) return "";
-    if (d.includes("T")) {
-      // ISO timestamp
-      return new Date(d).toLocaleDateString();
-    }
-    return d; // already formatted
+    if (!d) return "—";
+    if (d === "1969-12-31") return "—"; // Google default
+    if (d.includes("T")) return new Date(d).toLocaleDateString();
+    return d;
   };
 
-  // Format time
+  // Normalize time
   const fmtTime = (t) => {
     if (!t) return "";
     if (t.includes("T")) {
       const d = new Date(t);
       return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
     }
-    return t; // already formatted (AM/PM)
+    return t;
   };
 
   return {
@@ -664,46 +662,31 @@ function buildQuickView(row) {
     age_group: row.age_group,
     gender: row.gender,
     division: row.division,
-    coach_last_name: row.coach_last_name,
-  
+
     workflow_status: getWorkflowStatus(row),
 
     orig: {
       date: fmtDate(row.orig_date),
       time: fmtTime(row.orig_time),
-      field: row.orig_field
+      field: row.orig_field || "—"
     },
 
     final: {
       date: fmtDate(row.final_date),
       time: fmtTime(row.final_time),
-      field: row.final_field
-    },
-
-    progress: {
-      steps_completed: [
-        row.step_1,
-        row.step_2,
-        row.step_3,
-        row.step_4,
-        row.step_5,
-        row.step_6,
-        row.step_7,
-        row.step_8
-      ].filter(v => v === "completed").length
+      field: row.final_field || "—"
     },
 
     status: {
-      certified:
-        String(row.certified).toLowerCase() === "true",
-    
-      calendar_updated:
-        String(row.calendar_updated).toLowerCase() === "true",
-    
-      haysa_status: row.haysa_status
-    }
+      certified: String(row.certified).toLowerCase() === "true",
+      calendar_updated: String(row.calendar_updated).toLowerCase() === "true",
+      haysa_status: row.haysa_status || "—"
+    },
+
+    notes: row.notes && row.notes.trim() !== "" ? row.notes : "—"
   };
 }
+
 
 
 // ===============================
