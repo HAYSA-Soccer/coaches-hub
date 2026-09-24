@@ -725,32 +725,27 @@ async function loadSubmittedRequests() {
       div.className = "submitted-item";
 
       div.innerHTML = `
-        <div class="reschedule-card compact">
+        <div class="reschedule-card ultra">
       
-          <div class="card-left">
-            <div class="row1">
-              <span class="game">#${item.game_number}</span>
-              <span class="team">${item.team_name} — ${item.age_group} ${item.gender} ${item.division}</span>
-            </div>
-      
-            <div class="row2">
-              <span class="orig"><strong>Orig:</strong> ${item.orig.date} ${item.orig.time} • ${item.orig.field}</span>
-              <span class="final"><strong>Final:</strong> ${item.final.date || "—"} ${item.final.time || ""} • ${item.final.field || ""}</span>
-            </div>
-      
-            <div class="row3">
-              <span class="next"><strong>Next:</strong> ${item.workflow_status}</span>
-              <span class="status">
-                <strong>Status:</strong>
-                C:${item.status.certified ? "Y" : "N"} • 
-                Cal:${item.status.calendar_updated ? "Y" : "N"} • 
-                H:${item.status.haysa_status || "—"}
-              </span>
-            </div>
+          <div class="row-top">
+            <span class="game">#${item.game_number}</span>
+            <span class="team">${item.team_name} — ${item.age_group} ${item.gender} ${item.division}</span>
+            <button type="button" class="primary-btn resume-btn" onclick="resumeGame('${item.game_number}')">Resume</button>
           </div>
       
-          <div class="card-right">
-            <button type="button" class="primary-btn" onclick="resumeGame('${item.game_number}')">Resume</button>
+          <div class="row-mid">
+            <span class="orig"><strong>Orig:</strong> ${item.orig.date} • ${item.orig.time} • ${item.orig.field}</span>
+            <span class="final"><strong>Final:</strong> ${item.final.date || "—"} • ${item.final.time || ""} • ${item.final.field || ""}</span>
+          </div>
+      
+          <div class="row-bottom">
+            <span class="next"><strong>Next:</strong> ${item.workflow_status}</span>
+            <span class="status">
+              <strong>Status:</strong>
+              C:${item.status.certified ? "Y" : "N"} • 
+              Cal:${item.status.calendar_updated ? "Y" : "N"} • 
+              H:${item.status.haysa_status || "—"}
+            </span>
           </div>
       
         </div>
