@@ -73,6 +73,48 @@ function formatTimeForStorage(htmlTime) {
 }
 
 // =============================================================
+// COACH SEARCH (Critical Feature)
+// =============================================================
+async function searchByCoach() {
+  const input = document.getElementById("coach_search");
+  if (!input) {
+    alert("Coach search input not found in DOM.");
+    return;
+  }
+
+  const name = input.value.trim();
+  if (!name) {
+    alert("Please enter a coach last name.");
+    return;
+  }
+
+  const url = `${API_URL}?action=searchRows&coach_last_name=${encodeURIComponent(name)}`;
+  console.log("Coach search URL:", url);
+
+  const response = await fetch(url);
+  const result = await response.json();
+
+  const matches = result.rows || [];
+
+  // CASE 1 — EXACT MATCH
+  if (matches.length === 1) {
+    loadGame(matches[0].game_number);
+    return;
+  }
+
+  // CASE 2 — MULTIPLE MATCHES
+  if (matches.length > 1) {
+    showGameSelection(matches);
+    return;
+  }
+
+  // CASE 3 — NO MATCHES
+  alert(`No games found for coach "${name}".`);
+}
+
+
+
+// =============================================================
 // API LAYER
 // =============================================================
 async function apiGetAllRows() {
