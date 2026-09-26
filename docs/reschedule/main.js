@@ -65,6 +65,77 @@ function createNewFromSearchInputs() {
 }
 
 
+
+async function searchByCoach() {
+  const name = document.getElementById("coach_search").value.trim();
+
+  if (!name) {
+    alert("Enter a coach name.");
+    return;
+  }
+
+  const url = `${API_BASE}?action=searchRows&coach_last_name=${encodeURIComponent(name)}`;
+
+  const response = await fetch(url);
+  const data = await response.json();
+
+  if (!data.rows || data.rows.length === 0) {
+    alert("No games found for that coach.");
+    return;
+  }
+
+  renderCoachSearchResultsGrouped(data.rows);
+}
+
+
+function groupByTeam(rows) {
+  const groups = {};
+
+  rows.forEach(row => {
+    const team = row.team_name || "Unknown Team";
+
+    if (!groups[team]) groups[team] = [];
+    groups[team].push(row);
+  });
+
+  return groups;
+}
+
+
+function renderCoachSearchResultsGrouped(rows) {
+  const panel = document.getElementById("search_results");
+  panel.innerHTML = "";
+
+  const groups = groupByTeam(rows);
+
+  Object.keys(groups).forEach(teamName => {
+    const teamDiv = document.createElement("div");
+    teamDiv.className = "team-group";
+
+    teamDiv.innerHTML = `<h3>${teamName}</h3>`;
+
+    groups[teamName].forEach(row => {
+      const div = document.createElement("div");
+      div.className = "search-result";
+
+      div.innerHTML = `
+        Game #${row.game_number}<br>
+        ${row.orig_date} @ ${row.orig_time}<br>
+        Opponent: ${row.opp_town}<br>
+        <button onclick="loadGameWithoutStartingWorkflow(${row.game_number})">
+          Use This Game
+        </button>
+      `;
+
+      teamDiv.appendChild(div);
+    });
+
+    panel.appendChild(teamDiv);
+  });
+}
+
+
+
 function showSingleMatchConfirmation(match) {
   const container = document.getElementById("gameSelectionContainer");
 
