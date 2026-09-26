@@ -1638,11 +1638,15 @@ function goToStep(step) {
   }
 
   currentStep = step;
-  const panel = document.getElementById("panelContainer");
-  if (!panel) return;
 
   renderPanelForStep(step);
   hydrateTimelineFromRow(currentRowData);
+
+  // Scroll to the active panel
+  const activePanel = document.getElementById(`stepPanel_${step}`);
+  if (activePanel) {
+    activePanel.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
 
 function renderPanelForStep(step) {
