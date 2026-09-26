@@ -18,24 +18,25 @@ function normalizeDateForInput(value) {
 }
 
 function toggleCollapse(headerEl) {
-  // Always grab the .collapsible-body inside the same .collapsible
+  // Find the collapsible container
   const container = headerEl.closest(".collapsible");
-  const body = container.querySelector(".collapsible-body");
-  const isOpen = body.classList.contains("open");
 
-  // Remove any existing arrow (▶ or ▼)
+  // Find the actual body inside it
+  const body = container.querySelector(".collapsible-body");
+
+  // Determine open/closed
+  const isOpen = body.style.display === "block";
+
+  // Remove existing arrow
   const label = headerEl.textContent.replace(/^▶\s|^▼\s/, "");
 
   // Apply new arrow
   headerEl.textContent = (isOpen ? "▶ " : "▼ ") + label;
 
-  // Toggle visibility via class
-  if (isOpen) {
-    body.classList.remove("open");
-  } else {
-    body.classList.add("open");
-  }
+  // Toggle visibility
+  body.style.display = isOpen ? "none" : "block";
 }
+
 
 
 
