@@ -230,6 +230,8 @@ function displayTime(t) {
 // ===============================
 async function searchByCoach() {
   const input = document.getElementById("coach_search");
+  const resultsBox = document.getElementById("search_results");
+
   if (!input) {
     alert("Coach search input not found.");
     return;
@@ -241,16 +243,22 @@ async function searchByCoach() {
     return;
   }
 
+  // ⭐ Show pending message immediately
+  resultsBox.innerHTML = `
+    <div class="loading-banner">
+      Searching… please wait
+    </div>
+  `;
 
-
-
-  const url = `${API_URL}?action=searchRows&coach_name=${encodeURIComponent(
-    name
-  )}`;
+  const url = `${API_URL}?action=searchRows&coach_name=${encodeURIComponent(name)}`;
   console.log("Coach search URL:", url);
 
   const response = await fetch(url);
   const result = await response.json();
+
+  // ⭐ Clear pending message once results arrive
+  resultsBox.innerHTML = "";
+
   const matches = result.rows || [];
 
   if (matches.length === 1) {
