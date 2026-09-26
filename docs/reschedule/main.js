@@ -1649,6 +1649,7 @@ function goToStep(step) {
   }
 }
 
+
 function renderPanelForStep(step) {
   const panel = document.getElementById("panelContainer");
   if (!panel) return;
@@ -1656,9 +1657,17 @@ function renderPanelForStep(step) {
   // Clear previous content
   panel.innerHTML = "";
 
-  // Inject the correct step content
-  const html = getStepHTML(step);
-  panel.innerHTML = html;
+  switch (step) {
+    case 1: renderStep1(panel); break;
+    case 2: renderStep2(panel); break;
+    case 3: renderStep3(panel); break;
+    case 4: renderStep4(panel); break;
+    case 5: renderStep5(panel); break;
+    case 6: renderStep6(panel); break;
+    case 7: renderStep7(panel); break;
+    case 8: renderStep8(panel); break;
+    case 9: renderStep9(panel); break;
+  }
 
   // Always show Back button
   const backBtn = document.getElementById("backToListContainer");
