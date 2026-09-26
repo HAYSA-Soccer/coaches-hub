@@ -994,7 +994,7 @@ select:focus {
 }
 
 .collapsible-body {
-  display: none !important; /* force hidden */
+  display: none;
   padding: 8px 0 0 0 !important;
   background: transparent !important;
   border: none !important;
