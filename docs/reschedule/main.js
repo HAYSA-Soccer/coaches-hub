@@ -129,6 +129,41 @@ function groupByTeam(rows) {
 }
 
 
+function getNextWorkflowStep(row) {
+
+  // Step 1 — Game basics
+  if (!isStepComplete(1)) return 1;
+
+  // Step 2 — Original game info
+  if (!isStepComplete(2)) return 2;
+
+  // Step 3 — Opponent info
+  if (!isStepComplete(3)) return 3;
+
+  // Step 4 — Field request
+  if (!isStepComplete(4)) return 4;
+
+  // Step 5 — New game details
+  if (!isStepComplete(5)) return 5;
+
+  // Step 6 — Opposing coach info
+  if (!isStepComplete(6)) return 6;
+
+  // Step 7 — Your coach info
+  if (!isStepComplete(7)) return 7;
+
+  // Step 8 — Calendar update
+  if (!isStepComplete(8)) return 8;
+
+  // Step 9 — Certification
+  if (!isStepComplete(9)) return 9;
+
+  // All done
+  return 9;
+}
+
+
+
 function renderCoachSearchResultsGrouped(rows) {
   const panel = document.getElementById("search_results");
   panel.innerHTML = "";
@@ -971,7 +1006,7 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
   showWorkflowUI();
 
   // ⭐ Determine correct step dynamically
-  const step = getWorkflowStatus(currentRowData);
+  const step = getNextWorkflowStep(currentRowData);
 
   // ⭐ Jump to correct step
   goToStep(step);
@@ -1035,7 +1070,7 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
   showWorkflowWithoutStarting();
 
   // ⭐ Determine correct step dynamically
-  const step = getWorkflowStatus(currentRowData);
+  const step = getNextWorkflowStep(currentRowData);
   goToStep(step);
 
   // Scroll into view
