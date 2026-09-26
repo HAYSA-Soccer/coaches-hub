@@ -1629,7 +1629,7 @@ function isStepComplete(step) {
 }
 
 function goToStep(step) {
-  // Prevent skipping ahead based on current form fields
+  // Prevent skipping ahead
   for (let s = 2; s < step; s++) {
     if (!isStepComplete(s)) {
       alert(`You must complete Step ${s} before continuing.`);
@@ -1642,23 +1642,23 @@ function goToStep(step) {
   renderPanelForStep(step);
   hydrateTimelineFromRow(currentRowData);
 
-  // Scroll to the active panel
-  const activePanel = document.getElementById(`stepPanel_${step}`);
-  if (activePanel) {
-    activePanel.scrollIntoView({ behavior: "smooth", block: "start" });
+  // Scroll to the panel
+  const panel = document.getElementById("panelContainer");
+  if (panel) {
+    panel.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 }
 
 function renderPanelForStep(step) {
-  // Hide ALL step panels
-  for (let s = 1; s <= 9; s++) {
-    const panel = document.getElementById(`stepPanel_${s}`);
-    if (panel) panel.style.display = "none";
-  }
+  const panel = document.getElementById("panelContainer");
+  if (!panel) return;
 
-  // Show ONLY the active step panel
-  const active = document.getElementById(`stepPanel_${step}`);
-  if (active) active.style.display = "block";
+  // Clear previous content
+  panel.innerHTML = "";
+
+  // Inject the correct step content
+  const html = getStepHTML(step);
+  panel.innerHTML = html;
 
   // Always show Back button
   const backBtn = document.getElementById("backToListContainer");
