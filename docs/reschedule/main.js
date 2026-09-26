@@ -1649,6 +1649,7 @@ function goToStep(step) {
 
 
 
+
 function renderPanelForStep(step) {
   const panel = document.getElementById("panelContainer");
   if (!panel) return;
