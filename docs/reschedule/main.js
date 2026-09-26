@@ -1644,19 +1644,20 @@ function renderStep3(panel) {
 // ===============================
 
 function renderStep4(panel) {
+  const origField = getField("orig_field") || "Unknown Field";
+  const origHomeAway = getField("is_haysa_home") === "true" ? "Home" : "Away";
+
   panel.innerHTML = `
     <h2>Step 4 — Choose & Confirm New Game Time</h2>
 
     <p class="info-text">
-      If both coaches already agreed on a new date/time/field, enter it below.
-      If you're still exploring options, use the calendar to find availability
-      and propose up to two possible options for board approval.
+      Confirm the final agreed date, time, and field. If the field is not changing,
+      you may keep the original field.
     </p>
 
     <!-- FINAL AGREED DETAILS -->
     <div class="section">
       <h3>Final Agreed Game Details</h3>
-      <p>Enter the final agreed date, time, and field once both coaches approve.</p>
 
       <label>Final Date</label>
       <input type="date" id="final_date">
@@ -1664,201 +1665,51 @@ function renderStep4(panel) {
       <label>Final Time</label>
       <input type="time" id="final_time">
 
-      <label>Final Field</label>
+      <div class="field-change-block">
+        <p><strong>Original Field:</strong> ${origField} (${origHomeAway})</p>
 
-      <select id="final_field_select">
-        <option value="">Select a field category…</option>
+        <label>Is the field changing?</label>
+        <div class="radio-group">
+          <label><input type="radio" name="field_change" value="no"> No — keep original field</label>
+          <label><input type="radio" name="field_change" value="yes"> Yes — change field</label>
+        </div>
+      </div>
 
-        <option value="Holbrook HS Turf">Holbrook HS Turf</option>
-        <option value="Sumner/Sean Joyce Fields">Sumner/Sean Joyce Fields</option>
-        <option value="Brookville Fields">Brookville Fields</option>
-        <option value="Avon Butler Fields">Avon Butler Fields</option>
+      <div id="field_change_ui" style="display:none; margin-top:12px;">
+        <label>Will the rescheduled game be:</label>
+        <div class="radio-group">
+          <label><input type="radio" name="new_homeaway" value="home"> Home</label>
+          <label><input type="radio" name="new_homeaway" value="away"> Away</label>
+        </div>
 
-        <option value="__custom__">Other (Away Game)</option>
-      </select>
+        <div id="home_field_ui" style="display:none; margin-top:12px;">
+          <label>Select new home field</label>
+          <select id="final_field_home">
+            <option value="">Select a field…</option>
+            <option value="Holbrook HS Turf">Holbrook HS Turf</option>
+            <option value="Sumner/Sean Joyce Fields">Sumner/Sean Joyce Fields</option>
+            <option value="Brookville Fields">Brookville Fields</option>
+            <option value="Avon Butler Fields">Avon Butler Fields</option>
+          </select>
+        </div>
 
-      <input
-        type="text"
-        id="final_field_custom"
-        placeholder="Enter away field"
-        style="display:none; margin-top:8px;"
-      >
+        <div id="away_field_ui" style="display:none; margin-top:12px;">
+          <label>Enter new away field</label>
+          <input type="text" id="final_field_away" placeholder="Enter away field">
+        </div>
+      </div>
 
-      <button class="primary-btn" onclick="saveFinalDetails()">
-        Save Final Details
-      </button>
+      <button class="primary-btn" onclick="saveFinalDetails()">Save Final Details</button>
     </div>
 
     <hr>
 
-    <!-- CALENDAR -->
-    <div class="section">
-      <h3>Check Field Availability</h3>
-      <p>Use the calendar below to find open field slots for your proposed reschedule.</p>
-
-      <iframe
-        src="https://haysa-soccer.github.io/haysa-scheduler-ui/"
-        class="calendar-embed">
-      </iframe>
-    </div>
-
-    <hr>
-
-    <!-- PROPOSED OPTIONS -->
-    <div class="section">
-      <h3>Proposed Options (Board Approval Required)</h3>
-      <p>Propose up to two possible date/time/field options. The board will approve or reject each.</p>
-
-      <div class="option-block">
-        <h4>Option 1</h4>
-        <label>Date</label>
-        <input type="date" id="opt1_date">
-
-        <label>Time</label>
-        <input type="time" id="opt1_time">
-
-        <label>Field</label>
-        <input type="text" id="opt1_field">
-
-        <button class="secondary-btn" onclick="saveOption(1)">
-          Save Option 1
-        </button>
-      </div>
-
-      <div class="option-block">
-        <h4>Option 2</h4>
-        <label>Date</label>
-        <input type="date" id="opt2_date">
-
-        <label>Time</label>
-        <input type="time" id="opt2_time">
-
-        <label>Field</label>
-        <input type="text" id="opt2_field">
-
-        <button class="secondary-btn" onclick="saveOption(2)">
-          Save Option 2
-        </button>
-      </div>
-    </div>
+    <!-- CALENDAR + OPTIONS remain unchanged -->
+    ${renderCalendarAndOptions()}
   `;
 
-  // ===============================
-  // HYDRATE FINAL FIELD SELECT
-  // ===============================
-  const savedField = getField("final_field") || "";
-  const select = document.getElementById("final_field_select");
-  const custom = document.getElementById("final_field_custom");
-
-  if (
-    savedField === "Holbrook HS Turf" ||
-    savedField === "Sumner/Sean Joyce Fields" ||
-    savedField === "Brookville Fields" ||
-    savedField === "Avon Butler Fields"
-  ) {
-    select.value = savedField;
-  } else if (savedField) {
-    select.value = "__custom__";
-    custom.style.display = "block";
-    custom.value = savedField;
-  }
-
-  select.onchange = () => {
-    const sel = select.value;
-    custom.style.display = sel === "__custom__" ? "block" : "none";
-  };
-
-  // ===============================
-  // HYDRATE FINAL DATE/TIME
-  // ===============================
-  document.getElementById("final_date").value =
-    convertToHtmlDate(getField("final_date"));
-
-  document.getElementById("final_time").value =
-    convertToHtmlTime(getField("final_time"));
-
-  // ===============================
-  // HYDRATE PROPOSED OPTIONS
-  // ===============================
-  document.getElementById("opt1_date").value =
-    convertToHtmlDate(getField("opt1_date"));
-  document.getElementById("opt1_time").value =
-    convertToHtmlTime(getField("opt1_time"));
-  document.getElementById("opt1_field").value =
-    getField("opt1_field") || "";
-
-  document.getElementById("opt2_date").value =
-    convertToHtmlDate(getField("opt2_date"));
-  document.getElementById("opt2_time").value =
-    convertToHtmlTime(getField("opt2_time"));
-  document.getElementById("opt2_field").value =
-    getField("opt2_field") || "";
+  hydrateStep4();
 }
-
-
-// ===============================
-// SAVE FINAL DETAILS
-// ===============================
-async function saveFinalDetails() {
-  const dateHtml = document.getElementById("final_date").value;
-  const timeHtml = document.getElementById("final_time").value;
-
-  const finalDate = convertFromHtmlDate(dateHtml);
-  const finalTime = convertFromHtmlTime(timeHtml);
-
-  const select = document.getElementById("final_field_select");
-  const custom = document.getElementById("final_field_custom");
-
-  const finalField =
-    select.value === "__custom__" ? custom.value : select.value;
-
-  // Save Step 4 final details
-  await apiUpdateFinal(currentGameNumber, finalDate, finalTime, finalField);
-
-  // ===============================
-  // AUTO-COMPLETE STEP 5 IMMEDIATELY
-  // ===============================
-  // Step 5 is ALWAYS informational-only and ALWAYS complete
-  if (currentRowData.step_5 !== "completed") {
-    await apiUpdateStep(currentGameNumber, 5);
-    currentRowData.step_5 = "completed";
-    hydrateTimelineFromRow(currentRowData);
-  }
-
-  alert("Final details saved.");
-}
-
-
-// ===============================
-// SAVE OPTION 1 / OPTION 2
-// ===============================
-async function saveOption(optionNumber) {
-  const dateHtml = document.getElementById(`opt${optionNumber}_date`).value;
-  const timeHtml = document.getElementById(`opt${optionNumber}_time`).value;
-  const field = document.getElementById(`opt${optionNumber}_field`).value;
-
-  const dateSheet = convertFromHtmlDate(dateHtml);
-  const timeSheet = convertFromHtmlTime(timeHtml);
-
-  const opt1 = {
-    date: optionNumber === 1 ? dateSheet : getField("opt1_date"),
-    time: optionNumber === 1 ? timeSheet : getField("opt1_time"),
-    field: optionNumber === 1 ? field : getField("opt1_field"),
-    status: getField("opt1_status") || ""
-  };
-
-  const opt2 = {
-    date: optionNumber === 2 ? dateSheet : getField("opt2_date"),
-    time: optionNumber === 2 ? timeSheet : getField("opt2_time"),
-    field: optionNumber === 2 ? field : getField("opt2_field"),
-    status: getField("opt2_status") || ""
-  };
-
-  await apiUpdateOptions(currentGameNumber, opt1, opt2, {});
-
-  alert(`Option ${optionNumber} saved.`);
-}
-
 
 
 // STEP 5 — Field Hold (auto-handled)
