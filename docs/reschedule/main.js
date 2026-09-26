@@ -32,9 +32,10 @@ function showSingleMatchConfirmation(match) {
       <div><strong>Game #:</strong> ${match.game_number}</div>
 
       <div class="button-row">
-        <button class="primary-btn" onclick="useExistingOrStartNew('${match.game_number}')">
+        <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${match.game_number}')">
           Use This Game
         </button>
+
 
         <button class="secondary-btn" onclick="createNewFromSearchInputs()">
           Create New Case Instead
@@ -779,17 +780,29 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
     return;
   }
 
-  hydrateFieldsFromRow(rowResult.data);
+  // Load row data
+  currentRowData = rowResult.data;
+  hydrateFieldsFromRow(currentRowData);
 
   // Detect board approval
   const row = rowResult.data;
   if (row.opt1_status === "approved") autoMoveApprovedOption(1);
   if (row.opt2_status === "approved") autoMoveApprovedOption(2);
-  
-  // Show workflow UI
+
+  // ⭐ REQUIRED: show workflow page + timeline
+  showWorkflowUI();
+
+  // ⭐ REQUIRED: show workflow shell (no auto-step progression)
   showWorkflowWithoutStarting();
 
+  // ⭐ REQUIRED: actually display Step 4
+  goToStep(4);
+
+  // Optional: scroll into view
+  const wf = document.getElementById("workflowPage");
+  if (wf) wf.scrollIntoView({ behavior: "smooth" });
 }
+
 
 
 
