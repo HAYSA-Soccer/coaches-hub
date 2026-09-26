@@ -1015,10 +1015,11 @@ select:focus {
 }
 
 
-.collapsible-body {
-  display: none;
-}
-
 .collapsible-body.open {
   display: block;
+}
+
+
+.collapsible-body {
+  padding-bottom: 12px;
 }
