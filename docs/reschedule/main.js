@@ -1659,12 +1659,12 @@ function renderPanelForStep(step) {
   // Show ONLY the active step panel
   const active = document.getElementById(`stepPanel_${step}`);
   if (active) active.style.display = "block";
-}
-
 
   // Always show Back button
-  document.getElementById("backToListContainer").style.display = "block";
+  const backBtn = document.getElementById("backToListContainer");
+  if (backBtn) backBtn.style.display = "block";
 }
+
 
 
 // ===============================
