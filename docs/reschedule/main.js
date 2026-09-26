@@ -17,6 +17,15 @@ function normalizeDateForInput(value) {
   return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
 }
 
+function toggleCollapse(headerEl) {
+  const body = headerEl.nextElementSibling;
+  const isOpen = body.style.display === "block";
+
+  body.style.display = isOpen ? "none" : "block";
+  headerEl.textContent = (isOpen ? "▶ " : "▼ ") + headerEl.textContent.slice(2);
+}
+
+
 
 function showSingleMatchConfirmation(match) {
   const container = document.getElementById("gameSelectionContainer");
