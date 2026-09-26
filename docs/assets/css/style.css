@@ -692,3 +692,24 @@ section {
   margin-top: 6px;
 }
 
+.collapsible {
+  margin-bottom: 12px;
+}
+
+.collapsible-header {
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 0;
+  color: #0077cc;
+}
+
+.collapsible-header:hover {
+  text-decoration: underline;
+}
+
+.collapsible-body {
+  display: none;
+  padding: 10px 0 0 0;
+}
+
