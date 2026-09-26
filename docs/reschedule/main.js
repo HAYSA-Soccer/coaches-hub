@@ -252,7 +252,7 @@ async function searchByCoach() {
     `;
   }
 
-  const url = `${API_URL}?action=searchRows&coach_name=${encodeURIComponent(name)}`;
+  const url = `${API_URL}?action=searchRows&coach_last_name=${encodeURIComponent(name)}`;
   console.log("Coach search URL:", url);
 
   let response, result;
