@@ -957,6 +957,7 @@ select:focus {
   border-radius: 4px;
 }
 
+
 /* --- CLEAN, FINAL COLLAPSIBLE UI --- */
 
 /* Reduce padding ONLY for the Start card */
@@ -981,7 +982,7 @@ select:focus {
   font-weight: 700;
   cursor: pointer;
   padding: 6px 2px;
-  color: #173d77; /* HAYSA blue */
+  color: #173d77;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -994,8 +995,8 @@ select:focus {
 }
 
 .collapsible-body {
-  display: none;
-  padding: 8px 0 0 0 !important;
+  display: none;                     /* JS toggles this */
+  padding: 8px 0 12px 0 !important;  /* top + bottom spacing */
   background: transparent !important;
   border: none !important;
 }
@@ -1014,12 +1015,7 @@ select:focus {
   margin-bottom: 10px;
 }
 
-
+/* When expanded */
 .collapsible-body.open {
   display: block;
-}
-
-
-.collapsible-body {
-  padding-bottom: 12px;
 }
