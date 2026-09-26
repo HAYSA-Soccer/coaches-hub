@@ -973,10 +973,12 @@ select:focus {
   margin-bottom: 0 !important;
 }
 
+/* Collapsible wrapper */
 .collapsible {
   margin: 16px 0;
 }
 
+/* Header */
 .collapsible-header {
   font-size: 1.15rem;
   font-weight: 700;
@@ -994,9 +996,11 @@ select:focus {
   color: #0f2c57;
 }
 
+/* Body (collapsed by default) */
 .collapsible-body {
   display: none;                     /* JS toggles this */
   padding: 8px 0 12px 0 !important;  /* top + bottom spacing */
+  margin-top: 6px;                   /* prevents overlap between sections */
   background: transparent !important;
   border: none !important;
 }
@@ -1015,12 +1019,9 @@ select:focus {
   margin-bottom: 10px;
 }
 
-/* When expanded */
+/* Expanded state */
 .collapsible-body.open {
   display: block;
 }
 
-.collapsible-body {
-  margin-top: 6px;
-}
 
