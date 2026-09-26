@@ -74,7 +74,7 @@ async function searchByCoach() {
     return;
   }
 
-  const url = `${API_BASE}?action=searchRows&coach_last_name=${encodeURIComponent(name)}`;
+  const url = `${API_URL}?action=searchRows&coach_last_name=${encodeURIComponent(name)}`;
 
   const response = await fetch(url);
   const data = await response.json();
@@ -86,6 +86,7 @@ async function searchByCoach() {
 
   renderCoachSearchResultsGrouped(data.rows);
 }
+
 
 
 function groupByTeam(rows) {
