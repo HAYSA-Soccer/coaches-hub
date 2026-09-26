@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HAYSA Game Reschedule</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <h1>HAYSA Game Reschedule</h1>
+    <div class="subtitle">Guided workflow to move your SSSL game</div>
+  </header>
+
+  <nav class="top-links">
+    <a href="https://sssl.sportspilot.com/Scheduler/public/default.aspx" target="_blank">SSSL Lookup</a>
+    <a href="#startContainer">Search</a>
+    <a href="#submittedListContainer">Submitted</a>
+    <a href="#submittedListContainer">Resume</a>
+    <a href="#startContainer">New Request</a>
+  </nav>
+
+
+
+
+  
+
+  <!-- START RESCHEDULE -->
+  <section class="card" id="startContainer">
+    <h2>Start a Reschedule</h2>
+    <p>Select a search method below.</p>
+  
+    <!-- COLLAPSIBLE: GAME NUMBER -->
+    <div class="collapsible">
+      <div class="collapsible-header" onclick="toggleCollapse(this)">
+        Search by Game Number
+      </div>
+      <div class="collapsible-body">
+        <label for="lookupGameNumber">SSSL Game Number</label>
+        <input type="text" id="lookupGameNumber" placeholder="e.g., 12345">
+    
+        <div class="button-row">
+          <button class="primary-btn" onclick="lookupGameNumber()">Lookup & Start</button>
+          <button class="secondary-btn" onclick="createNewFromLookup()">+ New Reschedule</button>
+        </div>
+    
+        <div id="lookupStatus" class="info-text"></div>
+      </div>
+    </div>
+
+  
+    <!-- COLLAPSIBLE: TEAM DETAILS -->
+    <div class="collapsible">
+      <div class="collapsible-header" onclick="toggleCollapse(this)">
+        Search by Team Details
+      </div>
+      <div class="collapsible-body">
+        <div class="grid-two">
+          <div>
+            <label>Age Group</label>
+            <input type="text" id="sr_age_group" placeholder="e.g., 5/6, 7/8">
+          </div>
+  
+          <div>
+            <label>Gender</label>
+            <select id="sr_gender">
+              <option value="">Select…</option>
+              <option value="Girls">Girls</option>
+              <option value="Boys">Boys</option>
+            </select>
+          </div>
+  
+          <div>
+            <label>Division</label>
+            <input type="text" id="sr_division" placeholder="e.g., Presidents, 6.2">
+          </div>
+  
+          <div>
+            <label>Original Date</label>
+            <input type="date" id="sr_orig_date">
+          </div>
+  
+          <div>
+            <label>Original Time</label>
+            <input type="time" id="sr_orig_time">
+          </div>
+  
+          <div>
+            <label>Opponent Town</label>
+            <input type="text" id="sr_opp_town" placeholder="e.g., Abington">
+          </div>
+        </div>
+  
+        <button class="primary-btn" onclick="startRescheduleFromForm()">
+          Search & Start Reschedule
+        </button>
+  
+        <div id="searchStatus" class="info-text"></div>
+        <div id="gameSelectionContainer" class="selection-list"></div>
+      </div>
+    </div>
+  
+    <!-- COLLAPSIBLE: COACH SEARCH -->
+    <div class="collapsible">
+      <div class="collapsible-header" onclick="toggleCollapse(this)">
+        Search by Coach Name
+      </div>
+      <div class="collapsible-body">
+        <label>Coach Last Name</label>
+        <input type="text" id="coach_search" placeholder="e.g., Ayers, Casavant">
+  
+        <button class="primary-btn" onclick="searchByCoach()">
+          Search by Coach
+        </button>
+  
+        <div id="search_results" class="search-results"></div>
+      </div>
+    </div>
+  
+    <!-- FIND GAME NUMBER -->
+    <div class="collapsible">
+      <div class="collapsible-header" onclick="toggleCollapse(this)">
+        Need help finding your game number?
+      </div>
+      <div class="collapsible-body">
+        <p>You can use either of the official SSSL tools:</p>
+  
+        <a class="secondary-btn"
+           href="https://www.southshoresoccer.com/Schedules"
+           target="_blank">
+           SSSL Schedule List (searchable)
+        </a>
+  
+        <a class="secondary-btn"
+           href="https://sssl.sportspilot.com/Scheduler/public/default.aspx"
+           target="_blank">
+           Visual Game Calendar (browse by date)
+        </a>
+      </div>
+    </div>
+  
+  </section>
+  
+
+  <!-- SUBMITTED REQUESTS -->
+  <section class="card" id="submittedListContainer">
+    <h2>Submitted Requests</h2>
+    <div id="submittedLoading" class="loading-banner">Loading reschedules…</div>
+    <p>Click “Resume” to continue an in‑progress reschedule workflow.</p>
+    <div id="submittedList"></div>
+  </section>
+
+  
+  <!-- WORKFLOW WRAPPER -->
+  <div id="workflowPage" style="display:none;">
+
+    <!-- TIMELINE -->
+    <div id="timelineContainer" class="timeline" style="display:none;">
+      <div class="timeline-step" id="step_1" data-step="1">Start</div>
+      <div class="timeline-step" id="step_2" data-step="2">Original</div>
+      <div class="timeline-step" id="step_3" data-step="3">Opponent</div>
+      <div class="timeline-step" id="step_4" data-step="4">New Details</div>
+      <div class="timeline-step" id="step_5" data-step="5">Field Hold</div>
+      <div class="timeline-step" id="step_6" data-step="6">HAYSA</div>
+      <div class="timeline-step" id="step_7" data-step="7">SSSL Form</div>
+      <div class="timeline-step" id="step_8" data-step="8">Finalize</div>
+    </div>
+
+
+    <!-- ⭐ NEW FIXED NAV BAR -->
+    <div id="stepNavBar" class="step-nav-bar">
+      <button id="prevStepBtn" class="secondary-btn">← Back</button>
+      <button id="nextStepBtn" class="primary-btn">Next →</button>
+    </div>
+    
+        
+    <!-- PANEL -->
+    <section class="card panel fade-in" id="panelContainer" style="display:none;">
+      <!-- Step content injected by main.js -->
+    </section>
+
+    <!-- BACK BUTTON -->
+    <div id="backToListContainer" class="next-step-container" style="display:none;">
+      <button class="secondary-btn" id="backToListBtn">← Back to Submitted List</button>
+    </div>
+
+  </div>
+
+  <!-- GAME CHANGE FORM -->
+  <section class="card" id="formSection" style="display:none;">
+    <h2>Game Change Form</h2>
+    <p>This form mirrors the SSSL reschedule details and captures a coach signature.</p>
+
+    <form id="gameChangeForm">
+
+      <label>Game Number</label>
+      <input type="text" name="game_number" id="form_game_number">
+
+      <label>Team Name</label>
+      <input type="text" name="team_name">
+
+      <label>Original Date</label>
+      <input type="date" name="orig_date">
+
+      <label>Original Time</label>
+      <input type="time" name="orig_time">
+
+      <label>Original Field</label>
+      <input type="text" name="orig_field">
+
+      <label>Final Date</label>
+      <input type="date" name="final_date">
+
+      <label>Final Time</label>
+      <input type="time" name="final_time">
+
+      <label>Final Field</label>
+      <input type="text" name="final_field">
+
+      <label>Coach Name</label>
+      <input type="text" name="coach_name">
+
+      <label>Coach Email</label>
+      <input type="email" name="coach_email">
+
+      <label>Coach Phone</label>
+      <input type="tel" name="coach_phone">
+
+      <label>Opposing Coach Name</label>
+      <input type="text" name="opp_coach_name">
+
+      <label>Opposing Coach Phone</label>
+      <input type="tel" name="opp_coach_phone">
+
+      <h3>Coach Signature</h3>
+      <canvas id="signaturePad"></canvas>
+      <button type="button" id="clearSignature" class="secondary-btn">Clear Signature</button>
+
+      <br><br>
+      <button type="submit" class="primary-btn">Save Form</button>
+
+    </form>
+  </section>
+
+  <!-- REQUIRED: pdf-lib must load BEFORE pdf.js -->
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
+  <!-- PDF generator -->
+  <script src="pdf.js"></script>
+
+  <!-- Workflow logic -->
+  <script src="main.js?v=5"></script>
+
+</body>
+</html>
