@@ -515,31 +515,59 @@ function convertFromHtmlTime(hhmm) {
 
 
 async function saveFinalDetails() {
-  const dateHtml = document.getElementById("final_date").value;
-  const timeHtml = document.getElementById("final_time").value;
+  console.log("saveFinalDetails running");
 
-  const finalDate = convertFromHtmlDate(dateHtml);
-  const finalTime = convertFromHtmlTime(timeHtml);
+  // --- FINAL DATE ---
+  const dateEl = document.getElementById("final_date");
+  const timeEl = document.getElementById("final_time");
 
-  const select = document.getElementById("final_field_select");
-  const custom = document.getElementById("final_field_custom");
+  if (!dateEl || !timeEl) {
+    console.error("Step 4 fields not found — Step 4 may not be rendered.");
+    return;
+  }
 
-  const finalField =
-    select.value === "__custom__" ? custom.value : select.value;
+  const finalDate = convertFromHtmlDate(dateEl.value);
+  const finalTime = convertFromHtmlTime(timeEl.value);
 
-  // Save to Google Sheet
+  // --- FIELD CHANGE ---
+  const fieldChange = document.querySelector("input[name='field_change']:checked");
+  const newHomeAway = document.querySelector("input[name='new_homeaway']:checked");
+
+  let finalField = "";
+
+  if (fieldChange && fieldChange.value === "yes") {
+    // Field IS changing
+    if (newHomeAway && newHomeAway.value === "home") {
+      const homeFieldEl = document.getElementById("final_field_home");
+      finalField = homeFieldEl ? homeFieldEl.value : "";
+    } else {
+      const awayFieldEl = document.getElementById("final_field_away");
+      finalField = awayFieldEl ? awayFieldEl.value : "";
+    }
+  } else {
+    // Field NOT changing — keep original
+    finalField = getField("orig_field");
+  }
+
+  console.log("Saving final details:", {
+    finalDate,
+    finalTime,
+    finalField
+  });
+
+  // --- SAVE TO GOOGLE SHEET ---
   await apiUpdateFinal(currentGameNumber, finalDate, finalTime, finalField);
 
-  // ⭐ Save to local workflow object (THIS WAS MISSING)
+  // --- SAVE LOCALLY ---
   currentRowData.final_date = finalDate;
   currentRowData.final_time = finalTime;
   currentRowData.final_field = finalField;
   currentRowData.step_4 = "completed";
 
-  // Refresh timeline
+  // --- UPDATE TIMELINE ---
   hydrateTimelineFromRow(currentRowData);
 
-  // Auto-complete Step 5
+  // --- AUTO-COMPLETE STEP 5 ---
   if (currentRowData.step_5 !== "completed") {
     await apiUpdateStep(currentGameNumber, 5);
     currentRowData.step_5 = "completed";
