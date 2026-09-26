@@ -116,12 +116,9 @@ async function resumeWorkflow(gameNumber) {
 
 
 function useExistingOrStartNew(gameNumber) {
-  if (workflowExists(gameNumber)) {
-    resumeWorkflow(gameNumber);
-  } else {
-    startNewWorkflow(gameNumber);
-  }
+  loadGameWithoutStartingWorkflow(gameNumber);
 }
+
 
 async function apiGetRow(gameNumber) {
   const form = new FormData();
