@@ -243,12 +243,14 @@ async function searchByCoach() {
     return;
   }
 
-  // ⭐ Show pending message immediately
-  resultsBox.innerHTML = `
-    <div class="loading-banner">
-      Searching… please wait
-    </div>
-  `;
+  // Safe pending message: only if the container exists
+  if (resultsBox) {
+    resultsBox.innerHTML = `
+      <div class="loading-banner">
+        Searching… please wait
+      </div>
+    `;
+  }
 
   const url = `${API_URL}?action=searchRows&coach_name=${encodeURIComponent(name)}`;
   console.log("Coach search URL:", url);
@@ -256,8 +258,10 @@ async function searchByCoach() {
   const response = await fetch(url);
   const result = await response.json();
 
-  // ⭐ Clear pending message once results arrive
-  resultsBox.innerHTML = "";
+  // Clear pending message if the container exists
+  if (resultsBox) {
+    resultsBox.innerHTML = "";
+  }
 
   const matches = result.rows || [];
 
