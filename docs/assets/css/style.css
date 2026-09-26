@@ -726,3 +726,50 @@ section {
   border: none !important;
 }
 
+/* --- CLEAN COLLAPSIBLE UI --- */
+
+.collapsible {
+  margin: 16px 0;
+}
+
+.collapsible-header {
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 2px;
+  color: #173d77; /* HAYSA blue */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 6px;
+}
+
+.collapsible-header:hover {
+  color: #0f2c57;
+}
+
+.collapsible-body {
+  display: none;
+  padding: 8px 0 0 0;
+}
+
+/* Reduce spacing inside collapsible bodies */
+.collapsible-body .grid-two {
+  gap: 10px;
+}
+
+.collapsible-body label {
+  margin-bottom: 4px;
+}
+
+.collapsible-body input,
+.collapsible-body select {
+  margin-bottom: 10px;
+}
+
+/* Reduce padding ONLY for the Start card */
+#startContainer.card {
+  padding: 16px;
+}
+
