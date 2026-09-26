@@ -1629,7 +1629,6 @@ function isStepComplete(step) {
 }
 
 function goToStep(step) {
-  // Prevent skipping ahead
   for (let s = 2; s < step; s++) {
     if (!isStepComplete(s)) {
       alert(`You must complete Step ${s} before continuing.`);
@@ -1642,7 +1641,6 @@ function goToStep(step) {
   renderPanelForStep(step);
   hydrateTimelineFromRow(currentRowData);
 
-  // Scroll to the panel
   const panel = document.getElementById("panelContainer");
   if (panel) {
     panel.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1650,10 +1648,12 @@ function goToStep(step) {
 }
 
 
+
 function renderPanelForStep(step) {
   const panel = document.getElementById("panelContainer");
   if (!panel) return;
 
+  // Clear previous content
   panel.innerHTML = "";
 
   switch (step) {
