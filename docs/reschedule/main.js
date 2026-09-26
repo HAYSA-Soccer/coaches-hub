@@ -1519,3 +1519,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initGameChangeForm();
 });
+
+
+
+// ============================ EXTRA TO REMOVE ERRORS ============================
+
+function toggleCollapse(el) {
+  const body = el.nextElementSibling;
+  body.style.display = body.style.display === "block" ? "none" : "block";
+}
+
