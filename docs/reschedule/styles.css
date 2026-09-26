@@ -1062,3 +1062,14 @@ select:focus {
   border-radius: 6px;
 }
 
+
+.team-group {
+  margin-bottom: 20px;
+}
+
+.team-group h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #173d77;
+}
+
