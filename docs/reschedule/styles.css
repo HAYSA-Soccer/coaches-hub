@@ -958,7 +958,7 @@ select:focus {
 }
 
 
-/* --- CLEAN, FINAL COLLAPSIBLE UI --- */
+/* --- CLEAN, FINAL COLLAPSIBLE UI (POLISHED) --- */
 
 /* Reduce padding ONLY for the Start card */
 #startContainer.card {
@@ -975,7 +975,8 @@ select:focus {
 
 /* Collapsible wrapper */
 .collapsible {
-  margin: 16px 0;
+  margin: 20px 0;                 /* more breathing room */
+  padding-bottom: 4px;            /* prevents visual collision */
 }
 
 /* Header */
@@ -983,13 +984,12 @@ select:focus {
   font-size: 1.15rem;
   font-weight: 700;
   cursor: pointer;
-  padding: 6px 2px;
+  padding: 10px 4px;              /* more vertical space */
   color: #173d77;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   border-bottom: 1px solid #e0e0e0;
-  margin-bottom: 6px;
 }
 
 .collapsible-header:hover {
@@ -998,30 +998,28 @@ select:focus {
 
 /* Body (collapsed by default) */
 .collapsible-body {
-  display: none;                     /* JS toggles this */
-  padding: 8px 0 12px 0 !important;  /* top + bottom spacing */
-  margin-top: 6px;                   /* prevents overlap between sections */
+  display: none;
+  padding: 12px 0 16px 0 !important; /* balanced interior spacing */
+  margin-top: 10px;                  /* FIX: prevents overlap */
   background: transparent !important;
   border: none !important;
 }
 
 /* Reduce spacing inside collapsible bodies */
 .collapsible-body .grid-two {
-  gap: 10px;
+  gap: 12px;
 }
 
 .collapsible-body label {
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .collapsible-body input,
 .collapsible-body select {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 /* Expanded state */
 .collapsible-body.open {
   display: block;
 }
-
-
