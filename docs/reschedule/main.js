@@ -1364,12 +1364,12 @@ function showWorkflowWithoutStarting() {
 
 
 function findNextIncompleteStepSkippingStep1(row) {
-  for (let s = 2; s <= 9; s++) {
+  for (let s = 2; s <= 8; s++) {
     if (!isStepComplete(s)) {
       return s;
     }
   }
-  return 9;
+  return 8; // final step
 }
 
 
@@ -1654,7 +1654,6 @@ function renderPanelForStep(step) {
   const panel = document.getElementById("panelContainer");
   if (!panel) return;
 
-  // Clear previous content
   panel.innerHTML = "";
 
   switch (step) {
@@ -1666,13 +1665,12 @@ function renderPanelForStep(step) {
     case 6: renderStep6(panel); break;
     case 7: renderStep7(panel); break;
     case 8: renderStep8(panel); break;
-    case 9: renderStep9(panel); break;
   }
 
-  // Always show Back button
   const backBtn = document.getElementById("backToListContainer");
   if (backBtn) backBtn.style.display = "block";
 }
+
 
 
 
