@@ -136,26 +136,35 @@ function renderCoachSearchResultsGrouped(rows) {
   const groups = groupByTeam(rows);
 
   Object.keys(groups).forEach(teamName => {
-    // Team header
     const teamDiv = document.createElement("div");
     teamDiv.className = "team-group";
     teamDiv.innerHTML = `<h3>${teamName}</h3>`;
 
-    // Each game under that team
     groups[teamName].forEach(row => {
+      const item = buildQuickView(row); // ← SAME FORMATTER used in submitted requests
+
       const div = document.createElement("div");
-      div.className = "search-result";
+      div.className = "reschedule-card ultra"; // ← SAME CARD STYLE
 
       div.innerHTML = `
-        <div class="sr-info">
-          <strong>Game #${row.game_number}</strong>
-          <div>${normalizeDateForInput(row.orig_date)} @ ${normalizeTimeForInput(row.orig_time)}</div>
-          <div>Opponent: ${row.opp_town || "—"}</div>
+        <div class="row-top">
+          <span class="game">#${item.game_number}</span>
+          <span class="team">${item.team_name} — ${item.age_group} ${item.gender} ${item.division}</span>
+          <button type="button" class="primary-btn resume-btn"
+            onclick="loadGameWithoutStartingWorkflow('${item.game_number}')">
+            Use This Game
+          </button>
         </div>
 
-        <button onclick="loadGameWithoutStartingWorkflow(${row.game_number})">
-          Use This Game
-        </button>
+        <div class="row-mid">
+          <span class="orig"><strong>Orig:</strong> ${item.orig.date} • ${item.orig.time} • ${item.orig.field}</span>
+        </div>
+
+        <div class="row-bottom">
+          <span class="status">
+            <strong>Opponent:</strong> ${item.opp_town || "—"}
+          </span>
+        </div>
       `;
 
       teamDiv.appendChild(div);
