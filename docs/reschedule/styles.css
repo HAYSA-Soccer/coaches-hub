@@ -1073,3 +1073,12 @@ select:focus {
   color: #173d77;
 }
 
+.loading-banner {
+  padding: 10px;
+  background: #f0f4ff;
+  border-left: 4px solid #3a6df0;
+  color: #2a3a6a;
+  margin: 10px 0;
+  font-weight: 600;
+}
+
