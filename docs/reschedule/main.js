@@ -805,24 +805,20 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
     return;
   }
 
-  // ⭐ Hide all landing page content
   hideLandingPage();
-
-  // ⭐ Show workflow page + timeline container
   showWorkflowUI();
 
-  // Load row data
   currentRowData = rowResult.data;
   hydrateFieldsFromRow(currentRowData);
 
-  // Show workflow without auto-starting Step 1
   showWorkflowWithoutStarting();
 
-  // Scroll into workflow cleanly
   const wf = document.getElementById("workflowPage");
   if (wf) wf.scrollIntoView({ behavior: "smooth" });
-}
 
+  // ⭐ THIS WAS MISSING
+  goToStep(4);
+}
 
 
 async function lookupGameNumber() {
