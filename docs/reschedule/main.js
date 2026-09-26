@@ -24,6 +24,17 @@ function normalizeDateForInput(value) {
   return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
 }
 
+function toggleCollapse(el) {
+  const container = el.closest(".collapsible");
+  const body = container.querySelector(".collapsible-body");
+
+  const isOpen = body.style.display === "block";
+  body.style.display = isOpen ? "none" : "block";
+
+  const label = el.textContent.replace(/^▶\s|^▼\s/, "");
+  el.textContent = (isOpen ? "▶ " : "▼ ") + label;
+}
+
 function normalizeTimeForInput(value) {
   if (!value) return "";
   if (/^\d{2}:\d{2}$/.test(value)) return value;
