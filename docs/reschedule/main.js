@@ -141,15 +141,16 @@ function renderCoachSearchResultsGrouped(rows) {
     teamDiv.innerHTML = `<h3>${teamName}</h3>`;
 
     groups[teamName].forEach(row => {
-      const item = buildQuickView(row); // ← SAME FORMATTER used in submitted requests
+      const item = buildQuickView(row);   // ← THIS FIXES EVERYTHING
 
       const div = document.createElement("div");
-      div.className = "reschedule-card ultra"; // ← SAME CARD STYLE
+      div.className = "reschedule-card ultra";
 
       div.innerHTML = `
         <div class="row-top">
           <span class="game">#${item.game_number}</span>
           <span class="team">${item.team_name} — ${item.age_group} ${item.gender} ${item.division}</span>
+
           <button type="button" class="primary-btn resume-btn"
             onclick="loadGameWithoutStartingWorkflow('${item.game_number}')">
             Use This Game
@@ -158,6 +159,7 @@ function renderCoachSearchResultsGrouped(rows) {
 
         <div class="row-mid">
           <span class="orig"><strong>Orig:</strong> ${item.orig.date} • ${item.orig.time} • ${item.orig.field}</span>
+          <span class="final"><strong>Final:</strong> ${item.final.date || "—"} • ${item.final.time || ""} • ${item.final.field || ""}</span>
         </div>
 
         <div class="row-bottom">
