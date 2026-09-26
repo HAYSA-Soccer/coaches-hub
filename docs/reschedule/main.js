@@ -285,6 +285,7 @@ async function searchByCoach() {
   alert(`No games found for coach "${name}".`);
 }
 
+
 // ===============================
 // SEARCH FORM → START RESCHEDULE
 // ===============================
