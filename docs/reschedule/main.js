@@ -129,37 +129,31 @@ function groupByTeam(rows) {
 }
 
 
-function renderCoachSearchResultsGrouped(rows) {
+function renderCoachSearchResults(rows) {
   const panel = document.getElementById("search_results");
   panel.innerHTML = "";
 
-  const groups = groupByTeam(rows);
+  rows.forEach(row => {
+    const div = document.createElement("div");
+    div.className = "search-result";
 
-  Object.keys(groups).forEach(teamName => {
-    const teamDiv = document.createElement("div");
-    teamDiv.className = "team-group";
+    div.innerHTML = `
+      <div class="sr-info">
+        <strong>${row.team_name}</strong>
+        <div>Game #${row.game_number}</div>
+        <div>${row.orig_date} @ ${row.orig_time}</div>
+        <div>Opponent: ${row.opp_town || "—"}</div>
+      </div>
 
-    teamDiv.innerHTML = `<h3>${teamName}</h3>`;
+      <button onclick="loadGameWithoutStartingWorkflow(${row.game_number})">
+        Use This Game
+      </button>
+    `;
 
-    groups[teamName].forEach(row => {
-      const div = document.createElement("div");
-      div.className = "search-result";
-
-      div.innerHTML = `
-        Game #${row.game_number}<br>
-        ${row.orig_date} @ ${row.orig_time}<br>
-        Opponent: ${row.opp_town}<br>
-        <button onclick="loadGameWithoutStartingWorkflow(${row.game_number})">
-          Use This Game
-        </button>
-      `;
-
-      teamDiv.appendChild(div);
-    });
-
-    panel.appendChild(teamDiv);
+    panel.appendChild(div);
   });
 }
+
 
 
 
