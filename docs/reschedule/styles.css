@@ -1023,3 +1023,42 @@ select:focus {
 .collapsible-body.open {
   display: block;
 }
+
+/* --- COACH SEARCH RESULTS (CLEAN) --- */
+
+.search-results {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px; /* spacing between results */
+}
+
+.search-result {
+  background: #f9f9f9;
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: 1fr auto; /* left info + right button */
+  gap: 12px;
+  align-items: center;
+}
+
+.search-result .sr-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 15px;
+}
+
+.search-result strong {
+  font-size: 16px;
+  color: #173d77;
+}
+
+.search-result button {
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+}
+
