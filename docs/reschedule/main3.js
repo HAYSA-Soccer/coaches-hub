@@ -1,3 +1,5 @@
+// moves to new page!
+
 console.log("MAIN.JS LOADED");
 
 // ===============================
