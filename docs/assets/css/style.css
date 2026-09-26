@@ -663,3 +663,32 @@ section {
   border-radius: 8px;
 }
 
+.coach-search-block {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.team-group {
+  margin-top: 20px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f9f9f9;
+}
+
+.team-group h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.search-result {
+  margin-bottom: 10px;
+  padding: 8px;
+  border-left: 3px solid #0077cc;
+  background: #fff;
+}
+
+.search-result button {
+  margin-top: 6px;
+}
+
