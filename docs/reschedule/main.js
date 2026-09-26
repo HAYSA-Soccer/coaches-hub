@@ -1364,13 +1364,14 @@ function showWorkflowWithoutStarting() {
 
 
 function findNextIncompleteStepSkippingStep1(row) {
-  for (let s = 2; s <= 8; s++) {
-    if (row[`step_${s}`] !== "completed") {
+  for (let s = 2; s <= 9; s++) {
+    if (!isStepComplete(s)) {
       return s;
     }
   }
-  return 8; // fallback
+  return 9;
 }
+
 
 
 
