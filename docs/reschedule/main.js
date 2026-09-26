@@ -804,15 +804,13 @@ function getWorkflowStatus(row) {
 
 function buildQuickView(row) {
 
-  // Normalize date
   const fmtDate = (d) => {
     if (!d) return "—";
-    if (d === "1969-12-31") return "—"; // Google default
+    if (d === "1969-12-31") return "—";
     if (d.includes("T")) return new Date(d).toLocaleDateString();
     return d;
   };
 
-  // Normalize time
   const fmtTime = (t) => {
     if (!t) return "";
     if (t.includes("T")) {
@@ -828,6 +826,9 @@ function buildQuickView(row) {
     age_group: row.age_group,
     gender: row.gender,
     division: row.division,
+
+    // ⭐ ADD THIS
+    opp_town: row.opp_town,
 
     workflow_status: getWorkflowStatus(row),
 
