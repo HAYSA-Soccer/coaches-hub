@@ -1646,21 +1646,16 @@ function goToStep(step) {
 }
 
 function renderPanelForStep(step) {
-  const panel = document.getElementById("panelContainer");
-  if (!panel) return;
-
-  switch (step) {
-    case 1: renderStep1(panel); break;
-    case 2: renderStep2(panel); break;
-    case 3: renderStep3(panel); break;
-    case 4: renderStep4(panel); break;
-    case 5: renderStep5(panel); break;
-    case 6: renderStep6(panel); break;
-    case 7: renderStep7(panel); break;
-    case 8: renderStep8(panel); break;
-    default:
-      panel.innerHTML = "<p>Select a step above.</p>";
+  // Hide ALL step panels
+  for (let s = 1; s <= 9; s++) {
+    const panel = document.getElementById(`stepPanel_${s}`);
+    if (panel) panel.style.display = "none";
   }
+
+  // Show ONLY the active step panel
+  const active = document.getElementById(`stepPanel_${step}`);
+  if (active) active.style.display = "block";
+}
 
 
   // Always show Back button
