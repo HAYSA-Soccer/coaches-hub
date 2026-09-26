@@ -940,7 +940,6 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
   currentGameNumber = gameNumber;
 
   const rowResult = await apiGetGame(gameNumber);
-
   if (!rowResult?.exists) {
     alert("Unable to load game data.");
     return;
@@ -950,24 +949,38 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
   currentRowData = rowResult.data;
   hydrateFieldsFromRow(currentRowData);
 
-  // Detect board approval
-  const row = rowResult.data;
-  if (row.opt1_status === "approved") autoMoveApprovedOption(1);
-  if (row.opt2_status === "approved") autoMoveApprovedOption(2);
+  // Auto-start attempt if needed
+  if (!currentRowData.attempt_started) {
+    await apiUpdateRow(gameNumber, {
+      attempt_started: true,
+      attempt_started_date: new Date().toISOString().split("T")[0]
+    });
 
-  // ⭐ REQUIRED: show workflow page + timeline
+    currentRowData.attempt_started = true;
+    currentRowData.attempt_started_date = new Date().toISOString().split("T")[0];
+  }
+
+  // Detect board approval
+  if (currentRowData.opt1_status === "approved") autoMoveApprovedOption(1);
+  if (currentRowData.opt2_status === "approved") autoMoveApprovedOption(2);
+
+  // ⭐ Hide search page
+  document.getElementById("searchPage").style.display = "none";
+
+  // ⭐ Show workflow page
   showWorkflowUI();
 
-  // ⭐ REQUIRED: show workflow shell (no auto-step progression)
-  showWorkflowWithoutStarting();
+  // ⭐ Determine correct step dynamically
+  const step = getWorkflowStatus(currentRowData);
 
-  // ⭐ REQUIRED: actually display Step 4
-  goToStep(4);
+  // ⭐ Jump to correct step
+  goToStep(step);
 
-  // Optional: scroll into view
+  // ⭐ Scroll into view
   const wf = document.getElementById("workflowPage");
   if (wf) wf.scrollIntoView({ behavior: "smooth" });
 }
+
 
 
 async function apiUpdateRow(gameNumber, updates) {
