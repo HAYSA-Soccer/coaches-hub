@@ -984,19 +984,38 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
     return;
   }
 
-  hideLandingPage();
-  showWorkflowUI();
-
   currentRowData = rowResult.data;
   hydrateFieldsFromRow(currentRowData);
 
+  const row = rowResult.data;
+
+  // ⭐ If workflow has NOT started, start it now
+  if (!row.attempt_started) {
+    await apiUpdateRow(gameNumber, {
+      attempt_started: true,
+      attempt_started_date: new Date().toISOString().split("T")[0]
+    });
+
+    // Update local copy
+    currentRowData.attempt_started = true;
+    currentRowData.attempt_started_date = new Date().toISOString().split("T")[0];
+  }
+
+  // ⭐ Detect board approval
+  if (row.opt1_status === "approved") autoMoveApprovedOption(1);
+  if (row.opt2_status === "approved") autoMoveApprovedOption(2);
+
+  // ⭐ Show workflow UI
+  showWorkflowUI();
   showWorkflowWithoutStarting();
 
+  // ⭐ Determine correct step dynamically
+  const step = getWorkflowStatus(currentRowData);
+  goToStep(step);
+
+  // Scroll into view
   const wf = document.getElementById("workflowPage");
   if (wf) wf.scrollIntoView({ behavior: "smooth" });
-
-  // ⭐ THIS WAS MISSING
-  goToStep(4);
 }
 
 
