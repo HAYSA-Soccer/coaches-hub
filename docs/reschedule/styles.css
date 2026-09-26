@@ -1013,3 +1013,12 @@ select:focus {
 .collapsible-body select {
   margin-bottom: 10px;
 }
+
+
+.collapsible-body {
+  display: none;
+}
+
+.collapsible-body.open {
+  display: block;
+}
