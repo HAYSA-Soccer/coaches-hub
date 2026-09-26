@@ -1766,6 +1766,142 @@ function renderStep4(panel) {
 }
 
 
+function hydrateStep4() {
+  console.log("hydrateStep4 running");
+
+  //
+  // --- FINAL DATE ---
+  //
+  const finalDateEl = document.getElementById("final_date");
+  if (finalDateEl) {
+    const raw = getField("final_date");
+    finalDateEl.value = raw ? normalizeDateForInput(raw) : "";
+  }
+
+  //
+  // --- FINAL TIME ---
+  //
+  const finalTimeEl = document.getElementById("final_time");
+  if (finalTimeEl) {
+    const raw = getField("final_time");
+    finalTimeEl.value = raw ? normalizeTimeForInput(raw) : "";
+  }
+
+  //
+  // --- FIELD CHANGE RADIO ---
+  //
+  const fieldChange = getField("field_change"); // "yes" or "no"
+  const fieldChangeRadios = document.getElementsByName("field_change");
+  const fieldChangeUI = document.getElementById("field_change_ui");
+
+  if (fieldChangeRadios && fieldChangeRadios.length > 0) {
+    fieldChangeRadios.forEach(r => {
+      if (r.value === fieldChange) r.checked = true;
+
+      r.onchange = () => {
+        fieldChangeUI.style.display = r.value === "yes" ? "block" : "none";
+      };
+    });
+
+    // Initial visibility
+    if (fieldChange === "yes") {
+      fieldChangeUI.style.display = "block";
+    } else {
+      fieldChangeUI.style.display = "none";
+    }
+  }
+
+  //
+  // --- NEW HOME/AWAY RADIO ---
+  //
+  const newHomeAway = getField("new_homeaway"); // "home" or "away"
+  const homeAwayRadios = document.getElementsByName("new_homeaway");
+  const homeUI = document.getElementById("home_field_ui");
+  const awayUI = document.getElementById("away_field_ui");
+
+  if (homeAwayRadios && homeAwayRadios.length > 0) {
+    homeAwayRadios.forEach(r => {
+      if (r.value === newHomeAway) r.checked = true;
+
+      r.onchange = () => {
+        homeUI.style.display = r.value === "home" ? "block" : "none";
+        awayUI.style.display = r.value === "away" ? "block" : "none";
+      };
+    });
+
+    // Initial visibility
+    homeUI.style.display = newHomeAway === "home" ? "block" : "none";
+    awayUI.style.display = newHomeAway === "away" ? "block" : "none";
+  }
+
+  //
+  // --- FINAL FIELD (HOME SELECT) ---
+  //
+  const finalFieldHomeEl = document.getElementById("final_field_home");
+  if (finalFieldHomeEl) {
+    const raw = getField("final_field");
+    // Only hydrate if home was selected
+    if (newHomeAway === "home") {
+      finalFieldHomeEl.value = raw || "";
+    }
+  }
+
+  //
+  // --- FINAL FIELD (AWAY TEXT) ---
+  //
+  const finalFieldAwayEl = document.getElementById("final_field_away");
+  if (finalFieldAwayEl) {
+    const raw = getField("final_field");
+    // Only hydrate if away was selected
+    if (newHomeAway === "away") {
+      finalFieldAwayEl.value = raw || "";
+    }
+  }
+
+  //
+  // --- OPTION 1 ---
+  //
+  const opt1DateEl = document.getElementById("opt1_date");
+  const opt1TimeEl = document.getElementById("opt1_time");
+  const opt1FieldEl = document.getElementById("opt1_field");
+
+  if (opt1DateEl) {
+    const raw = getField("opt1_date");
+    opt1DateEl.value = raw ? normalizeDateForInput(raw) : "";
+  }
+  if (opt1TimeEl) {
+    const raw = getField("opt1_time");
+    opt1TimeEl.value = raw ? normalizeTimeForInput(raw) : "";
+  }
+  if (opt1FieldEl) {
+    opt1FieldEl.value = getField("opt1_field") || "";
+  }
+
+  //
+  // --- OPTION 2 ---
+  //
+  const opt2DateEl = document.getElementById("opt2_date");
+  const opt2TimeEl = document.getElementById("opt2_time");
+  const opt2FieldEl = document.getElementById("opt2_field");
+
+  if (opt2DateEl) {
+    const raw = getField("opt2_date");
+    opt2DateEl.value = raw ? normalizeDateForInput(raw) : "";
+  }
+  if (opt2TimeEl) {
+    const raw = getField("opt2_time");
+    opt2TimeEl.value = raw ? normalizeTimeForInput(raw) : "";
+  }
+  if (opt2FieldEl) {
+    opt2FieldEl.value = getField("opt2_field") || "";
+  }
+
+  console.log("hydrateStep4 complete");
+}
+
+
+
+
 // STEP 5 — Field Hold (auto-handled)
 function renderStep5(panel) {
 
