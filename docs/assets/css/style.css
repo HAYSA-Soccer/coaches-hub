@@ -692,41 +692,20 @@ section {
   margin-top: 6px;
 }
 
-.collapsible {
-  margin-bottom: 12px;
+/* --- CLEAN, FINAL COLLAPSIBLE UI --- */
+
+/* Reduce padding ONLY for the Start card */
+#startContainer.card {
+  padding: 16px !important;
 }
 
-.collapsible-header {
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 6px 0;
-  color: #0077cc;
-}
-
-.collapsible-header:hover {
-  text-decoration: underline;
-}
-
-.collapsible-body {
-  display: none;
-  padding: 10px 0 0 0;
-}
-
-.collapsible-header {
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 8px;
-  margin-bottom: 8px;
-}
-
-/* Ensure collapsible overrides older styles */
-.collapsible-body {
+/* Remove old .section styling if any remain */
+#startContainer .section {
+  padding: 0 !important;
   background: transparent !important;
-  padding: 10px 0 !important;
-  border: none !important;
+  border-radius: 0 !important;
+  margin-bottom: 0 !important;
 }
-
-/* --- CLEAN COLLAPSIBLE UI --- */
 
 .collapsible {
   margin: 16px 0;
@@ -750,8 +729,10 @@ section {
 }
 
 .collapsible-body {
-  display: none;
-  padding: 8px 0 0 0;
+  display: none !important; /* force hidden */
+  padding: 8px 0 0 0 !important;
+  background: transparent !important;
+  border: none !important;
 }
 
 /* Reduce spacing inside collapsible bodies */
@@ -767,9 +748,3 @@ section {
 .collapsible-body select {
   margin-bottom: 10px;
 }
-
-/* Reduce padding ONLY for the Start card */
-#startContainer.card {
-  padding: 16px;
-}
-
