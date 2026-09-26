@@ -971,21 +971,17 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
 
 
 async function apiUpdateRow(gameNumber, updates) {
-  const url = `https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec?action=updateRow`;
+  const params = new URLSearchParams();
+  params.append("action", "updateRow");
+  params.append("game_number", gameNumber);
+  params.append("updates", JSON.stringify(updates));
 
-  const payload = {
-    game_number: gameNumber,
-    updates: JSON.stringify(updates)
-  };
+  const url = `https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec?${params.toString()}`;
 
-  const response = await fetch(url, {
-    method: "POST",
-    body: JSON.stringify(payload),
-    headers: { "Content-Type": "application/json" }
-  });
-
+  const response = await fetch(url, { method: "GET" });
   return response.json();
 }
+
 
 
 async function loadGameWithoutStartingWorkflow(gameNumber) {
