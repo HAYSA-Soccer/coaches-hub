@@ -21,9 +21,16 @@ function toggleCollapse(headerEl) {
   const body = headerEl.nextElementSibling;
   const isOpen = body.style.display === "block";
 
+  // Remove any existing arrow (▶ or ▼)
+  const label = headerEl.textContent.replace(/^▶\s|^▼\s/, "");
+
+  // Apply new arrow
+  headerEl.textContent = (isOpen ? "▶ " : "▼ ") + label;
+
+  // Toggle visibility
   body.style.display = isOpen ? "none" : "block";
-  headerEl.textContent = (isOpen ? "▶ " : "▼ ") + headerEl.textContent.slice(2);
 }
+
 
 
 
