@@ -1019,3 +1019,8 @@ select:focus {
 .collapsible-body.open {
   display: block;
 }
+
+.collapsible-body {
+  margin-top: 6px;
+}
+
