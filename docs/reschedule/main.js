@@ -1710,8 +1710,56 @@ function renderStep4(panel) {
 
     <hr>
 
-    <!-- CALENDAR + OPTIONS remain unchanged -->
-    ${renderCalendarAndOptions()}
+    <!-- CALENDAR -->
+    <div class="section">
+      <h3>Check Field Availability</h3>
+      <p>Use the calendar below to find open field slots for your proposed reschedule.</p>
+
+      <iframe
+        src="https://haysa-soccer.github.io/haysa-scheduler-ui/"
+        class="calendar-embed">
+      </iframe>
+    </div>
+
+    <hr>
+
+    <!-- PROPOSED OPTIONS -->
+    <div class="section">
+      <h3>Proposed Options (Board Approval Required)</h3>
+      <p>Propose up to two possible date/time/field options. The board will approve or reject each.</p>
+
+      <div class="option-block">
+        <h4>Option 1</h4>
+        <label>Date</label>
+        <input type="date" id="opt1_date">
+
+        <label>Time</label>
+        <input type="time" id="opt1_time">
+
+        <label>Field</label>
+        <input type="text" id="opt1_field">
+
+        <button class="secondary-btn" onclick="saveOption(1)">
+          Save Option 1
+        </button>
+      </div>
+
+      <div class="option-block">
+        <h4>Option 2</h4>
+        <label>Date</label>
+        <input type="date" id="opt2_date">
+
+        <label>Time</label>
+        <input type="time" id="opt2_time">
+
+        <label>Field</label>
+        <input type="text" id="opt2_field">
+
+        <button class="secondary-btn" onclick="saveOption(2)">
+          Save Option 2
+        </button>
+      </div>
+    </div>
   `;
 
   hydrateStep4();
