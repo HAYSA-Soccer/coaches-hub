@@ -30,117 +30,118 @@
   <!-- START RESCHEDULE -->
   <section class="card" id="startContainer">
     <h2>Start a Reschedule</h2>
-    <p>Begin by entering your SSSL Game Number <strong>OR</strong> search by team details.</p>
-
-    <!-- OPTION A — GAME NUMBER -->
-    <div class="section">
-      <h3>Option A — Use Game Number</h3>
-
-      <label for="lookupGameNumber">SSSL Game Number</label>
-      <input type="text" id="lookupGameNumber" placeholder="e.g., 12345">
-
-      <div class="button-row">
-        <button class="primary-btn" onclick="lookupGameNumber()">Lookup & Start</button>
-        <button class="secondary-btn" onclick="createNewFromLookup()">+ New Reschedule</button>
+    <p>Select a search method below.</p>
+  
+    <!-- COLLAPSIBLE: GAME NUMBER -->
+    <div class="collapsible">
+      <div class="collapsible-header" onclick="toggleCollapse(this)">
+        ▶ Search by Game Number
       </div>
-
-      <div id="lookupStatus" class="info-text"></div>
+      <div class="collapsible-body">
+        <label for="lookupGameNumber">SSSL Game Number</label>
+        <input type="text" id="lookupGameNumber" placeholder="e.g., 12345">
+  
+        <div class="button-row">
+          <button class="primary-btn" onclick="lookupGameNumber()">Lookup & Start</button>
+          <button class="secondary-btn" onclick="createNewFromLookup()">+ New Reschedule</button>
+        </div>
+  
+        <div id="lookupStatus" class="info-text"></div>
+      </div>
     </div>
-
-    <hr>
-
-    <!-- OPTION B — TEAM SEARCH -->
-    <div class="section">
-      <h3>Option B — Search by Team Details</h3>
-    
-      <div class="grid-two">
-        <div>
-          <label>Age Group</label>
-          <input type="text" id="sr_age_group" placeholder="e.g., 5/6, 7/8">
-        </div>
-    
-        <div>
-          <label>Gender</label>
-          <select id="sr_gender">
-            <option value="">Select…</option>
-            <option value="Girls">Girls</option>
-            <option value="Boys">Boys</option>
-          </select>
-        </div>
-    
-        <div>
-          <label>Division</label>
-          <input type="text" id="sr_division" placeholder="e.g., Presidents, 6.2">
-        </div>
-    
-        <div>
-          <label>Original Date</label>
-          <input type="date" id="sr_orig_date">
-        </div>
-    
-        <div>
-          <label>Original Time</label>
-          <input type="time" id="sr_orig_time">
-        </div>
-    
-        <div>
-          <label>Opponent Town</label>
-          <input type="text" id="sr_opp_town" placeholder="e.g., Abington">
-        </div>
+  
+    <!-- COLLAPSIBLE: TEAM DETAILS -->
+    <div class="collapsible">
+      <div class="collapsible-header" onclick="toggleCollapse(this)">
+        ▶ Search by Team Details
       </div>
-    
-      <!-- ⭐ NEW: COACH SEARCH -->
-      <hr>
-      <h3>Search by Coach</h3>
-    
-      <div class="coach-search-block">
+      <div class="collapsible-body">
+        <div class="grid-two">
+          <div>
+            <label>Age Group</label>
+            <input type="text" id="sr_age_group" placeholder="e.g., 5/6, 7/8">
+          </div>
+  
+          <div>
+            <label>Gender</label>
+            <select id="sr_gender">
+              <option value="">Select…</option>
+              <option value="Girls">Girls</option>
+              <option value="Boys">Boys</option>
+            </select>
+          </div>
+  
+          <div>
+            <label>Division</label>
+            <input type="text" id="sr_division" placeholder="e.g., Presidents, 6.2">
+          </div>
+  
+          <div>
+            <label>Original Date</label>
+            <input type="date" id="sr_orig_date">
+          </div>
+  
+          <div>
+            <label>Original Time</label>
+            <input type="time" id="sr_orig_time">
+          </div>
+  
+          <div>
+            <label>Opponent Town</label>
+            <input type="text" id="sr_opp_town" placeholder="e.g., Abington">
+          </div>
+        </div>
+  
+        <button class="primary-btn" onclick="startRescheduleFromForm()">
+          Search & Start Reschedule
+        </button>
+  
+        <div id="searchStatus" class="info-text"></div>
+        <div id="gameSelectionContainer" class="selection-list"></div>
+      </div>
+    </div>
+  
+    <!-- COLLAPSIBLE: COACH SEARCH -->
+    <div class="collapsible">
+      <div class="collapsible-header" onclick="toggleCollapse(this)">
+        ▶ Search by Coach Name
+      </div>
+      <div class="collapsible-body">
         <label>Coach Last Name</label>
-        <input
-          type="text"
-          id="coach_search"
-          placeholder="e.g., Ayers, Casavant"
-          style="width: 240px; padding: 6px;"
-        >
-    
+        <input type="text" id="coach_search" placeholder="e.g., Ayers, Casavant">
+  
         <button class="primary-btn" onclick="searchByCoach()">
           Search by Coach
         </button>
+  
+        <div id="search_results" class="search-results"></div>
       </div>
-    
-      <!-- Results appear here -->
-      <div id="search_results" class="search-results"></div>
-    
-      <hr>
-    
-      <button class="primary-btn" onclick="startRescheduleFromForm()">
-        Search & Start Reschedule
-      </button>
-    
-      <div id="searchStatus" class="info-text"></div>
-      <div id="gameSelectionContainer" class="selection-list"></div>
     </div>
-
-
-    <hr>
-
+  
     <!-- FIND GAME NUMBER -->
-    <div class="section find-number-helper">
-      <h3>Need help finding your game number?</h3>
-      <p>You can use either of the official SSSL tools:</p>
-
-      <a class="secondary-btn"
-         href="https://www.southshoresoccer.com/Schedules"
-         target="_blank">
-         SSSL Schedule List (searchable)
-      </a>
-
-      <a class="secondary-btn"
-         href="https://sssl.sportspilot.com/Scheduler/public/default.aspx"
-         target="_blank">
-         Visual Game Calendar (browse by date)
-      </a>
+    <div class="collapsible">
+      <div class="collapsible-header" onclick="toggleCollapse(this)">
+        ▶ Need help finding your game number?
+      </div>
+      <div class="collapsible-body">
+        <p>You can use either of the official SSSL tools:</p>
+  
+        <a class="secondary-btn"
+           href="https://www.southshoresoccer.com/Schedules"
+           target="_blank">
+           SSSL Schedule List (searchable)
+        </a>
+  
+        <a class="secondary-btn"
+           href="https://sssl.sportspilot.com/Scheduler/public/default.aspx"
+           target="_blank">
+           Visual Game Calendar (browse by date)
+        </a>
+      </div>
     </div>
+  
   </section>
+  
 
   <!-- SUBMITTED REQUESTS -->
   <section class="card" id="submittedListContainer">
