@@ -243,7 +243,7 @@ async function searchByCoach() {
     return;
   }
 
-  // Safe pending message: only if the container exists
+  // ⭐ Safe pending message — only if the element exists
   if (resultsBox) {
     resultsBox.innerHTML = `
       <div class="loading-banner">
@@ -255,10 +255,17 @@ async function searchByCoach() {
   const url = `${API_URL}?action=searchRows&coach_name=${encodeURIComponent(name)}`;
   console.log("Coach search URL:", url);
 
-  const response = await fetch(url);
-  const result = await response.json();
+  let response, result;
+  try {
+    response = await fetch(url);
+    result = await response.json();
+  } catch (err) {
+    if (resultsBox) resultsBox.innerHTML = "";
+    alert("Network error while searching.");
+    return;
+  }
 
-  // Clear pending message if the container exists
+  // ⭐ Clear pending message safely
   if (resultsBox) {
     resultsBox.innerHTML = "";
   }
