@@ -719,3 +719,10 @@ section {
   margin-bottom: 8px;
 }
 
+/* Ensure collapsible overrides older styles */
+.collapsible-body {
+  background: transparent !important;
+  padding: 10px 0 !important;
+  border: none !important;
+}
+
