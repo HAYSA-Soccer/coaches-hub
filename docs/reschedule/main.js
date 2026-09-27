@@ -457,30 +457,29 @@ function showGameSelection(matches) {
     <p>Multiple games match your search. Choose the one you want to reschedule.</p>
   `;
 
-matches.forEach(m => {
-  const div = document.createElement("div");
-  div.className = "match-card";
+  matches.forEach(m => {
+    const div = document.createElement("div");
+    div.className = "match-card";
 
-  div.innerHTML = `
-    <div class="sr-line"><strong>Team:</strong> ${m.team_name || "—"}</div>
-    <div class="sr-line"><strong>Opponent:</strong> ${m.opp_town || "—"}</div>
-    <div class="sr-line"><strong>Date:</strong> ${displayDate(m.orig_date) || "—"}</div>
-    <div class="sr-line"><strong>Time:</strong> ${displayTime(m.orig_time) || "—"}</div>
-    <div class="sr-line"><strong>Field:</strong> ${m.orig_field || "—"}</div>
-    <div class="sr-line"><strong>Game #:</strong> ${m.game_number}</div>
+    div.innerHTML = `
+      <div class="sr-line"><strong>Team:</strong> ${m.team_name || "—"}</div>
+      <div class="sr-line"><strong>Opponent:</strong> ${m.opp_town || "—"}</div>
+      <div class="sr-line"><strong>Date:</strong> ${displayDate(m.orig_date) || "—"}</div>
+      <div class="sr-line"><strong>Time:</strong> ${displayTime(m.orig_time) || "—"}</div>
+      <div class="sr-line"><strong>Field:</strong> ${m.orig_field || "—"}</div>
+      <div class="sr-line"><strong>Game #:</strong> ${m.game_number}</div>
 
-    <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${m.game_number}')">
-      Use This Game
-    </button>
-  `;
-});
+      <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${m.game_number}')">
+        Use This Game
+      </button>
+    `;
 
-
-    container.appendChild(div);
+    container.appendChild(div);   // ⭐ append INSIDE the loop
   });
 
   container.style.display = "block";
 }
+
 
 function displayDate(d) {
   return d ? new Date(d).toLocaleDateString("en-US") : "(none)";
