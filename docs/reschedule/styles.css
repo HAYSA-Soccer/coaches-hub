@@ -1082,3 +1082,7 @@ select:focus {
   font-weight: 600;
 }
 
+#search_results {
+  overflow-anchor: none;
+}
+
