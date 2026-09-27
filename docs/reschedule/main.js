@@ -26,6 +26,19 @@ async function apiGetGame(gameNumber) {
   }
 }
 
+function showLoading(container) {
+  container.innerHTML = `
+    <div class="loading-banner">Searching… please wait</div>
+  `;
+}
+
+function renderMatches(container, matches) {
+  container.innerHTML = ""; // clear loading banner
+
+  matches.forEach(m => {
+    container.appendChild(renderMatchCard(m));
+  });
+}
 
 
 // ===============================
@@ -532,10 +545,7 @@ function showGameSelection(matches) {
   const container = document.getElementById("gameSelectionContainer");
   if (!container) return;
 
-  container.innerHTML = `
-    <h3>Select the correct game</h3>
-    <p>Multiple games match your search. Choose the one you want to reschedule.</p>
-  `;
+  container.innerHTML = `<div class="loading-banner">Loading matches…</div>`;
 
   matches.forEach(m => {
     container.appendChild(renderMatchCard(m));
@@ -606,7 +616,7 @@ async function searchByCoach() {
   console.log("Coach search URL:", url);
 
   const searchResults = document.getElementById("search_results");
-  searchResults.innerHTML = "";
+  searchResults.innerHTML = `<div class="loading-banner">Searching… please wait</div>`;
 
   try {
     const response = await fetch(url);
@@ -668,7 +678,7 @@ async function startRescheduleFromForm() {
   const gameSelectionContainer = document.getElementById("gameSelectionContainer");
 
   searchStatus.textContent = "";
-  gameSelectionContainer.innerHTML = "";
+  gameSelectionContainer.innerHTML = `<div class="loading-banner">Searching… please wait</div>`;
 
   if (matches.length === 0) {
     searchStatus.textContent = "No matching games found.";
