@@ -346,17 +346,18 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
   if (row.opt1_status === "approved") autoMoveApprovedOption(1);
   if (row.opt2_status === "approved") autoMoveApprovedOption(2);
 
+  // ⭐ Hide search UI FIRST — prevents scroll jumping to search results
+  hideSearchUI();
+
   // ⭐ Show workflow UI
   showWorkflowUI();
 
-  // ⭐ Hide all search UI (THIS IS WHERE IT GOES)
-  hideSearchUI();
-
-  // ⭐ Continue workflow startup
-  showWorkflowWithoutStarting(); // this will call findNextIncompleteStepSkippingStep1
-
+  // ⭐ Scroll NOW — after search UI is gone
   const wf = document.getElementById("workflowPage");
   if (wf) wf.scrollIntoView({ behavior: "smooth" });
+
+  // ⭐ Continue workflow startup (auto-step logic)
+  showWorkflowWithoutStarting(); // calls findNextIncompleteStepSkippingStep1
 }
 
 
