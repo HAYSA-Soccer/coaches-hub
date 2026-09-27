@@ -1,4 +1,4 @@
-console.log("MAIN.JS LOADED");
+console.log("MAIN.JS LOADED 8:06PM");
 
 // ===============================
 // CONFIG + STATE
