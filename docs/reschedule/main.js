@@ -579,12 +579,17 @@ async function searchByCoach() {
 
     matches.forEach(m => {
       const div = document.createElement("div");
-      div.className = "search-result";
+      div.className = "match-card";
 
       div.innerHTML = `
-        <div><strong>Game #:</strong> ${m.game_number}</div>
-        <div><strong>Opponent:</strong> ${m.opp_town}</div>
-        <button onclick="loadGameWithoutStartingWorkflow(${m.game_number})">
+        <div class="sr-line"><strong>Team:</strong> ${m.team_name || "—"}</div>
+        <div class="sr-line"><strong>Opponent:</strong> ${m.opp_town || "—"}</div>
+        <div class="sr-line"><strong>Date:</strong> ${displayDate(m.orig_date) || "—"}</div>
+        <div class="sr-line"><strong>Time:</strong> ${displayTime(m.orig_time) || "—"}</div>
+        <div class="sr-line"><strong>Field:</strong> ${m.orig_field || "—"}</div>
+        <div class="sr-line"><strong>Game #:</strong> ${m.game_number}</div>
+
+        <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${m.game_number}')">
           Use This Game
         </button>
       `;
@@ -636,25 +641,27 @@ async function startRescheduleFromForm() {
   const searchStatus = document.getElementById("searchStatus");
   const gameSelectionContainer = document.getElementById("gameSelectionContainer");
 
-  // Clear previous results
   searchStatus.textContent = "";
   gameSelectionContainer.innerHTML = "";
 
-  // No matches
   if (matches.length === 0) {
     searchStatus.textContent = "No matching games found.";
     return;
   }
 
-  // ⭐ ALWAYS show a list — even if only one match
   matches.forEach(m => {
     const div = document.createElement("div");
-    div.className = "search-result";
+    div.className = "match-card";
 
     div.innerHTML = `
-      <div><strong>Game #:</strong> ${m.game_number}</div>
-      <div><strong>Opponent:</strong> ${m.opp_town}</div>
-      <button onclick="useThisGame(${m.game_number})">Use This Game</button>
+      <div class="sr-line"><strong>Team:</strong> ${m.team_name || "—"}</div>
+      <div class="sr-line"><strong>Opponent:</strong> ${m.opp_town || "—"}</div>
+      <div class="sr-line"><strong>Date:</strong> ${displayDate(m.orig_date) || "—"}</div>
+      <div class="sr-line"><strong>Time:</strong> ${displayTime(m.orig_time) || "—"}</div>
+      <div class="sr-line"><strong>Field:</strong> ${m.orig_field || "—"}</div>
+      <div class="sr-line"><strong>Game #:</strong> ${m.game_number}</div>
+
+      <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${m.game_number}')">
         Use This Game
       </button>
     `;
