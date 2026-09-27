@@ -624,6 +624,9 @@ async function searchByCoach() {
 
     const matches = result.rows || [];
 
+    // ⭐ THIS LINE WAS MISSING — it clears the loading banner
+    searchResults.innerHTML = "";
+
     if (matches.length === 0) {
       searchResults.innerHTML = "<div>No matching games found.</div>";
       return;
@@ -637,7 +640,8 @@ async function searchByCoach() {
     console.error("Coach search error:", err);
     searchResults.innerHTML = "<div>Error searching. Check console.</div>";
   }
-}   // ← FIXED
+}
+   // ← FIXED
 
 
 
