@@ -12,6 +12,22 @@ let currentGameNumber = "";
 let currentRowData = null;
 let currentStep = 1;
 
+
+async function apiGetGame(gameNumber) {
+  const url = `${API_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}`;
+
+  try {
+    const response = await fetch(url, { method: "GET" });
+    if (!response.ok) return null;
+    return await response.json();   // { exists, data }
+  } catch (err) {
+    console.error("apiGetGame error:", err);
+    return null;
+  }
+}
+
+
+
 // ===============================
 // DATE/TIME HELPERS
 // ===============================
@@ -292,9 +308,6 @@ async function loadSubmittedRequests() {
   if (container) container.style.display = "block";
 }
 
-
-// If you already have apiGetGame / apiCreateRow / setField / getField defined
-// elsewhere, keep those. If not, you can add minimal versions here.
 
 // ===============================
 // WORKFLOW LOAD / RESUME
