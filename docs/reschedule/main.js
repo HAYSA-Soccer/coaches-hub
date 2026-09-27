@@ -1,4 +1,4 @@
-console.log("MAIN.JS LOADED 8:06PM");
+console.log("MAIN.JS LOADED 12:58PM");
 
 // ===============================
 // CONFIG + STATE
@@ -343,60 +343,59 @@ function displayTime(t) {
 // COACH SEARCH (critical)
 // ===============================
 async function searchByCoach() {
-  const input = document.getElementById("coach_search");
-  const resultsBox = document.getElementById("search_results");
+  const coach = document.getElementById("coach_search").value.trim();
+  if (!coach) return;
 
-  if (!input) {
-    alert("Coach search input not found.");
-    return;
-  }
-
-  const name = input.value.trim();
-  if (!name) {
-    alert("Please enter a coach last name.");
-    return;
-  }
-
-  // ⭐ Safe pending message — only if the element exists
-  if (resultsBox) {
-    resultsBox.innerHTML = `
-      <div class="loading-banner">
-        Searching… please wait
-      </div>
-    `;
-  }
-
-  const url = `${API_URL}?action=searchRows&coach_last_name=${encodeURIComponent(name)}`;
+  const url = `${API_URL}?action=searchRows&coach_last_name=${encodeURIComponent(coach)}`;
   console.log("Coach search URL:", url);
 
-  let response, result;
   try {
-    response = await fetch(url);
-    result = await response.json();
+    const response = await fetch(url);
+    const result = await response.json();
+
+    const rows = result.rows || [];
+    const container = document.getElementById("search_results");
+    container.innerHTML = "";
+
+    if (rows.length === 0) {
+      container.innerHTML = `<p>No games found for coach "${coach}".</p>`;
+      return;
+    }
+
+    // Group by team_name
+    const groups = {};
+    rows.forEach(r => {
+      const team = r.team_name || "Unknown Team";
+      if (!groups[team]) groups[team] = [];
+      groups[team].push(r);
+    });
+
+    // Render groups
+    Object.keys(groups).forEach(team => {
+      const block = document.createElement("div");
+      block.className = "team-group";
+
+      let html = `<h3>${team}</h3>`;
+
+      groups[team].forEach(r => {
+        html += `
+          <div class="search-result">
+            <div><strong>Game #:</strong> ${r.game_number}</div>
+            <div><strong>Opponent:</strong> ${r.opp_town}</div>
+            <button onclick="startRescheduleFromSearch(${r.game_number})">
+              Use This Game
+            </button>
+          </div>
+        `;
+      });
+
+      block.innerHTML = html;
+      container.appendChild(block);
+    });
+
   } catch (err) {
-    if (resultsBox) resultsBox.innerHTML = "";
-    alert("Network error while searching.");
-    return;
+    console.error("Coach search error:", err);
   }
-
-  // ⭐ Clear pending message safely
-  if (resultsBox) {
-    resultsBox.innerHTML = "";
-  }
-
-  const matches = result.rows || [];
-
-  if (matches.length === 1) {
-    await loadGameWithoutStartingWorkflow(matches[0].game_number);
-    return;
-  }
-
-  if (matches.length > 1) {
-    showGameSelection(matches);
-    return;
-  }
-
-  alert(`No games found for coach "${name}".`);
 }
 
 
