@@ -97,6 +97,10 @@ function hideSearchUI() {
 async function startRescheduleFromSearch(gameNumber) {
   console.log("Starting reschedule from search:", gameNumber);
 
+  // ⭐ Scroll IMMEDIATELY — before browser auto-scrolls to button
+  const wf = document.getElementById("workflowPage");
+  if (wf) wf.scrollIntoView({ behavior: "instant", block: "start" });
+
   const result = await apiGetGame(gameNumber);
   if (!result || !result.exists) {
     alert("Game not found.");
@@ -109,20 +113,17 @@ async function startRescheduleFromSearch(gameNumber) {
   // Hydrate fields
   hydrateFieldsFromRow(result.data);
 
-  // ⭐ Hide search UI FIRST
+  // Hide search UI
   hideSearchUI();
 
-  // ⭐ Show workflow UI
+  // Show workflow UI
   showWorkflowUI();
 
-  // ⭐ Scroll NOW, before step logic
-  const wf = document.getElementById("workflowPage");
-  if (wf) wf.scrollIntoView({ behavior: "smooth" });
-
-  // ⭐ Jump to correct step
+  // Jump to correct step
   const nextStep = findNextIncompleteStepSkippingStep1(currentRowData);
   goToStep(nextStep);
 }
+
 
 
 function getField(name) {
