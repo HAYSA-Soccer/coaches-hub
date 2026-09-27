@@ -159,8 +159,8 @@ function renderMatchCard(m) {
   div.innerHTML = `
     <div class="sr-line"><strong>Team:</strong> ${m.team_name || "—"}</div>
     <div class="sr-line"><strong>Opponent:</strong> ${m.opp_town || "—"}</div>
-    <div class="sr-line"><strong>Date:</strong> ${displayDate(m.orig_date) || "—"}</div>
-    <div class="sr-line"><strong>Time:</strong> ${displayTime(m.orig_time) || "—"}</div>
+    <div class="sr-line"><strong>Date:</strong> ${displayDate(m.orig_date)}</div>
+    <div class="sr-line"><strong>Time:</strong> ${displayTime(m.orig_time)}</div>
     <div class="sr-line"><strong>Field:</strong> ${m.orig_field || "—"}</div>
     <div class="sr-line"><strong>Game #:</strong> ${m.game_number}</div>
 
@@ -538,27 +538,8 @@ function showGameSelection(matches) {
   `;
 
   matches.forEach(m => {
-    const div = document.createElement("div");
-    div.className = "match-card";
-
-    div.innerHTML = `
-      <div class="sr-line"><strong>Team:</strong> ${m.team_name || "—"}</div>
-      <div class="sr-line"><strong>Opponent:</strong> ${m.opp_town || "—"}</div>
-      <div class="sr-line"><strong>Date:</strong> ${displayDate(m.orig_date) || "—"}</div>
-      <div class="sr-line"><strong>Time:</strong> ${displayTime(m.orig_time) || "—"}</div>
-      <div class="sr-line"><strong>Field:</strong> ${m.orig_field || "—"}</div>
-      <div class="sr-line"><strong>Game #:</strong> ${m.game_number}</div>
-
-      <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${m.game_number}')">
-        Use This Game
-      </button>
-    `;
-
-    container.appendChild(div);
-  });
-
-  container.style.display = "block";
-}
+    container.appendChild(renderMatchCard(m));
+    });
 
 
 
@@ -637,30 +618,8 @@ async function searchByCoach() {
     }
 
     matches.forEach(m => {
-      const div = document.createElement("div");
-      div.className = "match-card";
-
-      div.innerHTML = `
-        <div class="sr-line"><strong>Team:</strong> ${m.team_name || "—"}</div>
-        <div class="sr-line"><strong>Opponent:</strong> ${m.opp_town || "—"}</div>
-        <div class="sr-line"><strong>Date:</strong> ${displayDate(m.orig_date) || "—"}</div>
-        <div class="sr-line"><strong>Time:</strong> ${displayTime(m.orig_time) || "—"}</div>
-        <div class="sr-line"><strong>Field:</strong> ${m.orig_field || "—"}</div>
-        <div class="sr-line"><strong>Game #:</strong> ${m.game_number}</div>
-
-        <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${m.game_number}')">
-          Use This Game
-        </button>
-      `;
-
-      searchResults.appendChild(div);
+      searchResults.appendChild(renderMatchCard(m));
     });
-
-  } catch (err) {
-    console.error("Coach search error:", err);
-    searchResults.innerHTML = "<div>Error searching. Check console.</div>";
-  }
-}
 
 
 
@@ -709,25 +668,9 @@ async function startRescheduleFromForm() {
   }
 
   matches.forEach(m => {
-    const div = document.createElement("div");
-    div.className = "match-card";
-
-    div.innerHTML = `
-      <div class="sr-line"><strong>Team:</strong> ${m.team_name || "—"}</div>
-      <div class="sr-line"><strong>Opponent:</strong> ${m.opp_town || "—"}</div>
-      <div class="sr-line"><strong>Date:</strong> ${displayDate(m.orig_date) || "—"}</div>
-      <div class="sr-line"><strong>Time:</strong> ${displayTime(m.orig_time) || "—"}</div>
-      <div class="sr-line"><strong>Field:</strong> ${m.orig_field || "—"}</div>
-      <div class="sr-line"><strong>Game #:</strong> ${m.game_number}</div>
-
-      <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${m.game_number}')">
-        Use This Game
-      </button>
-    `;
-
-    gameSelectionContainer.appendChild(div);
+    gameSelectionContainer.appendChild(renderMatchCard(m));
   });
-}
+
 
 
 // ===============================
