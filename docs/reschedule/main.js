@@ -560,7 +560,7 @@ async function searchByCoach() {
           <div class="search-result">
             <div><strong>Game #:</strong> ${r.game_number}</div>
             <div><strong>Opponent:</strong> ${r.opp_town}</div>
-            <button onclick="startRescheduleFromSearch(${r.game_number})">
+            <button onclick="loadGameWithoutStartingWorkflow(${r.game_number})">
               Use This Game
             </button>
           </div>
@@ -611,12 +611,12 @@ async function startRescheduleFromForm() {
   const matches = result.rows || [];
 
   if (matches.length === 1) {
-    showSingleMatchConfirmation(matches[0]);
+    loadGameWithoutStartingWorkflow(matches[0].game_number);
     return;
   }
 
   if (matches.length > 1) {
-    showGameSelection(matches);
+    loadGameWithoutStartingWorkflow(matches[0].game_number);
     return;
   }
 
