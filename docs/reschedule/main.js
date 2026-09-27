@@ -616,8 +616,10 @@ function showLandingPage() {
   document.getElementById("workflowPage").style.display = "none";
   document.getElementById("timelineContainer").style.display = "none";
   document.getElementById("panelContainer").style.display = "none";
-  document.getElementById("nextStepContainer").style.display = "none";
   document.getElementById("backToListContainer").style.display = "none";
+
+  // Remove this — it does not exist in your new UI
+  // document.getElementById("nextStepContainer").style.display = "none";
 }
 
 function hideLandingPage() {
@@ -627,6 +629,8 @@ function hideLandingPage() {
   if (start) start.style.display = "none";
   if (submitted) submitted.style.display = "none";
 }
+
+
 
 function backToList() {
   showLandingPage();
