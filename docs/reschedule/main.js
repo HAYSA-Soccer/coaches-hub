@@ -71,16 +71,14 @@ async function setField(name, value) {
   if (!currentRowData) currentRowData = {};
   currentRowData[name] = value;
 
-  const params = new URLSearchParams({
-    action: "updateField",
-    game_number: currentGameNumber,
-    field: name,
-    value: value
-  });
+  const form = new FormData();
+  form.append("action", "updateField");
+  form.append("game_number", currentGameNumber);
+  form.append("field", name);
+  form.append("value", value == null ? "" : value);
 
-  const url = `${API_URL}?${params.toString()}`;
-  const response = await fetch(url, { method: "GET" });
-  return response.json();
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
 }
 
 
@@ -89,15 +87,68 @@ async function setField(name, value) {
 // API HELPERS (assumes backend already supports these actions)
 // ===============================
 async function apiUpdateRow(gameNumber, updates) {
-  const params = new URLSearchParams();
-  params.append("action", "updateRow");
-  params.append("game_number", gameNumber);
-  params.append("updates", JSON.stringify(updates));
+  const form = new FormData();
+  form.append("action", "updateRow");
+  form.append("game_number", gameNumber);
+  form.append("updates", JSON.stringify(updates));
 
-  const url = `${API_URL}?${params.toString()}`;
-  const response = await fetch(url, { method: "GET" });
-  return response.json();
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
 }
+
+async function apiUpdateStep(gameNumber, step) {
+  const form = new FormData();
+  form.append("action", "updateStep");
+  form.append("game_number", gameNumber);
+  form.append("step", step);
+
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
+
+
+async function apiUpdateFinal(gameNumber, date, time, field) {
+  const form = new FormData();
+  form.append("action", "updateFinal");
+  form.append("game_number", gameNumber);
+  form.append("date", date);
+  form.append("time", time);
+  form.append("field", field);
+
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
+
+
+async function apiUpdateGameChangeForm(payload) {
+  const form = new FormData();
+  form.append("action", "updateGameChangeForm");
+
+  Object.keys(payload).forEach(key => {
+    form.append(key, payload[key] || "");
+  });
+
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
+
+
+
+async function apiUpdateOptions(gameNumber, optionNumber, date, time, field) {
+  const form = new FormData();
+  form.append("action", "updateOptions");
+  form.append("game_number", gameNumber);
+  form.append("option_number", optionNumber);
+  form.append("date", date);
+  form.append("time", time);
+  form.append("field", field);
+
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
+
+
+
 
 // If you already have apiGetGame / apiCreateRow / setField / getField defined
 // elsewhere, keep those. If not, you can add minimal versions here.
