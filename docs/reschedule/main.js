@@ -1,4 +1,4 @@
-console.log("MAIN.JS LOADED 12:58PM");
+console.log("MAIN.JS LOADED 1:53PM");
 
 // ===============================
 // CONFIG + STATE
@@ -286,14 +286,28 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
 
   // If workflow has NOT started, start it now
   if (!row.attempt_started) {
+    const today = new Date().toISOString().split("T")[0];
+
     await apiUpdateRow(gameNumber, {
       attempt_started: true,
-      attempt_started_date: new Date().toISOString().split("T")[0]
+      attempt_started_date: today
     });
 
     currentRowData.attempt_started = true;
-    currentRowData.attempt_started_date = new Date().toISOString().split("T")[0];
+    currentRowData.attempt_started_date = today;
   }
+
+  // Detect board approval
+  if (row.opt1_status === "approved") autoMoveApprovedOption(1);
+  if (row.opt2_status === "approved") autoMoveApprovedOption(2);
+
+  showWorkflowUI();
+  showWorkflowWithoutStarting(); // this will call findNextIncompleteStepSkippingStep1
+
+  const wf = document.getElementById("workflowPage");
+  if (wf) wf.scrollIntoView({ behavior: "smooth" });
+}
+
 
   // Detect board approval
   if (row.opt1_status === "approved") autoMoveApprovedOption(1);
@@ -658,13 +672,15 @@ function showWorkflowWithoutStarting() {
 }
 
 function findNextIncompleteStepSkippingStep1(row) {
+  const source = row || currentRowData || {};
   for (let s = 2; s <= 8; s++) {
-    if (!isStepComplete(s)) {
+    if (!isStepCompleteRow(source, s)) {
       return s;
     }
   }
   return 8;
 }
+
 
 function beginWorkflow() {
   hideLandingPage();
@@ -835,7 +851,9 @@ function isStepCompleteRow(r, step) {
       return r.haysa_status === "approved";
     case 7:
       return (
-        (r.certified === "true" || r.certified === true) &&
+        (r.certified === "true" ||
+         r.certified === "TRUE" ||
+         r.certified === true) &&
         r.signed_name
       );
     case 8:
@@ -844,6 +862,8 @@ function isStepCompleteRow(r, step) {
       return false;
   }
 }
+
+
 
 // FIELD-based completeness (for goToStep guard)
 function isStepComplete(step) {
@@ -871,7 +891,9 @@ function isStepComplete(step) {
       return f("haysa_status") === "approved";
     case 7:
       return (
-        (f("certified") === "true" || f("certified") === true) &&
+        (f("certified") === "true" ||
+         f("certified") === "TRUE" ||
+         f("certified") === true) &&
         f("signed_name")
       );
     case 8:
@@ -880,6 +902,8 @@ function isStepComplete(step) {
       return false;
   }
 }
+
+
 
 function goToStep(step) {
   for (let s = 2; s < step; s++) {
@@ -1491,7 +1515,15 @@ function renderStep7(panel) {
     </div>
 
     <h3>Certification</h3>
-    <label><input type="checkbox" id="certified" ${fd("certified")==="true"?"checked":""}> I certify the opposing coach agreed to this change.</label>
+    <label>
+      <input
+        type="checkbox"
+        id="certified"
+        ${fd("certified")==="true" || fd("certified")==="TRUE" ? "checked" : ""}
+      >
+      I certify the opposing coach agreed to this change.
+    </label>
+
 
     <label>Signed Name</label>
     <input type="text" id="signed_name" value="${fd("signed_name")}">
