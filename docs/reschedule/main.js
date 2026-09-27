@@ -678,6 +678,7 @@ async function startRescheduleFromForm() {
   matches.forEach(m => {
     gameSelectionContainer.appendChild(renderMatchCard(m));
   });
+}   // ← FIXED
 
 
 
