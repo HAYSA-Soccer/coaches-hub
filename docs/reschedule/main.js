@@ -109,7 +109,7 @@ async function startRescheduleFromSearch(gameNumber) {
   // Hydrate fields
   hydrateFieldsFromRow(result.data);
 
-  // Hide search UI
+  // Hide all search UI
   hideSearchUI();
 
   // Show workflow UI
