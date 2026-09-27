@@ -77,6 +77,23 @@ function formatTimeForStorage(htmlTime) {
   return `${h}:${mm} ${ap}`;
 }
 
+async function useThisGame(gameNumber) {
+  const rowResult = await apiGetGame(gameNumber);
+  if (!rowResult?.exists) {
+    alert("Unable to load game data.");
+    return;
+  }
+
+  currentRowData = rowResult.data;
+  hydrateFieldsFromRow(currentRowData);
+
+  // EXACTLY what lookupGameNumber does:
+  beginWorkflow();
+  showWorkflowUI();
+  hideLandingPage();
+}
+
+
 function toggleCollapse(el) {
   const body = el.nextElementSibling;
   body.style.display = body.style.display === "block" ? "none" : "block";
@@ -562,7 +579,7 @@ async function searchByCoach() {
           <div class="search-result">
             <div><strong>Game #:</strong> ${r.game_number}</div>
             <div><strong>Opponent:</strong> ${r.opp_town}</div>
-            <button onclick="loadGameWithoutStartingWorkflow(${r.game_number})">
+            <button onclick="useThisGame(${m.game_number})">Use This Game</button>
               Use This Game
             </button>
           </div>
@@ -633,7 +650,7 @@ async function startRescheduleFromForm() {
     div.innerHTML = `
       <div><strong>Game #:</strong> ${m.game_number}</div>
       <div><strong>Opponent:</strong> ${m.opp_town}</div>
-      <button onclick="loadGameWithoutStartingWorkflow(${m.game_number})">
+      <button onclick="useThisGame(${m.game_number})">Use This Game</button>
         Use This Game
       </button>
     `;
