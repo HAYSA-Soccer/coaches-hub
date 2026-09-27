@@ -109,19 +109,19 @@ async function startRescheduleFromSearch(gameNumber) {
   // Hydrate fields
   hydrateFieldsFromRow(result.data);
 
-  // Hide all search UI
+  // ⭐ Hide search UI FIRST
   hideSearchUI();
 
-  // Show workflow UI
+  // ⭐ Show workflow UI
   showWorkflowUI();
 
-  // Jump to correct step
-  const nextStep = findNextIncompleteStepSkippingStep1(currentRowData);
-  goToStep(nextStep);
-
-  // Scroll into view
+  // ⭐ Scroll NOW, before step logic
   const wf = document.getElementById("workflowPage");
   if (wf) wf.scrollIntoView({ behavior: "smooth" });
+
+  // ⭐ Jump to correct step
+  const nextStep = findNextIncompleteStepSkippingStep1(currentRowData);
+  goToStep(nextStep);
 }
 
 
