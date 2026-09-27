@@ -77,6 +77,65 @@ function formatTimeForStorage(htmlTime) {
   return `${h}:${mm} ${ap}`;
 }
 
+function displayDate(value) {
+  if (!value) return "—";
+
+  // Already MM/DD/YYYY
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(value)) return value;
+
+  // Convert YYYY-MM-DD → MM/DD/YYYY
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [yyyy, mm, dd] = value.split("-");
+    return `${mm}/${dd}/${yyyy}`;
+  }
+
+  return value;
+}
+
+function displayTime(t) {
+  if (!t) return "—";
+  t = t.trim();
+
+  // Case 1: "15:00" (24-hour)
+  if (/^\d{1,2}:\d{2}$/.test(t)) {
+    let [h, m] = t.split(":").map(Number);
+    const suffix = h >= 12 ? "PM" : "AM";
+    h = (h % 12) || 12;
+    return `${h}:${m.toString().padStart(2, "0")} ${suffix}`;
+  }
+
+  // Case 2: "3 PM" or "3 pm"
+  if (/^\d{1,2}\s*(AM|PM)$/i.test(t)) {
+    return t.toUpperCase();
+  }
+
+  // Case 3: "3pm" or "3am"
+  if (/^\d{1,2}(am|pm)$/i.test(t)) {
+    const h = parseInt(t);
+    const suffix = t.toUpperCase().includes("PM") ? "PM" : "AM";
+    return `${h}:00 ${suffix}`;
+  }
+
+  // Case 4: "3:00 PM" or "3:00 pm"
+  if (/^\d{1,2}:\d{2}\s*(AM|PM)$/i.test(t)) {
+    return t.toUpperCase();
+  }
+
+  // Case 5: "3:00" (ambiguous)
+  if (/^\d{1,2}:\d{2}$/.test(t)) {
+    const [h, m] = t.split(":").map(Number);
+    const suffix = h >= 12 ? "PM" : "AM";
+    const hour12 = (h % 12) || 12;
+    return `${hour12}:${m.toString().padStart(2, "0")} ${suffix}`;
+  }
+
+  // Fallback — show raw value
+  return t;
+}
+
+
+
+
 async function useThisGame(gameNumber) {
   const rowResult = await apiGetGame(gameNumber);
   if (!rowResult?.exists) {
