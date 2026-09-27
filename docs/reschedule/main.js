@@ -61,6 +61,30 @@ function formatTimeForStorage(htmlTime) {
   return `${h}:${mm} ${ap}`;
 }
 
+
+function getField(name) {
+  if (!currentRowData) return "";
+  return currentRowData[name] == null ? "" : currentRowData[name];
+}
+
+async function setField(name, value) {
+  if (!currentRowData) currentRowData = {};
+  currentRowData[name] = value;
+
+  const params = new URLSearchParams({
+    action: "updateField",
+    game_number: currentGameNumber,
+    field: name,
+    value: value
+  });
+
+  const url = `${API_URL}?${params.toString()}`;
+  const response = await fetch(url, { method: "GET" });
+  return response.json();
+}
+
+
+
 // ===============================
 // API HELPERS (assumes backend already supports these actions)
 // ===============================
