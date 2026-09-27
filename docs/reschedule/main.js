@@ -62,6 +62,21 @@ function formatTimeForStorage(htmlTime) {
 }
 
 
+async function startRescheduleFromSearch(gameNumber) {
+  const result = await apiGetGame(gameNumber);
+  if (!result || !result.exists) {
+    alert("Game not found.");
+    return;
+  }
+
+  currentGameNumber = gameNumber;
+  currentRowData = result.data;
+
+  hydrateFieldsFromRow(result.data);
+  showWorkflowPage();
+}
+
+
 function getField(name) {
   if (!currentRowData) return "";
   return currentRowData[name] == null ? "" : currentRowData[name];
