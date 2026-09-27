@@ -626,9 +626,6 @@ function showLandingPage() {
   if (back) back.style.display = "none";
 }
 
-  // Remove this — it does not exist in your new UI
-  // document.getElementById("nextStepContainer").style.display = "none";
-}
 
 function hideLandingPage() {
   const start = document.getElementById("startContainer");
