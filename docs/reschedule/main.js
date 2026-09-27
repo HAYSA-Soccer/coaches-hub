@@ -332,13 +332,7 @@ async function loadSubmittedRequests() {
 // ===============================
 async function loadGameWithoutStartingWorkflow(gameNumber) {
 
-  // ⭐ FIX: collapse all collapsibles so browser loses scroll anchor
-  document.querySelectorAll(".collapsible-body").forEach(body => {
-    body.style.display = "none";
-  });
-
-  // ⭐ Hide entire search section
-  document.getElementById("startContainer").style.display = "none";
+  hideLandingPage();   // ⭐ THIS is the missing piece
 
   console.log("Loading game without starting workflow:", gameNumber);
 
@@ -379,6 +373,7 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
 
   showWorkflowWithoutStarting();
 }
+
 
 
 async function apiGetAllRows() {
