@@ -539,7 +539,9 @@ function showGameSelection(matches) {
 
   matches.forEach(m => {
     container.appendChild(renderMatchCard(m));
-    });
+  });
+} 
+
 
 
 
@@ -620,6 +622,12 @@ async function searchByCoach() {
     matches.forEach(m => {
       searchResults.appendChild(renderMatchCard(m));
     });
+
+  } catch (err) {
+    console.error("Coach search error:", err);
+    searchResults.innerHTML = "<div>Error searching. Check console.</div>";
+  }
+}   // ← FIXED
 
 
 
