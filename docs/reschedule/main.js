@@ -612,36 +612,36 @@ async function startRescheduleFromForm() {
 
   const matches = result.rows || [];
 
-  if (matches.length === 1) {
-    loadGameWithoutStartingWorkflow(matches[0].game_number);
+  const searchStatus = document.getElementById("searchStatus");
+  const gameSelectionContainer = document.getElementById("gameSelectionContainer");
+
+  // Clear previous results
+  searchStatus.textContent = "";
+  gameSelectionContainer.innerHTML = "";
+
+  // No matches
+  if (matches.length === 0) {
+    searchStatus.textContent = "No matching games found.";
     return;
   }
 
-  if (matches.length > 1) {
-    loadGameWithoutStartingWorkflow(matches[0].game_number);
-    return;
-  }
+  // ⭐ ALWAYS show a list — even if only one match
+  matches.forEach(m => {
+    const div = document.createElement("div");
+    div.className = "search-result";
 
-  const confirmCreate = confirm(
-    "No matching game was found.\n\n" +
-    "Would you like to create a NEW reschedule case using the details you entered?"
-  );
+    div.innerHTML = `
+      <div><strong>Game #:</strong> ${m.game_number}</div>
+      <div><strong>Opponent:</strong> ${m.opp_town}</div>
+      <button onclick="loadGameWithoutStartingWorkflow(${m.game_number})">
+        Use This Game
+      </button>
+    `;
 
-  if (!confirmCreate) {
-    document.getElementById("searchStatus").innerText =
-      "No matches found. Please adjust your search.";
-    return;
-  }
-
-  await createWorkflowFromSearchFields({
-    age_group,
-    gender,
-    division,
-    orig_date,
-    orig_time,
-    opp_town
+    gameSelectionContainer.appendChild(div);
   });
 }
+
 
 // ===============================
 // CREATE WORKFLOW FROM SEARCH FIELDS
