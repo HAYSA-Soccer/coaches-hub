@@ -93,6 +93,27 @@ async function useThisGame(gameNumber) {
   hideLandingPage();
 }
 
+function renderMatchCard(m) {
+  const div = document.createElement("div");
+  div.className = "match-card";
+
+  div.innerHTML = `
+    <div class="sr-line"><strong>Team:</strong> ${m.team_name || "—"}</div>
+    <div class="sr-line"><strong>Opponent:</strong> ${m.opp_town || "—"}</div>
+    <div class="sr-line"><strong>Date:</strong> ${displayDate(m.orig_date) || "—"}</div>
+    <div class="sr-line"><strong>Time:</strong> ${displayTime(m.orig_time) || "—"}</div>
+    <div class="sr-line"><strong>Field:</strong> ${m.orig_field || "—"}</div>
+    <div class="sr-line"><strong>Game #:</strong> ${m.game_number}</div>
+
+    <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${m.game_number}')">
+      Use This Game
+    </button>
+  `;
+
+  return div;
+}
+
+
 
 function toggleCollapse(el) {
   const body = el.nextElementSibling;
@@ -474,11 +495,12 @@ function showGameSelection(matches) {
       </button>
     `;
 
-    container.appendChild(div);   // ⭐ append INSIDE the loop
+    container.appendChild(div);
   });
 
   container.style.display = "block";
 }
+
 
 
 function displayDate(d) {
