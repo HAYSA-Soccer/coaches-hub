@@ -40,16 +40,15 @@
       <div class="collapsible-body">
         <label for="lookupGameNumber">SSSL Game Number</label>
         <input type="text" id="lookupGameNumber" placeholder="e.g., 12345">
-    
+  
         <div class="button-row">
           <button class="primary-btn" onclick="lookupGameNumber()">Lookup & Start</button>
           <button class="secondary-btn" onclick="createNewFromLookup()">+ New Reschedule</button>
         </div>
-    
+  
         <div id="lookupStatus" class="info-text"></div>
       </div>
     </div>
-
   
     <!-- COLLAPSIBLE: TEAM DETAILS -->
     <div class="collapsible">
@@ -98,7 +97,7 @@
         </button>
   
         <div id="searchStatus" class="info-text"></div>
-        <div id="gameSelectionContainer" class="selection-list"></div>
+        <!-- 🔴 REMOVED gameSelectionContainer from here -->
       </div>
     </div>
   
@@ -115,7 +114,7 @@
           Search by Coach
         </button>
   
-        <div id="search_results" class="search-results"></div>
+        <!-- 🔴 REMOVED search_results from here -->
       </div>
     </div>
   
@@ -140,8 +139,12 @@
         </a>
       </div>
     </div>
-  
   </section>
+  
+  <!-- 🔵 NEW: RESULTS RENDER OUTSIDE THE CARD -->
+  <div id="gameSelectionContainer" class="selection-list"></div>
+  <div id="search_results" class="search-results"></div>
+
   
 
   <!-- SUBMITTED REQUESTS -->
