@@ -61,6 +61,11 @@ function formatTimeForStorage(htmlTime) {
   return `${h}:${mm} ${ap}`;
 }
 
+function toggleCollapse(el) {
+  const body = el.nextElementSibling;
+  body.style.display = body.style.display === "block" ? "none" : "block";
+}
+
 
 async function startRescheduleFromSearch(gameNumber) {
   const result = await apiGetGame(gameNumber);
@@ -303,21 +308,6 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
 
   showWorkflowUI();
   showWorkflowWithoutStarting(); // this will call findNextIncompleteStepSkippingStep1
-
-  const wf = document.getElementById("workflowPage");
-  if (wf) wf.scrollIntoView({ behavior: "smooth" });
-}
-
-
-  // Detect board approval
-  if (row.opt1_status === "approved") autoMoveApprovedOption(1);
-  if (row.opt2_status === "approved") autoMoveApprovedOption(2);
-
-  showWorkflowUI();
-  showWorkflowWithoutStarting();
-
-  const step = getNextWorkflowStep(currentRowData);
-  goToStep(step);
 
   const wf = document.getElementById("workflowPage");
   if (wf) wf.scrollIntoView({ behavior: "smooth" });
@@ -1797,13 +1787,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initGameChangeForm();
 });
-
-
-
-// ============================ EXTRA TO REMOVE ERRORS ============================
-
-function toggleCollapse(el) {
-  const body = el.nextElementSibling;
-  body.style.display = body.style.display === "block" ? "none" : "block";
-}
-
