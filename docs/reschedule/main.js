@@ -68,6 +68,8 @@ function toggleCollapse(el) {
 
 
 async function startRescheduleFromSearch(gameNumber) {
+  console.log("Starting reschedule from search:", gameNumber);
+
   const result = await apiGetGame(gameNumber);
   if (!result || !result.exists) {
     alert("Game not found.");
@@ -77,8 +79,18 @@ async function startRescheduleFromSearch(gameNumber) {
   currentGameNumber = gameNumber;
   currentRowData = result.data;
 
+  // Hydrate all fields into the UI
   hydrateFieldsFromRow(result.data);
-  showWorkflowPage();
+
+  // Show the workflow UI (this replaces the old showWorkflowPage)
+  showWorkflowUI();
+
+  // Start at Step 1
+  goToStep(1);
+
+  // Scroll into view
+  const wf = document.getElementById("workflowPage");
+  if (wf) wf.scrollIntoView({ behavior: "smooth" });
 }
 
 
