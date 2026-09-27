@@ -1086,3 +1086,20 @@ select:focus {
   overflow-anchor: none;
 }
 
+#resultsPanel {
+  margin-top: 20px;
+}
+
+#resultsPanel h2 {
+  margin-bottom: 10px;
+}
+
+.search-result {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.search-result button {
+  margin-top: 8px;
+}
+
