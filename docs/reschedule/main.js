@@ -540,60 +540,46 @@ Coach Certification:
 // COACH SEARCH (critical)
 // ===============================
 async function searchByCoach() {
-  const coach = document.getElementById("coach_search").value.trim();
-  if (!coach) return;
+  const last = document.getElementById("coach_search").value.trim();
+  const url = `${BASE_URL}?action=searchRows&coach_last_name=${encodeURIComponent(last)}`;
 
-  const url = `${API_URL}?action=searchRows&coach_last_name=${encodeURIComponent(coach)}`;
   console.log("Coach search URL:", url);
+
+  const searchResults = document.getElementById("search_results");
+  searchResults.innerHTML = "";
 
   try {
     const response = await fetch(url);
     const result = await response.json();
 
-    const rows = result.rows || [];
-    const container = document.getElementById("search_results");
-    container.innerHTML = "";
+    const matches = result.rows || [];
 
-    if (rows.length === 0) {
-      container.innerHTML = `<p>No games found for coach "${coach}".</p>`;
+    if (matches.length === 0) {
+      searchResults.innerHTML = "<div>No matching games found.</div>";
       return;
     }
 
-    // Group by team_name
-    const groups = {};
-    rows.forEach(r => {
-      const team = r.team_name || "Unknown Team";
-      if (!groups[team]) groups[team] = [];
-      groups[team].push(r);
-    });
+    matches.forEach(m => {
+      const div = document.createElement("div");
+      div.className = "search-result";
 
-    // Render groups
-    Object.keys(groups).forEach(team => {
-      const block = document.createElement("div");
-      block.className = "team-group";
+      div.innerHTML = `
+        <div><strong>Game #:</strong> ${m.game_number}</div>
+        <div><strong>Opponent:</strong> ${m.opp_town}</div>
+        <button onclick="loadGameWithoutStartingWorkflow(${m.game_number})">
+          Use This Game
+        </button>
+      `;
 
-      let html = `<h3>${team}</h3>`;
-
-      groups[team].forEach(r => {
-        html += `
-          <div class="search-result">
-            <div><strong>Game #:</strong> ${r.game_number}</div>
-            <div><strong>Opponent:</strong> ${r.opp_town}</div>
-            <button onclick="useThisGame(${m.game_number})">Use This Game</button>
-              Use This Game
-            </button>
-          </div>
-        `;
-      });
-
-      block.innerHTML = html;
-      container.appendChild(block);
+      searchResults.appendChild(div);
     });
 
   } catch (err) {
     console.error("Coach search error:", err);
+    searchResults.innerHTML = "<div>Error searching. Check console.</div>";
   }
 }
+
 
 
 
