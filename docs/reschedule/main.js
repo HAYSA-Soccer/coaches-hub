@@ -132,6 +132,17 @@ async function apiUpdateGameChangeForm(payload) {
   return res.json();
 }
 
+async function apiUpdateGameChangeForm(payload) {
+  const form = new FormData();
+  form.append("action", "updateGameChangeForm");
+
+  Object.keys(payload).forEach(key => {
+    form.append(key, payload[key] || "");
+  });
+
+  const res = await fetch(API_URL, { method: "POST", body: form });
+  return res.json();
+}
 
 
 async function apiUpdateOptions(gameNumber, optionNumber, date, time, field) {
