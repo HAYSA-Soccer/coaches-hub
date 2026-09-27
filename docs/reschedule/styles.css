@@ -1103,3 +1103,16 @@ select:focus {
   margin-top: 8px;
 }
 
+.match-card {
+  background: #fafafa;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+.sr-line {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
