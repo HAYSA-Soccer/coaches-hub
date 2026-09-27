@@ -66,6 +66,17 @@ function toggleCollapse(el) {
   body.style.display = body.style.display === "block" ? "none" : "block";
 }
 
+function hideSearchUI() {
+  const searchSection = document.getElementById("searchSection");
+  const listSection = document.getElementById("listSection");
+  const workflowPage = document.getElementById("workflowPage");
+
+  if (searchSection) searchSection.style.display = "none";
+  if (listSection) listSection.style.display = "none";
+  if (workflowPage) workflowPage.style.display = "block";
+}
+
+
 
 async function startRescheduleFromSearch(gameNumber) {
   console.log("Starting reschedule from search:", gameNumber);
@@ -79,14 +90,18 @@ async function startRescheduleFromSearch(gameNumber) {
   currentGameNumber = gameNumber;
   currentRowData = result.data;
 
-  // Hydrate all fields into the UI
+  // Hydrate fields
   hydrateFieldsFromRow(result.data);
 
-  // Show the workflow UI (this replaces the old showWorkflowPage)
+  // Hide search UI
+  hideSearchUI();
+
+  // Show workflow UI
   showWorkflowUI();
 
-  // Start at Step 1
-  goToStep(1);
+  // Jump to correct step
+  const nextStep = findNextIncompleteStepSkippingStep1(currentRowData);
+  goToStep(nextStep);
 
   // Scroll into view
   const wf = document.getElementById("workflowPage");
@@ -318,25 +333,19 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
   if (row.opt1_status === "approved") autoMoveApprovedOption(1);
   if (row.opt2_status === "approved") autoMoveApprovedOption(2);
 
+  // ⭐ Show workflow UI
   showWorkflowUI();
+
+  // ⭐ Hide all search UI (THIS IS WHERE IT GOES)
+  hideSearchUI();
+
+  // ⭐ Continue workflow startup
   showWorkflowWithoutStarting(); // this will call findNextIncompleteStepSkippingStep1
 
   const wf = document.getElementById("workflowPage");
   if (wf) wf.scrollIntoView({ behavior: "smooth" });
 }
 
-async function apiGetGame(gameNumber) {
-  const url = `${API_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}`;
-
-  try {
-    const response = await fetch(url, { method: "GET" });
-    if (!response.ok) return null;
-    return await response.json();   // { exists, data }
-  } catch (err) {
-    console.error("apiGetGame error:", err);
-    return null;
-  }
-}
 
 async function apiGetAllRows() {
   const url = `${API_URL}?action=getAllRows`;
