@@ -174,6 +174,92 @@ async function apiUpdateOptions(gameNumber, optionNumber, date, time, field) {
 }
 
 
+async function loadSubmittedRequests() {
+  const rows = await apiGetAllRows();
+  const list = document.getElementById("submittedList");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  // Filter rows that have ANY workflow progress
+  const submitted = rows.filter(r =>
+    r.step_1 === "completed" ||
+    r.step_2 === "completed" ||
+    r.step_3 === "completed" ||
+    r.step_4 === "completed" ||
+    r.step_5 === "completed" ||
+    r.step_6 === "completed" ||
+    r.step_7 === "completed" ||
+    r.step_8 === "completed" ||
+    r.step_9 === "completed" ||
+    r.attempt_started === "true"
+  );
+
+  if (submitted.length === 0) {
+    list.innerHTML = `<p>No submitted reschedule requests yet.</p>`;
+    return;
+  }
+
+  submitted.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "submitted-item";
+
+    div.innerHTML = `
+      <div class="reschedule-card">
+      
+        <div class="card-header">
+          <div class="game-number">Game #${item.game_number}</div>
+          <button type="button" class="primary-btn" onclick="resumeGame('${item.game_number}')">Resume</button>
+        </div>
+      
+        <div class="card-body">
+      
+          <div class="left">
+            <div class="team">
+              <strong>${item.team_name}</strong><br>
+              ${item.age_group} ${item.gender} ${item.division}
+            </div>
+      
+            <div class="next-action">
+              <strong>Next Action:</strong> ${item.workflow_status || "Complete"}
+            </div>
+      
+            <div class="status">
+              <strong>Status:</strong>
+              Certified: ${item.certified ? "Yes" : "No"} •
+              Calendar: ${item.calendar_updated ? "Yes" : "No"} •
+              HAYSA: ${item.haysa_status || "—"}
+            </div>
+          </div>
+      
+          <div class="right">
+            <table class="dates-table">
+              <tr>
+                <th>Original</th>
+                <th>Final</th>
+              </tr>
+              <tr>
+                <td>${item.orig_date_display} — ${item.orig_time_display}</td>
+                <td>${item.final_date_display || "—"} — ${item.final_time_display || ""}</td>
+              </tr>
+              <tr>
+                <td>${item.orig_field}</td>
+                <td>${item.final_field || ""}</td>
+              </tr>
+            </table>
+          </div>
+      
+        </div>
+      
+      </div>
+    `;
+
+    list.appendChild(div);
+  });
+
+  const container = document.getElementById("submittedListContainer");
+  if (container) container.style.display = "block";
+}
 
 
 // If you already have apiGetGame / apiCreateRow / setField / getField defined
