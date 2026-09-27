@@ -314,6 +314,15 @@ async function loadSubmittedRequests() {
 // WORKFLOW LOAD / RESUME
 // ===============================
 async function loadGameWithoutStartingWorkflow(gameNumber) {
+
+  // ⭐ FIX: collapse all collapsibles so browser loses scroll anchor
+  document.querySelectorAll(".collapsible-body").forEach(body => {
+    body.style.display = "none";
+  });
+
+  // ⭐ Hide entire search section
+  document.getElementById("startContainer").style.display = "none";
+
   console.log("Loading game without starting workflow:", gameNumber);
 
   currentGameNumber = gameNumber;
@@ -330,7 +339,6 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
 
   const row = rowResult.data;
 
-  // If workflow has NOT started, start it now
   if (!row.attempt_started) {
     const today = new Date().toISOString().split("T")[0];
 
@@ -343,22 +351,16 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
     currentRowData.attempt_started_date = today;
   }
 
-  // Detect board approval
   if (row.opt1_status === "approved") autoMoveApprovedOption(1);
   if (row.opt2_status === "approved") autoMoveApprovedOption(2);
 
-  // ⭐ Hide search UI FIRST — prevents scroll jumping to search results
   hideSearchUI();
-
-  // ⭐ Show workflow UI
   showWorkflowUI();
 
-  // ⭐ Scroll NOW — after search UI is gone
   const wf = document.getElementById("workflowPage");
   if (wf) wf.scrollIntoView({ behavior: "smooth" });
 
-  // ⭐ Continue workflow startup (auto-step logic)
-  showWorkflowWithoutStarting(); // calls findNextIncompleteStepSkippingStep1
+  showWorkflowWithoutStarting();
 }
 
 
