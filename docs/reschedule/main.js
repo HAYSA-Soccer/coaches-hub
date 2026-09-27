@@ -209,6 +209,34 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
   if (wf) wf.scrollIntoView({ behavior: "smooth" });
 }
 
+async function apiGetGame(gameNumber) {
+  const url = `${API_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}`;
+
+  try {
+    const response = await fetch(url, { method: "GET" });
+    if (!response.ok) return null;
+    return await response.json();   // { exists, data }
+  } catch (err) {
+    console.error("apiGetGame error:", err);
+    return null;
+  }
+}
+
+async function apiGetAllRows() {
+  const url = `${API_URL}?action=getAllRows`;
+
+  try {
+    const response = await fetch(url, { method: "GET" });
+    if (!response.ok) return [];
+    const data = await response.json();
+    return data.rows || [];
+  } catch (err) {
+    console.error("apiGetAllRows error:", err);
+    return [];
+  }
+}
+
+
 async function lookupGameNumber() {
   const input = document.getElementById("lookupGameNumber");
   const statusEl = document.getElementById("lookupStatus");
