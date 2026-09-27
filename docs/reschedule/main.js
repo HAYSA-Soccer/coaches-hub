@@ -443,6 +443,44 @@ function displayTime(t) {
     : "(none)";
 }
 
+
+function generateSSSLEmailSummary(row) {
+  const homeOriginal = row.is_haysa_home === "true" ? row.team_name : row.opp_town;
+  const awayOriginal = row.is_haysa_home === "true" ? row.opp_town : row.team_name;
+
+  const homeFinal = homeOriginal;
+  const awayFinal = awayOriginal;
+
+  return `
+Subject: Reschedule Request – Game #${row.game_number}
+
+Attached is the completed reschedule form for:
+
+Game Number: ${row.game_number}
+Teams: ${row.team_name} vs ${row.opp_town}
+
+Original Game:
+- Date: ${row.orig_date}
+- Time: ${row.orig_time}
+- Field: ${row.orig_field}
+- Home: ${homeOriginal}
+- Away: ${awayOriginal}
+
+New Game:
+- Date: ${row.final_date}
+- Time: ${row.final_time}
+- Field: ${row.final_field}
+- Home: ${homeFinal}
+- Away: ${awayFinal}
+
+Coach Certification:
+- Certified: ${row.certified}
+- Signed Name: ${row.signed_name}
+`.trim();
+}
+
+
+
 // ===============================
 // COACH SEARCH (critical)
 // ===============================
