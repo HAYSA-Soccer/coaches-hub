@@ -191,7 +191,6 @@ async function loadSubmittedRequests() {
     r.step_6 === "completed" ||
     r.step_7 === "completed" ||
     r.step_8 === "completed" ||
-    r.step_9 === "completed" ||
     r.attempt_started === "true"
   );
 
