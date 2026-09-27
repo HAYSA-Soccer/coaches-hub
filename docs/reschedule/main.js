@@ -560,7 +560,7 @@ async function searchByCoach() {
           <div class="search-result">
             <div><strong>Game #:</strong> ${r.game_number}</div>
             <div><strong>Opponent:</strong> ${r.opp_town}</div>
-            <button tabindex="-1" onclick="startRescheduleFromSearch(${r.game_number})">
+            <button onclick="startRescheduleFromSearch(${r.game_number})">
               Use This Game
             </button>
           </div>
