@@ -610,13 +610,21 @@ function hydrateFieldsFromRow(row) {
 // LANDING PAGE
 // ===============================
 function showLandingPage() {
-  document.getElementById("startContainer").style.display = "block";
-  document.getElementById("submittedListContainer").style.display = "block";
+  const start = document.getElementById("startContainer");
+  const submitted = document.getElementById("submittedListContainer");
+  const workflow = document.getElementById("workflowPage");
+  const timeline = document.getElementById("timelineContainer");
+  const panel = document.getElementById("panelContainer");
+  const back = document.getElementById("backToListContainer");
 
-  document.getElementById("workflowPage").style.display = "none";
-  document.getElementById("timelineContainer").style.display = "none";
-  document.getElementById("panelContainer").style.display = "none";
-  document.getElementById("backToListContainer").style.display = "none";
+  if (start) start.style.display = "block";
+  if (submitted) submitted.style.display = "block";
+
+  if (workflow) workflow.style.display = "none";
+  if (timeline) timeline.style.display = "none";
+  if (panel) panel.style.display = "none";
+  if (back) back.style.display = "none";
+}
 
   // Remove this — it does not exist in your new UI
   // document.getElementById("nextStepContainer").style.display = "none";
