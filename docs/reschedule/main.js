@@ -236,6 +236,7 @@ async function startRescheduleFromSearch(gameNumber) {
 
 
 
+
 function getField(name) {
   if (!currentRowData) return "";
   return currentRowData[name] == null ? "" : currentRowData[name];
@@ -545,12 +546,19 @@ function showGameSelection(matches) {
   const container = document.getElementById("gameSelectionContainer");
   if (!container) return;
 
+  // Show loading banner immediately
   container.innerHTML = `<div class="loading-banner">Loading matches…</div>`;
+
+  // ⭐ CLEAR THE LOADING BANNER BEFORE RENDERING CARDS
+  container.innerHTML = `
+    <h3>Select the correct game</h3>
+    <p>Multiple games match your search. Choose the one you want to reschedule.</p>
+  `;
 
   matches.forEach(m => {
     container.appendChild(renderMatchCard(m));
   });
-} 
+}
 
 
 
@@ -672,17 +680,20 @@ async function startRescheduleFromForm() {
   const url = `${BASE_URL}?${params.toString()}`;
   console.log("Search URL:", url);
 
+  const searchStatus = document.getElementById("searchStatus");
+  const gameSelectionContainer = document.getElementById("gameSelectionContainer");
+
+  searchStatus.textContent = "";
+  gameSelectionContainer.innerHTML = `<div class="loading-banner">Searching… please wait</div>`;
+
   const response = await fetch(url);
   const result = await response.json();
   console.log("Search result:", result);
 
   const matches = result.rows || [];
 
-  const searchStatus = document.getElementById("searchStatus");
-  const gameSelectionContainer = document.getElementById("gameSelectionContainer");
-
-  searchStatus.textContent = "";
-  gameSelectionContainer.innerHTML = `<div class="loading-banner">Searching… please wait</div>`;
+  // ⭐ CLEAR THE LOADING BANNER BEFORE RENDERING CARDS
+  gameSelectionContainer.innerHTML = "";
 
   if (matches.length === 0) {
     searchStatus.textContent = "No matching games found.";
@@ -692,7 +703,7 @@ async function startRescheduleFromForm() {
   matches.forEach(m => {
     gameSelectionContainer.appendChild(renderMatchCard(m));
   });
-}   // ← FIXED
+}
 
 
 
