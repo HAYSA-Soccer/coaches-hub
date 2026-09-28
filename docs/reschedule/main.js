@@ -214,6 +214,99 @@ function displayTime(t) {
 }
 
 
+async function showCoachDashboard() {
+  const all = await apiGetAllRows();
+
+  const coachName = document.getElementById("coach_search").value.trim().toLowerCase();
+
+  const mine = all.filter(r =>
+    r.coach_name && r.coach_name.toLowerCase().includes(coachName)
+  );
+
+  // ⭐ Sort active first
+  mine.sort((a, b) => {
+    const aCompleted = !!a.completed_at;
+    const bCompleted = !!b.completed_at;
+    if (!aCompleted && bCompleted) return -1;
+    if (aCompleted && !bCompleted) return 1;
+    return (a.game_number || 0) - (b.game_number || 0);
+  });
+
+  let html = "";
+  mine.forEach(row => html += renderDashboardCard(row));
+
+  document.getElementById("coachDashboardList").innerHTML = html;
+  document.getElementById("coachDashboard").style.display = "block";
+}
+
+function renderDashboardCard(row) {
+  // Mini green workflow steps
+  const steps = [
+    ["step_1", "Start"],
+    ["step_2", "Original"],
+    ["step_3", "Opponent"],
+    ["step_4", "New"],
+    ["step_5", "Field Hold"],
+    ["step_6", "HAYSA"],
+    ["step_7", "SSSL"],
+    ["step_8", "Finalize"]
+  ];
+
+  let stepHtml = "<div class='mini-step-container'>";
+  steps.forEach(([key, label]) => {
+    const done = String(row[key]).toUpperCase() === "TRUE";
+    stepHtml += `
+      <div class="mini-step ${done ? "mini-step-done" : ""}">
+        ${label}
+      </div>
+    `;
+  });
+  stepHtml += "</div>";
+
+  // Board pills
+  const boardFields = [
+    ["board_opponent_contacted", "Opponent"],
+    ["board_new_info_confirmed", "Info"],
+    ["board_field_hold_entered", "Field Hold"],
+    ["board_haysa_approved", "HAYSA"],
+    ["board_coach_certified", "Coach"],
+    ["board_email_sent", "Email"],
+    ["board_sssl_approved", "SSSL"],
+    ["board_ts_updated", "TS"]
+  ];
+
+  let pills = "<div class='board-pill-container'>";
+  boardFields.forEach(([key, label]) => {
+    const val = String(row[key]).toUpperCase() === "TRUE";
+    pills += `
+      <div class="board-pill ${val ? "pill-complete" : "pill-pending"}">
+        ${val ? "✓" : "✗"} ${label}
+      </div>
+    `;
+  });
+  pills += "</div>";
+
+  return `
+    <div class="dashboard-card">
+      <div class="dash-top">
+        <div class="dash-title">
+          ${row.team_name} vs ${row.opp_town}
+          <span class="dash-game-number">#${row.game_number}</span>
+        </div>
+        <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${row.game_number}')">
+          Resume
+        </button>
+      </div>
+
+      ${stepHtml}
+      ${pills}
+
+      <div class="dash-status">
+        <strong>Status:</strong> ${row.completed_at ? "Completed" : "Active"}
+      </div>
+    </div>
+  `;
+}
 
 
 async function useThisGame(gameNumber) {
