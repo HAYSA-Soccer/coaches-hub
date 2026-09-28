@@ -1,4 +1,4 @@
-console.log("BOARD.JS VERSION 2026-09-28-05:00 — Priority Sorting Enabled");
+console.log("BOARD.JS VERSION 2026-09-28-05:30 — Priority Sorting Enabled");
 
 /* ============================================================
    BASE URL
@@ -30,32 +30,47 @@ function loadBoardView() {
        PRIORITY LOGIC
        ============================================================ */
     function getPriority(row) {
-  // COMPLETED ALWAYS LAST
-  if (row.completed_at) return 999;
+      // COMPLETED ALWAYS LAST
+      if (row.completed_at) return 999;
 
-  const boardFields = [
-    row.board_opponent_contacted,
-    row.board_field_hold_entered,
-    row.board_new_info_confirmed,
-    row.board_haysa_approved,
-    row.board_coach_certified,
-    row.board_email_sent,
-    row.board_sssl_approved,
-    row.board_ts_updated
-  ];
+      const boardFields = [
+        row.board_opponent_contacted,
+        row.board_field_hold_entered,
+        row.board_new_info_confirmed,
+        row.board_haysa_approved,
+        row.board_coach_certified,
+        row.board_email_sent,
+        row.board_sssl_approved,
+        row.board_ts_updated
+      ];
 
-  const anyBoardDone = boardFields.some(v => v === "TRUE" || v === true);
-  const allBoardDone = boardFields.every(v => v === "TRUE" || v === true);
+      const anyBoardDone = boardFields.some(v => v === "TRUE" || v === true);
+      const allBoardDone = boardFields.every(v => v === "TRUE" || v === true);
 
-  // 1️⃣ Needs Board Action (some done, some not)
-  if (!allBoardDone && anyBoardDone) return 1;
+      // 1️⃣ Needs Board Action (some done, some not)
+      if (!allBoardDone && anyBoardDone) return 1;
 
-  // 2️⃣ Coach Completed / Board Not Started
-  if (!anyBoardDone && row.final_date) return 2;
+      // 2️⃣ Coach Completed / Board Not Started
+      if (!anyBoardDone && row.final_date) return 2;
 
-  // 3️⃣ Everything else
-  return 3;
-}
+      // 3️⃣ Everything else
+      return 3;
+    }
+
+    // SORT ACTIVE RESCHEDULES BY PRIORITY
+    started.sort((a, b) => getPriority(a) - getPriority(b));
+
+    renderBoardList(started, "boardList", getPriority);
+    renderBoardList(completed, "completedList", getPriority);
+
+    delete window[callbackName];
+  };
+
+  const url = `${BASE_URL}?action=getAllRows&callback=${callbackName}`;
+  const script = document.createElement("script");
+  script.src = url;
+  document.body.appendChild(script);
+}   // ← THIS WAS MISSING AND IS NOW FIXED
 
 /* ============================================================
    DATE/TIME HELPERS
