@@ -5,6 +5,8 @@ const BASE_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9
    LOAD BOARD VIEW
    ============================================================ */
 
+document.addEventListener("DOMContentLoaded", loadBoardView);
+
 function loadBoardView() {
   const callbackName = "boardCallback_" + Date.now();
 
@@ -19,8 +21,6 @@ function loadBoardView() {
   document.body.appendChild(script);
 }
 
-document.addEventListener("DOMContentLoaded", loadBoardView);
-
 
 /* ============================================================
    RENDER BOARD CARDS
@@ -31,8 +31,21 @@ function renderBoardList(rows) {
   container.innerHTML = "";
 
   rows.forEach(row => {
-    // Only show games where a reschedule has started
-    if (!row.game_number || !row.step_1_started) return;
+    // Must have a game number
+    if (!row.game_number) return;
+
+    // Detect if a reschedule has started using fields your sheet actually has
+    const started =
+      row.workflow_status ||
+      row.new_date ||
+      row.new_time ||
+      row.step_1 ||
+      row.step_2 ||
+      row.step_3 ||
+      row.step_4 ||
+      row.step_5;
+
+    if (!started) return;
 
     const card = document.createElement("div");
     card.className = "board-card";
