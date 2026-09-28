@@ -12,6 +12,21 @@ let currentGameNumber = "";
 let currentRowData = null;
 let currentStep = 1;
 
+function setSearchHeader(text) {
+  const header = document.getElementById("searchHeader");
+  if (header) header.textContent = text;
+}
+
+function showLoading(container) {
+  container.innerHTML = `<div class="loading-banner">Searching… please wait</div>`;
+}
+
+function renderMatches(container, matches) {
+  container.innerHTML = ""; // clear loading banner
+  matches.forEach(m => container.appendChild(renderMatchCard(m)));
+}
+
+
 
 async function apiGetGame(gameNumber) {
   const url = `${API_URL}?action=getRow&game_number=${encodeURIComponent(gameNumber)}`;
@@ -543,13 +558,11 @@ async function lookupGameNumber() {
 // MULTI-MATCH GAME SELECTION
 // ===============================
 function showGameSelection(matches) {
-  const container = document.getElementById("gameSelectionContainer");
+  const container = document.getElementById("search_results");
   if (!container) return;
 
-  // Show loading banner immediately
-  container.innerHTML = `<div class="loading-banner">Loading matches…</div>`;
+  setSearchHeader("Select the correct game");
 
-  // ⭐ CLEAR THE LOADING BANNER BEFORE RENDERING CARDS
   container.innerHTML = `
     <h3>Select the correct game</h3>
     <p>Multiple games match your search. Choose the one you want to reschedule.</p>
@@ -621,35 +634,28 @@ async function searchByCoach() {
   const last = document.getElementById("coach_search").value.trim();
   const url = `${BASE_URL}?action=searchRows&coach_last_name=${encodeURIComponent(last)}`;
 
-  console.log("Coach search URL:", url);
-
-  const searchResults = document.getElementById("search_results");
-  searchResults.innerHTML = `<div class="loading-banner">Searching… please wait</div>`;
+  const container = document.getElementById("search_results");
+  setSearchHeader(`Coach: ${last}`);
+  showLoading(container);
 
   try {
     const response = await fetch(url);
     const result = await response.json();
-
     const matches = result.rows || [];
 
-    // ⭐ THIS LINE WAS MISSING — it clears the loading banner
-    searchResults.innerHTML = "";
-
     if (matches.length === 0) {
-      searchResults.innerHTML = "<div>No matching games found.</div>";
+      container.innerHTML = "<div>No matching games found.</div>";
       return;
     }
 
-    matches.forEach(m => {
-      searchResults.appendChild(renderMatchCard(m));
-    });
+    renderMatches(container, matches);
 
   } catch (err) {
     console.error("Coach search error:", err);
-    searchResults.innerHTML = "<div>Error searching. Check console.</div>";
+    container.innerHTML = "<div>Error searching. Check console.</div>";
   }
 }
-   // ← FIXED
+
 
 
 
@@ -678,31 +684,33 @@ async function startRescheduleFromForm() {
   });
 
   const url = `${BASE_URL}?${params.toString()}`;
-  console.log("Search URL:", url);
 
+  const container = document.getElementById("search_results");
   const searchStatus = document.getElementById("searchStatus");
-  const gameSelectionContainer = document.getElementById("gameSelectionContainer");
+
+  // Build a meaningful header
+  setSearchHeader(`${age_group} ${gender} — ${division} — ${opp_town || ""}`.trim());
 
   searchStatus.textContent = "";
-  gameSelectionContainer.innerHTML = `<div class="loading-banner">Searching… please wait</div>`;
+  showLoading(container);
 
-  const response = await fetch(url);
-  const result = await response.json();
-  console.log("Search result:", result);
+  try {
+    const response = await fetch(url);
+    const result = await response.json();
+    const matches = result.rows || [];
 
-  const matches = result.rows || [];
+    if (matches.length === 0) {
+      container.innerHTML = "";
+      searchStatus.textContent = "No matching games found.";
+      return;
+    }
 
-  // ⭐ CLEAR THE LOADING BANNER BEFORE RENDERING CARDS
-  gameSelectionContainer.innerHTML = "";
+    renderMatches(container, matches);
 
-  if (matches.length === 0) {
-    searchStatus.textContent = "No matching games found.";
-    return;
+  } catch (err) {
+    console.error("Search error:", err);
+    container.innerHTML = "<div>Error searching. Check console.</div>";
   }
-
-  matches.forEach(m => {
-    gameSelectionContainer.appendChild(renderMatchCard(m));
-  });
 }
 
 
