@@ -129,37 +129,15 @@ function renderBoardList(rows) {
         <div><strong>Final:</strong> ${formatDate(row.final_date)} @ ${formatTime(row.final_time)} • ${row.final_field || "-"}</div>
       </div>
 
-      <div class="workflow">
-        <span>
-          Opponent 
-          <span class="indicator ${row.step_2 ? "done" : "pending"}">●</span>
-        </span>
-      
-        <span>
-          HAYSA 
-          <span class="indicator ${row.step_3 ? "done" : "pending"}">●</span>
-        </span>
-      
-        <span>
-          Sent SSSL 
-          <span class="indicator ${row.step_4 ? "done" : "pending"}">●</span>
-        </span>
-      
-        <span>
-          SSSL OK 
-          <span class="indicator ${row.step_5 ? "done" : "waiting"}">●</span>
-        </span>
-      
-        <span>
-          TS Updated 
-          <span class="indicator ${row.calendar_updated ? "done" : "pending"}">●</span>
-        </span>
-      
-        <span>
-          Blocked 
-          <span class="indicator ${row.field_confirmed ? "done" : "blocked"}">●</span>
-        </span>
+      <div class="workflow-checkbox-row">
+        <label><input type="checkbox" data-field="step_2" ${row.step_2 ? "checked" : ""}> Opponent Contacted</label>
+        <label><input type="checkbox" data-field="step_newinfo" ${row.step_newinfo ? "checked" : ""}> New Info Confirmed</label>
+        <label><input type="checkbox" data-field="step_3" ${row.step_3 ? "checked" : ""}> HAYSA Approved</label>
+        <label><input type="checkbox" data-field="step_4" ${row.step_4 ? "checked" : ""}> Sent to SSSL</label>
+        <label><input type="checkbox" data-field="step_5" ${row.step_5 ? "checked" : ""}> SSSL Approved</label>
+        <label><input type="checkbox" data-field="calendar_updated" ${row.calendar_updated ? "checked" : ""}> TS Updated</label>
       </div>
+
 
 
       <div class="board-section">
