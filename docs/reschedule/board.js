@@ -33,7 +33,17 @@ function formatTime(value) {
     return value;
   }
 
-  // Try parsing ISO datetime
+  // Detect the Google Sheets "1899-12-30T..." datetime string
+  if (typeof value === "string" && value.startsWith("1899-12-30T")) {
+    const d = new Date(value);
+    let hours = d.getUTCHours();
+    let minutes = d.getUTCMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = (hours % 12) || 12;
+    return `${hours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
+  }
+
+  // Detect ISO datetime (real game dates)
   const iso = new Date(value);
   if (!isNaN(iso.getTime())) {
     let hours = iso.getHours();
@@ -43,7 +53,7 @@ function formatTime(value) {
     return `${hours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
   }
 
-  // Try parsing Google Sheets serial (datetime or time-only)
+  // Detect Google Sheets serial (number)
   const serial = Number(value);
   if (!isNaN(serial)) {
     const base = new Date(1899, 11, 30);
@@ -60,6 +70,7 @@ function formatTime(value) {
 
   return value;
 }
+
 
 
 function formatDate(value) {
