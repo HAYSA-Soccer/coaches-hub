@@ -122,9 +122,10 @@ function renderBoardList(rows) {
     // Must have a game number
     if (!row.game_number) return;
 
-    // ⭐ NEW: Show case if coach has started OR board needs review
+    // Coach started workflow?
     const coachStarted = !!row.attempt_started;
 
+    // Board review needed?
     const needsBoardReview =
       !row.board_opponent_contacted ||
       !row.board_new_info_confirmed ||
@@ -135,14 +136,14 @@ function renderBoardList(rows) {
       !row.board_sssl_approved ||
       !row.board_ts_updated;
 
+    // Show case if coach started OR board needs review
     const showCase = coachStarted || needsBoardReview;
-
     if (!showCase) return;
 
-    // ⭐ Board indicator
+    // Visual indicator pill
     const boardIndicator = needsBoardReview
-      ? "<span class='board-needed'>Board Review Needed</span>"
-      : "<span class='board-complete'>Board Complete</span>";
+      ? `<div class="board-pill pill-warning">⚠ Board Review Needed</div>`
+      : `<div class="board-pill pill-complete">✓ Board Complete</div>`;
 
     // Build card
     const card = document.createElement("div");
@@ -168,19 +169,19 @@ function renderBoardList(rows) {
       </div>
 
       <div class="board-section board-status">
-        <strong>Status:</strong> ${row.haysa_status || "In Progress"}  
+        <strong>Status:</strong> ${row.haysa_status || "In Progress"}
         ${boardIndicator}
       </div>
 
       <div class="board-checkboxes">
-        <label><input type="checkbox" data-field="board_opponent_contacted" ${row.board_opponent_contacted ? "checked" : ""}> Opponent Contacted</label>
-        <label><input type="checkbox" data-field="board_new_info_confirmed" ${row.board_new_info_confirmed ? "checked" : ""}> New Info Confirmed</label>
-        <label><input type="checkbox" data-field="board_field_hold_entered" ${row.board_field_hold_entered ? "checked" : ""}> Field Hold Entered</label>
-        <label><input type="checkbox" data-field="board_haysa_approved" ${row.board_haysa_approved ? "checked" : ""}> HAYSA Approved</label>
-        <label><input type="checkbox" data-field="board_coach_certified" ${row.board_coach_certified ? "checked" : ""}> Coach Certified</label>
-        <label><input type="checkbox" data-field="board_email_sent" ${row.board_email_sent ? "checked" : ""}> Email Sent</label>
-        <label><input type="checkbox" data-field="board_sssl_approved" ${row.board_sssl_approved ? "checked" : ""}> SSSL Approved</label>
-        <label><input type="checkbox" data-field="board_ts_updated" ${row.board_ts_updated ? "checked" : ""}> TS Updated</label>
+        ${renderBoardCheckbox("board_opponent_contacted", row.board_opponent_contacted, "Opponent Contacted")}
+        ${renderBoardCheckbox("board_new_info_confirmed", row.board_new_info_confirmed, "New Info Confirmed")}
+        ${renderBoardCheckbox("board_field_hold_entered", row.board_field_hold_entered, "Field Hold Entered")}
+        ${renderBoardCheckbox("board_haysa_approved", row.board_haysa_approved, "HAYSA Approved")}
+        ${renderBoardCheckbox("board_coach_certified", row.board_coach_certified, "Coach Certified")}
+        ${renderBoardCheckbox("board_email_sent", row.board_email_sent, "Email Sent")}
+        ${renderBoardCheckbox("board_sssl_approved", row.board_sssl_approved, "SSSL Approved")}
+        ${renderBoardCheckbox("board_ts_updated", row.board_ts_updated, "TS Updated")}
       </div>
 
       <textarea class="board-notes" data-field="haysa_notes" placeholder="Board notes...">${row.haysa_notes || ""}</textarea>
@@ -193,6 +194,20 @@ function renderBoardList(rows) {
     container.appendChild(card);
   });
 }
+
+
+// Helper to render colored checkbox rows
+function renderBoardCheckbox(field, value, label) {
+  const cls = value ? "pill-complete" : "pill-pending";
+  const icon = value ? "✓" : "!";
+  return `
+    <label class="board-pill ${cls}">
+      <input type="checkbox" data-field="${field}" ${value ? "checked" : ""}>
+      ${icon} ${label}
+    </label>
+  `;
+}
+
 
 
 /* ============================================================
