@@ -104,3 +104,22 @@
   color: #c62828; /* red */
 }
 
+.workflow-checkbox-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 12px 0;
+}
+
+.workflow-checkbox-row label {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.workflow-checkbox-row input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+
