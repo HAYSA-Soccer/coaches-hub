@@ -481,7 +481,7 @@ function renderDashboardCard(row) {
   
     pills += `
       <div class="board-pill ${cls}">
-        ${val ? "✓" : "!"} ${label}
+        ${val ? "✓" : ""} ${label}
       </div>
     `;
   });
