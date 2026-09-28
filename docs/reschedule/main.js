@@ -217,41 +217,40 @@ function renderMatchCard(m) {
   div.className = "match-card";
 
   div.innerHTML = `
-    <div class="mc-left">
+    <!-- TOP IDENTITY LINE -->
+    <div class="mc-top">
       <div class="mc-title">
-        <strong>${m.team_name || "Unknown Team"}</strong>
+        ${m.team_name || "—"} vs ${m.opp_town || "—"}
       </div>
-
-      <div class="mc-line">
-        <span>${displayDate(m.orig_date)}</span>
-        <span>${displayTime(m.orig_time)}</span>
-        <span>${m.orig_field || "—"}</span>
-      </div>
-
-      <div class="mc-line">
-        <span>Opponent: ${m.opp_town || "—"}</span>
-      </div>
-
-      <div class="mc-line">
-        <span>Game #${m.game_number}</span>
+      <div class="mc-game-number">
+        Game #${m.game_number}
       </div>
     </div>
 
-    <div class="mc-right">
-      ${
-        m.final_date || m.final_time || m.final_field
-          ? `
-        <div class="mc-title">New Details</div>
-        <div class="mc-line">
-          <span>${m.final_date ? displayDate(m.final_date) : ""}</span>
-          <span>${m.final_time ? displayTime(m.final_time) : ""}</span>
-          <span>${m.final_field || ""}</span>
-        </div>
-        `
-          : `<div class="mc-title empty">No New Details</div>`
-      }
+    <!-- ORIGINAL + NEW DETAILS SIDE BY SIDE -->
+    <div class="mc-details">
+      <div class="mc-col">
+        <div class="mc-label">Original</div>
+        <div class="mc-line"><strong>Date:</strong> ${displayDate(m.orig_date)}</div>
+        <div class="mc-line"><strong>Time:</strong> ${displayTime(m.orig_time)}</div>
+        <div class="mc-line"><strong>Location:</strong> ${m.orig_field || "—"}</div>
+      </div>
+
+      <div class="mc-col">
+        <div class="mc-label">New</div>
+        ${
+          m.final_date || m.final_time || m.final_field
+            ? `
+              <div class="mc-line"><strong>Date:</strong> ${displayDate(m.final_date)}</div>
+              <div class="mc-line"><strong>Time:</strong> ${displayTime(m.final_time)}</div>
+              <div class="mc-line"><strong>Location:</strong> ${m.final_field || "—"}</div>
+            `
+            : `<div class="mc-line empty">No new details</div>`
+        }
+      </div>
     </div>
 
+    <!-- ACTION BUTTON -->
     <div class="mc-actions">
       <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${m.game_number}')">
         Use This Game
