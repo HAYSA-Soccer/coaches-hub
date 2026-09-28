@@ -1,4 +1,4 @@
-console.log("BOARD.JS VERSION 2026-09-28-04:00 — FINAL WORKING VERSION");
+console.log("BOARD.JS VERSION 2026-09-28-05:00 — Priority Sorting Enabled");
 
 /* ============================================================
    BASE URL
@@ -26,8 +26,39 @@ function loadBoardView() {
 
     const completed = rows.filter(r => r.completed_at);
 
-    renderBoardList(started, "boardList");
-    renderBoardList(completed, "completedList");
+    /* ============================================================
+       PRIORITY LOGIC
+       ============================================================ */
+    function getPriority(row) {
+      const boardFields = [
+        row.board_opponent_contacted,
+        row.board_field_hold_entered,
+        row.board_new_info_confirmed,
+        row.board_haysa_approved,
+        row.board_coach_certified,
+        row.board_email_sent,
+        row.board_sssl_approved,
+        row.board_ts_updated
+      ];
+
+      const anyBoardDone = boardFields.some(v => v === "TRUE" || v === true);
+      const allBoardDone = boardFields.every(v => v === "TRUE" || v === true);
+
+      // 1️⃣ Needs Board Action (some done, some not)
+      if (!allBoardDone && anyBoardDone) return 1;
+
+      // 2️⃣ Coach Completed / Board Not Started (final exists, board untouched)
+      if (!anyBoardDone && row.final_date) return 2;
+
+      // 3️⃣ Everything else
+      return 3;
+    }
+
+    // SORT ACTIVE RESCHEDULES BY PRIORITY
+    started.sort((a, b) => getPriority(a) - getPriority(b));
+
+    renderBoardList(started, "boardList", getPriority);
+    renderBoardList(completed, "completedList", getPriority);
 
     delete window[callbackName];
   };
@@ -80,7 +111,7 @@ function displayTime(value) {
    RENDER BOARD CARDS
    ============================================================ */
 
-function renderBoardList(rows, containerId) {
+function renderBoardList(rows, containerId, getPriority) {
   const container = document.getElementById(containerId);
   container.innerHTML = "";
 
@@ -96,6 +127,20 @@ function renderBoardList(rows, containerId) {
       : "Not yet finalized";
 
     const statusText = row.completed_at ? "Completed" : (row.haysa_status || "In Progress");
+
+    /* ============================================================
+       PRIORITY BADGE
+       ============================================================ */
+    const priority = getPriority(row);
+    const priorityLabel =
+      priority === 1 ? "Needs Board Action" :
+      priority === 2 ? "Coach Completed" :
+      "In Progress";
+
+    const priorityClass =
+      priority === 1 ? "priority-high" :
+      priority === 2 ? "priority-medium" :
+      "priority-low";
 
     /* ============================================================
        COACH PROGRESS
@@ -135,6 +180,8 @@ function renderBoardList(rows, containerId) {
         <div class="board-title">${row.team_name} vs ${row.opp_town}</div>
         <div class="board-game-number">#${row.game_number}</div>
       </div>
+
+      <div class="priority-badge ${priorityClass}">${priorityLabel}</div>
 
       <div class="board-grid">
         <div><strong>Original:</strong> ${origDetails}</div>
