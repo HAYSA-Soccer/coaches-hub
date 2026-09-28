@@ -1,4 +1,4 @@
-console.log("BOARD.JS VERSION 2026-09-28-03:00 — Coach + Board Workflow Enabled");
+console.log("BOARD.JS VERSION 2026-09-28-03:30 — Corrected Layout + Full Started Cases");
 
 const BASE_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
 
@@ -14,8 +14,14 @@ function loadBoardView() {
   window[callbackName] = function(result) {
     const rows = result.rows || [];
 
-    // SIMPLE SPLIT
-    const started = rows.filter(r => r.attempt_started);
+    // FIXED: Show ALL started cases (TRUE, "TRUE", 1, "1")
+    const started = rows.filter(r =>
+      r.attempt_started === true ||
+      r.attempt_started === "TRUE" ||
+      r.attempt_started === 1 ||
+      r.attempt_started === "1"
+    );
+
     const completed = rows.filter(r => r.completed_at);
 
     renderBoardList(started, "boardList");
@@ -91,7 +97,7 @@ function renderBoardList(rows, containerId) {
     const statusText = row.completed_at ? "Completed" : (row.haysa_status || "In Progress");
 
     /* ============================================================
-       COACH PROGRESS SECTION
+       COACH PROGRESS (Compact)
        ============================================================ */
     const coachProgress = `
       <div class="coach-progress">
@@ -105,7 +111,7 @@ function renderBoardList(rows, containerId) {
     `;
 
     /* ============================================================
-       BOARD CHECKBOXES (CLICKABLE)
+       BOARD CHECKBOXES (Clickable)
        ============================================================ */
     const boardCheckboxes = `
       <div class="board-checkboxes">
