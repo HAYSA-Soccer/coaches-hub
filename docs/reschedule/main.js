@@ -172,6 +172,33 @@ function displayDate(value) {
   return value;
 }
 
+async function showCoachSelector() {
+  const all = await apiGetAllRows();
+
+  // Build a unique list of coach/team combos
+  const coachMap = new Map();
+
+  all.forEach(r => {
+    const key = `${r.coach_name} | ${r.team_name}`;
+    if (r.coach_name && r.team_name && !coachMap.has(key)) {
+      coachMap.set(key, { coach: r.coach_name, team: r.team_name });
+    }
+  });
+
+  const dropdown = document.getElementById("coachSelectorDropdown");
+  dropdown.innerHTML = "";
+
+  coachMap.forEach((obj, key) => {
+    const opt = document.createElement("option");
+    opt.value = obj.coach.toLowerCase();
+    opt.textContent = `${obj.team} — Coach ${obj.coach}`;
+    dropdown.appendChild(opt);
+  });
+
+  document.getElementById("coachSelector").style.display = "block";
+}
+
+
 function displayTime(t) {
   if (!t) return "—";
   t = t.trim();
