@@ -1,0 +1,39 @@
+<div id="boardView">
+  <h2>Active Reschedules</h2>
+  <div id="boardList" class="board-list"></div>
+</div>
+
+<style>
+  .board-card {
+    border: 1px solid #ccc;
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    background: #fafafa;
+  }
+  .board-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+  }
+  .board-section {
+    margin-bottom: 8px;
+  }
+  .board-checkboxes label {
+    display: block;
+    margin-bottom: 4px;
+  }
+  .board-notes {
+    width: 100%;
+    margin-top: 6px;
+    padding: 6px;
+  }
+  .board-save-btn {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+</style>
