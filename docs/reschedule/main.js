@@ -12,19 +12,22 @@ let ALL_GAMES = [];
 
 // =========== Define preload function ====================
 async function preloadAllGames() {
-  try {
-    const url = `${BASE_URL}?action=getAllGames`;
-    const response = await fetch(url);
-    const result = await response.json();
+  const callbackName = "preloadCallback_" + Date.now();
 
-    console.log("Preload result:", result);   // ⭐ NOW result exists
+  window[callbackName] = function(result) {
     ALL_GAMES = result.rows || [];
     console.log("Preloaded games:", ALL_GAMES.length);
+    delete window[callbackName];
+  };
 
-  } catch (err) {
-    console.error("Error preloading games:", err);
-  }
+  const url = `${BASE_URL}?action=getAllGames&callback=${callbackName}`;
+
+  const script = document.createElement("script");
+  script.src = url;
+  script.onerror = () => console.error("JSONP preload failed");
+  document.body.appendChild(script);
 }
+
 
 
 // =============== Run it when the page loads ===============
