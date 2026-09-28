@@ -26,6 +26,19 @@ function renderMatches(container, matches) {
   matches.forEach(m => container.appendChild(renderMatchCard(m)));
 }
 
+function clearSearchResults() {
+  const header = document.getElementById("searchHeader");
+  const container = document.getElementById("search_results");
+  const status = document.getElementById("searchStatus");
+
+  if (header) header.textContent = "";
+  if (container) container.innerHTML = "";
+  if (status) status.textContent = "";
+
+  // Optional: scroll back to top of search area
+  const searchBox = document.getElementById("searchBox");
+  if (searchBox) searchBox.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
 
 async function apiGetGame(gameNumber) {
