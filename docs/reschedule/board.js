@@ -21,16 +21,6 @@ function loadBoardView() {
 }
 
 
-function isCompleted(row) {
-  return row.step_2 &&
-         row.step_newinfo &&
-         row.step_3 &&
-         row.step_4 &&
-         row.step_5 &&
-         row.calendar_updated;
-}
-
-
 /* ============================================================
    FORMAT DATE & TIME
    ============================================================ */
@@ -38,7 +28,6 @@ function isCompleted(row) {
 function formatDate(value) {
   if (!value) return "-";
 
-  // If it's an ISO datetime string like "2026-11-07T05:00:00.000Z"
   if (typeof value === "string" && value.includes("T")) {
     const d = new Date(value);
     if (!isNaN(d.getTime())) {
@@ -46,17 +35,23 @@ function formatDate(value) {
     }
   }
 
-  // Fallback: try normal Date
   const d2 = new Date(value);
   if (!isNaN(d2.getTime())) {
     return d2.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  }
+
+  const serial = Number(value);
+  if (!isNaN(serial)) {
+    const base = new Date(1899, 11, 30);
+    const ms = serial * 24 * 60 * 60 * 1000;
+    const d3 = new Date(base.getTime() + ms);
+    return d3.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
 
   return value;
 }
 
 function extractTimeFromString(value) {
-  // Handles "1899-12-30T19:00:00.000Z" or "2026-11-07T05:00:00.000Z"
   const m = typeof value === "string" ? value.match(/T(\d{2}):(\d{2})/) : null;
   if (!m) return null;
 
@@ -71,13 +66,10 @@ function extractTimeFromString(value) {
 function formatTime(value) {
   if (!value) return "-";
 
-  // If already looks like "7:30 PM" or "17:30"
   if (typeof value === "string" && value.match(/\d{1,2}:\d{2}/)) {
-    // If it already has AM/PM, just return
     if (value.toUpperCase().includes("AM") || value.toUpperCase().includes("PM")) {
       return value;
     }
-    // Otherwise assume 24h and convert
     const parts = value.split(":");
     let h = parseInt(parts[0], 10);
     const m = parts[1];
@@ -86,15 +78,25 @@ function formatTime(value) {
     return `${h}:${m} ${ampm}`;
   }
 
-  // Try to extract from "YYYY-MM-DDTHH:MM:SS.000Z"
   const fromString = extractTimeFromString(value);
   if (fromString) return fromString;
 
-  // Fallback: try Date
   const d = new Date(value);
   if (!isNaN(d.getTime())) {
     let hours = d.getHours();
     const minutes = d.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = (hours % 12) || 12;
+    return `${hours}:${minutes} ${ampm}`;
+  }
+
+  const serial = Number(value);
+  if (!isNaN(serial)) {
+    const base = new Date(1899, 11, 30);
+    const ms = serial * 24 * 60 * 60 * 1000;
+    const d2 = new Date(base.getTime() + ms);
+    let hours = d2.getHours();
+    const minutes = d2.getMinutes().toString().padStart(2, "0");
     const ampm = hours >= 12 ? "PM" : "AM";
     hours = (hours % 12) || 12;
     return `${hours}:${minutes} ${ampm}`;
@@ -105,29 +107,44 @@ function formatTime(value) {
 
 
 /* ============================================================
-   RENDER BOARD CARDS
+   RENDER BOARD CARDS (ACTIVE + COMPLETED)
    ============================================================ */
 
 function renderBoardList(rows) {
   const activeContainer = document.getElementById("boardList");
   const completedContainer = document.getElementById("completedList");
 
+  if (!activeContainer) return;
+  if (!completedContainer) return;
+
   activeContainer.innerHTML = "";
   completedContainer.innerHTML = "";
 
   rows.forEach(row => {
-
     if (!row.game_number) return;
     if (!row.attempt_started || row.attempt_started === "") return;
 
-    // Determine if case is completed
-    const isCompleted =
-      row.step_2 &&
-      row.step_newinfo &&
-      row.step_3 &&
-      row.step_4 &&
-      row.step_5 &&
-      row.calendar_updated;
+    // AUTO-BOARD LOGIC BASED ON COACH STEPS
+    // Step 4: new time/date/location selected → opponent contacted + new info confirmed
+    if (row.step_4) {
+      row.bm_opponent_contacted = true;
+      row.bm_new_info_confirmed = true;
+    }
+
+    // Step 6: HAYSA overall approval
+    if (row.step_6) {
+      row.bm_haysa_approved = true;
+    }
+
+    // Step 7: coach certifies they spoke with opposing coach
+    if (row.step_7) {
+      row.bm_coach_certified = true;
+    }
+
+    // Step 8: form printed/saved → email sent
+    if (row.step_8) {
+      row.bm_email_sent = true;
+    }
 
     const statusClass =
       row.haysa_status === "approved" ? "status-approved" :
@@ -152,12 +169,20 @@ function renderBoardList(rows) {
       </div>
 
       <div class="workflow-checkbox-row">
-        <label><input type="checkbox" data-field="step_2" ${row.step_2 ? "checked" : ""}> Opponent Contacted</label>
-        <label><input type="checkbox" data-field="step_newinfo" ${row.step_newinfo ? "checked" : ""}> New Info Confirmed</label>
-        <label><input type="checkbox" data-field="step_3" ${row.step_3 ? "checked" : ""}> HAYSA Approved</label>
-        <label><input type="checkbox" data-field="step_4" ${row.step_4 ? "checked" : ""}> Sent to SSSL</label>
-        <label><input type="checkbox" data-field="step_5" ${row.step_5 ? "checked" : ""}> SSSL Approved</label>
-        <label><input type="checkbox" data-field="calendar_updated" ${row.calendar_updated ? "checked" : ""}> TS Updated</label>
+        <label><input type="checkbox" data-field="bm_opponent_contacted" ${row.bm_opponent_contacted ? "checked" : ""} disabled> Opponent Contacted</label>
+        <label><input type="checkbox" data-field="bm_new_info_confirmed" ${row.bm_new_info_confirmed ? "checked" : ""} disabled> New Info Confirmed</label>
+
+        <label><input type="checkbox" data-field="bm_field_hold_entered" ${row.bm_field_hold_entered ? "checked" : ""}> Field Hold Entered</label>
+
+        <label><input type="checkbox" data-field="bm_haysa_approved" ${row.bm_haysa_approved ? "checked" : ""}> HAYSA Approved</label>
+
+        <label><input type="checkbox" data-field="bm_coach_certified" ${row.bm_coach_certified ? "checked" : ""} disabled> Coach Certified</label>
+
+        <label><input type="checkbox" data-field="bm_email_sent" ${row.bm_email_sent ? "checked" : ""} disabled> Email Sent</label>
+
+        <label><input type="checkbox" data-field="bm_sssl_approved" ${row.bm_sssl_approved ? "checked" : ""}> SSSL Approved/Declined</label>
+
+        <label><input type="checkbox" data-field="bm_ts_updated" ${row.bm_ts_updated ? "checked" : ""}> TS Updated / Temp Hold Removed</label>
       </div>
 
       <div class="board-section">
@@ -176,7 +201,16 @@ function renderBoardList(rows) {
       </button>
     `;
 
-    // Append to correct section
+    const isCompleted =
+      row.bm_opponent_contacted &&
+      row.bm_new_info_confirmed &&
+      row.bm_field_hold_entered &&
+      row.bm_haysa_approved &&
+      row.bm_coach_certified &&
+      row.bm_email_sent &&
+      row.bm_sssl_approved &&
+      row.bm_ts_updated;
+
     if (isCompleted) {
       completedContainer.appendChild(card);
     } else {
@@ -194,14 +228,19 @@ function saveBoardRow(gameNumber, cardElement) {
   const updates = {};
 
   cardElement.querySelectorAll("input[type='checkbox']").forEach(cb => {
-    updates[cb.dataset.field] = cb.checked ? "TRUE" : "FALSE";
+    const field = cb.dataset.field;
+    if (!field) return;
+    updates[field] = cb.checked ? "TRUE" : "FALSE";
   });
 
   cardElement.querySelectorAll("select[data-field]").forEach(sel => {
     updates[sel.dataset.field] = sel.value;
   });
 
-  updates["haysa_notes"] = cardElement.querySelector("textarea[data-field='haysa_notes']").value;
+  const notes = cardElement.querySelector("textarea[data-field='haysa_notes']");
+  if (notes) {
+    updates["haysa_notes"] = notes.value;
+  }
 
   const callbackName = "updateCallback_" + Date.now();
   window[callbackName] = function(result) {
