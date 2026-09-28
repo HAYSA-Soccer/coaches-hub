@@ -257,7 +257,7 @@ async function startRescheduleFromSearch(gameNumber) {
   // Hydrate fields
   hydrateFieldsFromRow(result.data);
 
-  // Hide search UI
+  // ⭐ Hide ALL search UI (now actually clears unified containers)
   hideSearchUI();
 
   // Show workflow UI
@@ -267,6 +267,7 @@ async function startRescheduleFromSearch(gameNumber) {
   const nextStep = findNextIncompleteStepSkippingStep1(currentRowData);
   goToStep(nextStep);
 }
+
 
 
 
