@@ -282,6 +282,38 @@ function renderMatchCard(m) {
 }
 
 
+function renderBoardProgress(row) {
+  const fields = [
+    "board_opponent_contacted",
+    "board_new_info_confirmed",
+    "board_field_hold_entered",
+    "board_haysa_approved",
+    "board_coach_certified",
+    "board_email_sent",
+    "board_sssl_approved",
+    "board_ts_updated"
+  ];
+
+  let html = "<ul class='board-progress-list'>";
+
+  fields.forEach(f => {
+    const val = String(row[f]).toUpperCase() === "TRUE";
+    const label = f.replace(/_/g, " ");
+    html += `<li><strong>${label}:</strong> ${val ? "✓ Completed" : "✗ Pending"}</li>`;
+  });
+
+  html += "</ul>";
+
+  if (row.completed_at) {
+    html += `<p><strong>Status:</strong> Completed on ${row.completed_at}</p>`;
+  } else {
+    html += `<p><strong>Status:</strong> Active</p>`;
+  }
+
+  document.getElementById("boardProgressContent").innerHTML = html;
+  document.getElementById("boardProgressContainer").style.display = "block";
+}
+
 
 
 
@@ -533,7 +565,7 @@ async function loadSubmittedRequests() {
 // ===============================
 async function loadGameWithoutStartingWorkflow(gameNumber) {
 
-  hideLandingPage();   // ⭐ THIS is the missing piece
+  hideLandingPage();
 
   console.log("Loading game without starting workflow:", gameNumber);
 
@@ -548,6 +580,9 @@ async function loadGameWithoutStartingWorkflow(gameNumber) {
 
   currentRowData = rowResult.data;
   hydrateFieldsFromRow(currentRowData);
+
+  // ⭐ ADD THIS — this is where the coach sees board progress
+  renderBoardProgress(currentRowData);
 
   const row = rowResult.data;
 
