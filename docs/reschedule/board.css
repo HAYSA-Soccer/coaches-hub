@@ -122,4 +122,171 @@
   margin-right: 6px;
 }
 
+/* ============================================================
+   CARD CONTAINER
+   ============================================================ */
+
+.board-card {
+  background: #ffffff;
+  border: 1px solid #d6d6d6;
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 22px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  transition: box-shadow 0.2s ease;
+}
+
+.board-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+/* ============================================================
+   SECTION HEADERS
+   ============================================================ */
+
+.case-header {
+  font-size: 15px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.status-approved {
+  background: #2e7d32;
+}
+
+.status-rejected {
+  background: #c62828;
+}
+
+.status-progress {
+  background: #1976d2;
+}
+
+/* ============================================================
+   GAME TITLE
+   ============================================================ */
+
+.board-card h3 {
+  margin: 6px 0 14px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* ============================================================
+   TIMELINE
+   ============================================================ */
+
+.timeline {
+  background: #f7f7f7;
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+  border-left: 4px solid #1976d2;
+}
+
+.timeline div {
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.timeline strong {
+  color: #333;
+}
+
+/* ============================================================
+   WORKFLOW CHECKBOX ROW
+   ============================================================ */
+
+.workflow-checkbox-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 22px;
+  margin-bottom: 18px;
+  padding: 12px 0;
+  border-top: 1px solid #e3e3e3;
+  border-bottom: 1px solid #e3e3e3;
+}
+
+.workflow-checkbox-row label {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  background: #fafafa;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.workflow-checkbox-row input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+/* ============================================================
+   BOARD SECTION
+   ============================================================ */
+
+.board-section {
+  margin: 14px 0;
+}
+
+.board-approval {
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* ============================================================
+   NOTES AREA
+   ============================================================ */
+
+.board-notes {
+  width: 100%;
+  min-height: 70px;
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: vertical;
+}
+
+/* ============================================================
+   SAVE BUTTON
+   ============================================================ */
+
+.board-save-btn {
+  margin-top: 14px;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.board-save-btn:hover {
+  background: #0f5bb5;
+}
+
+/* ============================================================
+   COMPLETED SECTION
+   ============================================================ */
+
+#completedList .board-card {
+  opacity: 0.85;
+  border-color: #bdbdbd;
+}
+
+#completedList .board-card:hover {
+  opacity: 1;
+}
 
