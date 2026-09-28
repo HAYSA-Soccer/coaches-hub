@@ -130,13 +130,37 @@ function renderBoardList(rows) {
       </div>
 
       <div class="workflow">
-        <span class="${row.step_2 ? "wf-done" : "wf-pending"}">Opponent</span>
-        <span class="${row.step_3 ? "wf-done" : "wf-pending"}">HAYSA</span>
-        <span class="${row.step_4 ? "wf-done" : "wf-pending"}">Sent SSSL</span>
-        <span class="${row.step_5 ? "wf-done" : "wf-pending"}">SSSL OK</span>
-        <span class="${row.calendar_updated ? "wf-done" : "wf-pending"}">TS Updated</span>
-        <span class="${row.field_confirmed ? "wf-done" : "wf-blocked"}">Blocked</span>
+        <span>
+          Opponent 
+          <span class="indicator ${row.step_2 ? "done" : "pending"}">●</span>
+        </span>
+      
+        <span>
+          HAYSA 
+          <span class="indicator ${row.step_3 ? "done" : "pending"}">●</span>
+        </span>
+      
+        <span>
+          Sent SSSL 
+          <span class="indicator ${row.step_4 ? "done" : "pending"}">●</span>
+        </span>
+      
+        <span>
+          SSSL OK 
+          <span class="indicator ${row.step_5 ? "done" : "waiting"}">●</span>
+        </span>
+      
+        <span>
+          TS Updated 
+          <span class="indicator ${row.calendar_updated ? "done" : "pending"}">●</span>
+        </span>
+      
+        <span>
+          Blocked 
+          <span class="indicator ${row.field_confirmed ? "done" : "blocked"}">●</span>
+        </span>
       </div>
+
 
       <div class="board-section">
         <strong>HAYSA Decision:</strong>
