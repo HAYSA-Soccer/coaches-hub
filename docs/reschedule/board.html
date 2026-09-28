@@ -4,26 +4,33 @@
   <meta charset="UTF-8">
   <title>HAYSA Board Reschedule Dashboard</title>
 
-  <!-- Board-only CSS -->
   <link rel="stylesheet" href="board.css">
-
-  <!-- Board JS -->
   <script src="board.js" defer></script>
 </head>
-  
-<input 
-  id="dateFilter" 
-  type="date" 
-  style="padding:8px; font-size:16px; margin-bottom:20px;"
->
 
 <body>
   <div id="boardView">
+
+    <h2>Filters</h2>
+
+    <!-- TEAM FILTER -->
+    <select id="teamFilter" style="padding:8px; font-size:16px; margin-right:10px;">
+      <option value="">All Teams</option>
+    </select>
+
+    <!-- DATE FILTER -->
+    <input 
+      id="dateFilter" 
+      type="date" 
+      style="padding:8px; font-size:16px; margin-bottom:20px;"
+    >
+
     <h2>Active Reschedules</h2>
     <div id="boardList"></div>
 
     <h2>Completed Reschedules</h2>
     <div id="completedList"></div>
+
   </div>
 </body>
 </html>
