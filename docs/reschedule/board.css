@@ -82,3 +82,25 @@
   color: #2e7d32;
 }
 
+
+.indicator {
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.indicator.done {
+  color: #2e7d32; /* green */
+}
+
+.indicator.pending {
+  color: #f9a825; /* yellow */
+}
+
+.indicator.waiting {
+  color: #1976d2; /* blue */
+}
+
+.indicator.blocked {
+  color: #c62828; /* red */
+}
+
