@@ -25,74 +25,73 @@ function loadBoardView() {
    FORMAT DATE & TIME
    ============================================================ */
 
-function formatTime(value) {
-  if (!value) return "-";
-
-  // If it's already readable (HH:MM or HH:MM AM/PM)
-  if (typeof value === "string" && value.match(/\d{1,2}:\d{2}/)) {
-    return value;
-  }
-
-  // Detect the Google Sheets "1899-12-30T..." datetime string
-  if (typeof value === "string" && value.startsWith("1899-12-30T")) {
-    const d = new Date(value);
-    let hours = d.getUTCHours();
-    let minutes = d.getUTCMinutes();
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = (hours % 12) || 12;
-    return `${hours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
-  }
-
-  // Detect ISO datetime (real game dates)
-  const iso = new Date(value);
-  if (!isNaN(iso.getTime())) {
-    let hours = iso.getHours();
-    let minutes = iso.getMinutes();
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = (hours % 12) || 12;
-    return `${hours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
-  }
-
-  // Detect Google Sheets serial (number)
-  const serial = Number(value);
-  if (!isNaN(serial)) {
-    const base = new Date(1899, 11, 30);
-    const ms = serial * 24 * 60 * 60 * 1000;
-    const d = new Date(base.getTime() + ms);
-
-    let hours = d.getHours();
-    let minutes = d.getMinutes();
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = (hours % 12) || 12;
-
-    return `${hours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
-  }
-
-  return value;
-}
-
-
-
 function formatDate(value) {
   if (!value) return "-";
 
-  const d = new Date(value);
-  if (!isNaN(d.getTime())) {
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  // If it's an ISO datetime string like "2026-11-07T05:00:00.000Z"
+  if (typeof value === "string" && value.includes("T")) {
+    const d = new Date(value);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    }
   }
 
-  // Google Sheets serial date
-  const serial = Number(value);
-  if (!isNaN(serial)) {
-    const base = new Date(1899, 11, 30);
-    const ms = serial * 24 * 60 * 60 * 1000;
-    const d2 = new Date(base.getTime() + ms);
+  // Fallback: try normal Date
+  const d2 = new Date(value);
+  if (!isNaN(d2.getTime())) {
     return d2.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
 
   return value;
 }
 
+function extractTimeFromString(value) {
+  // Handles "1899-12-30T19:00:00.000Z" or "2026-11-07T05:00:00.000Z"
+  const m = typeof value === "string" ? value.match(/T(\d{2}):(\d{2})/) : null;
+  if (!m) return null;
+
+  let hours = parseInt(m[1], 10);
+  const minutes = m[2];
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = (hours % 12) || 12;
+
+  return `${hours}:${minutes} ${ampm}`;
+}
+
+function formatTime(value) {
+  if (!value) return "-";
+
+  // If already looks like "7:30 PM" or "17:30"
+  if (typeof value === "string" && value.match(/\d{1,2}:\d{2}/)) {
+    // If it already has AM/PM, just return
+    if (value.toUpperCase().includes("AM") || value.toUpperCase().includes("PM")) {
+      return value;
+    }
+    // Otherwise assume 24h and convert
+    const parts = value.split(":");
+    let h = parseInt(parts[0], 10);
+    const m = parts[1];
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = (h % 12) || 12;
+    return `${h}:${m} ${ampm}`;
+  }
+
+  // Try to extract from "YYYY-MM-DDTHH:MM:SS.000Z"
+  const fromString = extractTimeFromString(value);
+  if (fromString) return fromString;
+
+  // Fallback: try Date
+  const d = new Date(value);
+  if (!isNaN(d.getTime())) {
+    let hours = d.getHours();
+    const minutes = d.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = (hours % 12) || 12;
+    return `${hours}:${minutes} ${ampm}`;
+  }
+
+  return value;
+}
 
 
 /* ============================================================
