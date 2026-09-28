@@ -114,90 +114,73 @@ function formatTime(value) {
    ============================================================ */
 
 function renderBoardList(rows) {
-  const activeContainer = document.getElementById("boardList");
-  const completedContainer = document.getElementById("completedList");
-
-  activeContainer.innerHTML = "";
-  completedContainer.innerHTML = "";
+  const container = document.getElementById("boardList");
+  container.innerHTML = "";
 
   rows.forEach(row => {
+
+    // Must have a game number
     if (!row.game_number) return;
-    if (!row.attempt_started || row.attempt_started === "") return;
 
-    /* ============================================================
-       AUTO-CHECK LOGIC (board can override)
-       ============================================================ */
+    // ⭐ NEW: Show case if coach has started OR board needs review
+    const coachStarted = !!row.attempt_started;
 
-    // Step 4: new time/date/location selected → opponent contacted + new info confirmed
-    if (row.step_4) {
-      row.board_opponent_contacted = true;
-      row.board_new_info_confirmed = true;
-    }
+    const needsBoardReview =
+      !row.board_opponent_contacted ||
+      !row.board_new_info_confirmed ||
+      !row.board_field_hold_entered ||
+      !row.board_haysa_approved ||
+      !row.board_coach_certified ||
+      !row.board_email_sent ||
+      !row.board_sssl_approved ||
+      !row.board_ts_updated;
 
-    // Step 6: HAYSA overall approval
-    if (row.step_6) {
-      row.board_haysa_approved = true;
-    }
+    const showCase = coachStarted || needsBoardReview;
 
-    // Step 7: coach certifies they spoke with opposing coach
-    if (row.step_7) {
-      row.board_coach_certified = true;
-    }
+    if (!showCase) return;
 
-    // Step 8: form printed/saved → email sent
-    if (row.step_8) {
-      row.board_email_sent = true;
-    }
+    // ⭐ Board indicator
+    const boardIndicator = needsBoardReview
+      ? "<span class='board-needed'>Board Review Needed</span>"
+      : "<span class='board-complete'>Board Complete</span>";
 
-    const statusClass =
-      row.haysa_status === "approved" ? "status-approved" :
-      row.haysa_status === "rejected" ? "status-rejected" :
-      "status-progress";
-
+    // Build card
     const card = document.createElement("div");
     card.className = "board-card";
 
     card.innerHTML = `
-      <div class="case-header ${statusClass}">
-        ${row.haysa_status ? row.haysa_status.toUpperCase() : "IN PROGRESS"}
-      </div>
-
       <h3>Game #${row.game_number} — ${row.team_name || ""} vs ${row.opp_town || ""}</h3>
 
-      <div class="timeline">
-        <div><strong>Original:</strong> ${formatDate(row.orig_date)} @ ${formatTime(row.orig_time)} • ${row.orig_field || ""}</div>
-        <div><strong>Option 1:</strong> ${formatDate(row.proposed_1_date)} @ ${formatTime(row.proposed_1_time)} • ${row.proposed_1_field || "-"}</div>
-        <div><strong>Option 2:</strong> ${formatDate(row.proposed_2_date)} @ ${formatTime(row.proposed_2_time)} • ${row.proposed_2_field || "-"}</div>
-        <div><strong>Final:</strong> ${formatDate(row.final_date)} @ ${formatTime(row.final_time)} • ${row.final_field || "-"}</div>
-      </div>
-
-      <div class="workflow-checkbox-row">
-
-        <label><input type="checkbox" data-field="board_opponent_contacted" ${row.board_opponent_contacted ? "checked" : ""}> Opponent Contacted</label>
-
-        <label><input type="checkbox" data-field="board_new_info_confirmed" ${row.board_new_info_confirmed ? "checked" : ""}> New Info Confirmed</label>
-
-        <label><input type="checkbox" data-field="board_field_hold_entered" ${row.board_field_hold_entered ? "checked" : ""}> Field Hold Entered</label>
-
-        <label><input type="checkbox" data-field="board_haysa_approved" ${row.board_haysa_approved ? "checked" : ""}> HAYSA Approved</label>
-
-        <label><input type="checkbox" data-field="board_coach_certified" ${row.board_coach_certified ? "checked" : ""}> Coach Certified</label>
-
-        <label><input type="checkbox" data-field="board_email_sent" ${row.board_email_sent ? "checked" : ""}> Email Sent</label>
-
-        <label><input type="checkbox" data-field="board_sssl_approved" ${row.board_sssl_approved ? "checked" : ""}> SSSL Approved/Declined</label>
-
-        <label><input type="checkbox" data-field="board_ts_updated" ${row.board_ts_updated ? "checked" : ""}> TS Updated / Temp Hold Removed</label>
-
+      <div class="board-section">
+        <strong>Original:</strong> ${row.orig_date || ""} • ${row.orig_time || ""} • ${row.orig_field || ""}
       </div>
 
       <div class="board-section">
-        <strong>HAYSA Decision:</strong>
-        <select class="board-approval" data-field="haysa_status">
-          <option value="in progress" ${row.haysa_status === "in progress" ? "selected" : ""}>In Progress</option>
-          <option value="approved" ${row.haysa_status === "approved" ? "selected" : ""}>Approved</option>
-          <option value="rejected" ${row.haysa_status === "rejected" ? "selected" : ""}>Rejected</option>
-        </select>
+        <strong>Proposed Option 1:</strong> ${row.proposed_1_date || "-"} • ${row.proposed_1_time || "-"} • ${row.proposed_1_field || "-"}
+      </div>
+
+      <div class="board-section">
+        <strong>Proposed Option 2:</strong> ${row.proposed_2_date || "-"} • ${row.proposed_2_time || "-"} • ${row.proposed_2_field || "-"}
+      </div>
+
+      <div class="board-section">
+        <strong>Final:</strong> ${row.final_date || "-"} • ${row.final_time || "-"} • ${row.final_field || "-"}
+      </div>
+
+      <div class="board-section board-status">
+        <strong>Status:</strong> ${row.haysa_status || "In Progress"}  
+        ${boardIndicator}
+      </div>
+
+      <div class="board-checkboxes">
+        <label><input type="checkbox" data-field="board_opponent_contacted" ${row.board_opponent_contacted ? "checked" : ""}> Opponent Contacted</label>
+        <label><input type="checkbox" data-field="board_new_info_confirmed" ${row.board_new_info_confirmed ? "checked" : ""}> New Info Confirmed</label>
+        <label><input type="checkbox" data-field="board_field_hold_entered" ${row.board_field_hold_entered ? "checked" : ""}> Field Hold Entered</label>
+        <label><input type="checkbox" data-field="board_haysa_approved" ${row.board_haysa_approved ? "checked" : ""}> HAYSA Approved</label>
+        <label><input type="checkbox" data-field="board_coach_certified" ${row.board_coach_certified ? "checked" : ""}> Coach Certified</label>
+        <label><input type="checkbox" data-field="board_email_sent" ${row.board_email_sent ? "checked" : ""}> Email Sent</label>
+        <label><input type="checkbox" data-field="board_sssl_approved" ${row.board_sssl_approved ? "checked" : ""}> SSSL Approved</label>
+        <label><input type="checkbox" data-field="board_ts_updated" ${row.board_ts_updated ? "checked" : ""}> TS Updated</label>
       </div>
 
       <textarea class="board-notes" data-field="haysa_notes" placeholder="Board notes...">${row.haysa_notes || ""}</textarea>
@@ -207,25 +190,7 @@ function renderBoardList(rows) {
       </button>
     `;
 
-    /* ============================================================
-       COMPLETION LOGIC
-       ============================================================ */
-
-    const isCompleted =
-      row.board_opponent_contacted &&
-      row.board_new_info_confirmed &&
-      row.board_field_hold_entered &&
-      row.board_haysa_approved &&
-      row.board_coach_certified &&
-      row.board_email_sent &&
-      row.board_sssl_approved &&
-      row.board_ts_updated;
-
-    if (isCompleted) {
-      completedContainer.appendChild(card);
-    } else {
-      activeContainer.appendChild(card);
-    }
+    container.appendChild(card);
   });
 }
 
