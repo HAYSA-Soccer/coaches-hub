@@ -28,10 +28,18 @@ async function preloadAllGames() {
   document.body.appendChild(script);
 }
 
-async function loadSelectedCoachDashboard() {
-  enterDashboardMode();
-  showCoachDashboard();
+function openCoachSelector() {
+  enterDashboardMode();   // hides search UI
+  showCoachSelector();    // your existing function
 }
+
+async function loadCoachDashboard() {
+  enterDashboardMode();        // hides search UI
+  document.getElementById("coachSelector").style.display = "none";
+  document.getElementById("coachDashboard").style.display = "block";
+  await showCoachDashboard();  // your existing function
+}
+
 
 
 
