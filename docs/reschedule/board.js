@@ -72,29 +72,51 @@ function loadBoardView() {
        FILTER FUNCTION
        ============================================================ */
     function applyFilters() {
-  let filtered = [...started];
+     let filtered = [...started];
+   
+     const teamTerm = document.getElementById("teamFilter").value;
+     const singleDate = document.getElementById("dateFilter").value;
+     const startDate = document.getElementById("startDate").value;
+     const endDate = document.getElementById("endDate").value;
+   
+     // TEAM FILTER
+     if (teamTerm) {
+       filtered = filtered.filter(r => r.team_name === teamTerm);
+     }
+   
+     // DATE SOURCE (final_date preferred)
+     function getRowDate(r) {
+       return (r.final_date || r.orig_date || "").split("T")[0];
+     }
+   
+     // SINGLE DATE FILTER
+     if (singleDate) {
+       filtered = filtered.filter(r => getRowDate(r) === singleDate);
+     }
+   
+     // RANGE FILTER
+     if (startDate || endDate) {
+       filtered = filtered.filter(r => {
+         const d = getRowDate(r);
+         if (startDate && d < startDate) return false;
+         if (endDate && d > endDate) return false;
+         return true;
+       });
+     }
+   
+     // NO RESULTS MESSAGE
+     const activeContainer = document.getElementById("boardList");
+     if (filtered.length === 0) {
+       activeContainer.innerHTML = `
+         <div style="padding:12px; font-size:16px; color:#666;">
+           No active reschedules for this date.
+         </div>
+       `;
+     } else {
+       renderBoardList(filtered, "boardList", getPriority);
+     }
+   }
 
-  const teamTerm = document.getElementById("teamFilter").value;
-  const singleDate = document.getElementById("dateFilter").value;
-  const startDate = document.getElementById("startDate").value;
-  const endDate = document.getElementById("endDate").value;
-
-  // TEAM FILTER
-  if (teamTerm) {
-    filtered = filtered.filter(r => r.team_name === teamTerm);
-  }
-
-  // DATE MATCH FUNCTION
-  function matchDate(rowDate, target) {
-    return rowDate === target;
-  }
-
-  // RANGE MATCH FUNCTION
-  function matchRange(rowDate, start, end) {
-    if (start && rowDate < start) return false;
-    if (end && rowDate > end) return false;
-    return true;
-  }
 
   // DATE SOURCE (final_date preferred)
   function getRowDate(r) {
