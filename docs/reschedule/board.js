@@ -1,4 +1,4 @@
-console.log("BOARD.JS VERSION 2026-09-28-05:30 — Priority Sorting Enabled");
+console.log("BOARD.JS VERSION 2026-09-28-06:00 — Priority Sorting Enabled");
 
 /* ============================================================
    BASE URL
@@ -70,7 +70,7 @@ function loadBoardView() {
   const script = document.createElement("script");
   script.src = url;
   document.body.appendChild(script);
-}   // ← THIS WAS MISSING AND IS NOW FIXED
+}
 
 /* ============================================================
    DATE/TIME HELPERS
@@ -132,18 +132,24 @@ function renderBoardList(rows, containerId, getPriority) {
     const statusText = row.completed_at ? "Completed" : (row.haysa_status || "In Progress");
 
     /* ============================================================
-       PRIORITY BADGE
+       PRIORITY BADGE (only for active items)
        ============================================================ */
-    const priority = getPriority(row);
-    const priorityLabel =
-      priority === 1 ? "Needs Board Action" :
-      priority === 2 ? "Coach Completed" :
-      "In Progress";
+    let priorityBadgeHTML = "";
 
-    const priorityClass =
-      priority === 1 ? "priority-high" :
-      priority === 2 ? "priority-medium" :
-      "priority-low";
+    if (!row.completed_at) {
+      const priority = getPriority(row);
+      const priorityLabel =
+        priority === 1 ? "Needs Board Action" :
+        priority === 2 ? "Coach Completed" :
+        "In Progress";
+
+      const priorityClass =
+        priority === 1 ? "priority-high" :
+        priority === 2 ? "priority-medium" :
+        "priority-low";
+
+      priorityBadgeHTML = `<div class="priority-badge ${priorityClass}">${priorityLabel}</div>`;
+    }
 
     /* ============================================================
        COACH PROGRESS
@@ -184,7 +190,7 @@ function renderBoardList(rows, containerId, getPriority) {
         <div class="board-game-number">#${row.game_number}</div>
       </div>
 
-      <div class="priority-badge ${priorityClass}">${priorityLabel}</div>
+      ${priorityBadgeHTML}
 
       <div class="board-grid">
         <div><strong>Original:</strong> ${origDetails}</div>
