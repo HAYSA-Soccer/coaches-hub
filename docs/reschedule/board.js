@@ -63,13 +63,22 @@ function renderBoardList(rows) {
         <strong>Status:</strong> ${row.haysa_status || "In Progress"}
       </div>
 
-      <div class="board-checkboxes">
-        <label><input type="checkbox" data-field="step_2" ${row.step_2 ? "checked" : ""}> Confirmed with Opponent</label>
-        <label><input type="checkbox" data-field="step_3" ${row.step_3 ? "checked" : ""}> HAYSA Approved</label>
-        <label><input type="checkbox" data-field="step_4" ${row.step_4 ? "checked" : ""}> Sent to SSSL</label>
-        <label><input type="checkbox" data-field="step_5" ${row.step_5 ? "checked" : ""}> SSSL Approved</label>
-        <label><input type="checkbox" data-field="calendar_updated" ${row.calendar_updated ? "checked" : ""}> Updated in TeamSideline</label>
-        <label><input type="checkbox" data-field="field_confirmed" ${row.field_confirmed ? "checked" : ""}> Field Block Created</label>
+      <div class="board-section">
+        <strong>HAYSA Decision:</strong>
+        <select class="board-approval" data-field="haysa_status">
+          <option value="in progress" ${row.haysa_status === "in progress" ? "selected" : ""}>In Progress</option>
+          <option value="approved" ${row.haysa_status === "approved" ? "selected" : ""}>Approved</option>
+          <option value="rejected" ${row.haysa_status === "rejected" ? "selected" : ""}>Rejected</option>
+        </select>
+      </div>
+
+      <div class="board-checkbox-row">
+        <label><input type="checkbox" data-field="step_2" ${row.step_2 ? "checked" : ""}> Opponent</label>
+        <label><input type="checkbox" data-field="step_3" ${row.step_3 ? "checked" : ""}> HAYSA</label>
+        <label><input type="checkbox" data-field="step_4" ${row.step_4 ? "checked" : ""}> Sent SSSL</label>
+        <label><input type="checkbox" data-field="step_5" ${row.step_5 ? "checked" : ""}> SSSL OK</label>
+        <label><input type="checkbox" data-field="calendar_updated" ${row.calendar_updated ? "checked" : ""}> TS Updated</label>
+        <label><input type="checkbox" data-field="field_confirmed" ${row.field_confirmed ? "checked" : ""}> Blocked</label>
       </div>
 
       <textarea class="board-notes" data-field="haysa_notes" placeholder="Board notes...">${row.haysa_notes || ""}</textarea>
@@ -95,6 +104,12 @@ function saveBoardRow(gameNumber, cardElement) {
   cardElement.querySelectorAll("input[type='checkbox']").forEach(cb => {
     const field = cb.dataset.field;
     updates[field] = cb.checked ? "TRUE" : "FALSE";
+  });
+
+  // Collect dropdowns
+  cardElement.querySelectorAll("select[data-field]").forEach(sel => {
+    const field = sel.dataset.field;
+    updates[field] = sel.value;
   });
 
   // Collect notes
