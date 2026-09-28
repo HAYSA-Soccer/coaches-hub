@@ -252,7 +252,7 @@ function renderMatchCard(m) {
                 <span>${m.final_field || "—"}</span>
               </div>
             `
-            : `<div class="mc-line empty">No new details</div>`
+            : `<div class="mc-line empty">No new reschedule information finalized / Reschedule not begun.</div>`
         }
       </div>
     </div>
