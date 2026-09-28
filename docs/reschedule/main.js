@@ -367,6 +367,15 @@ function renderDashboardCard(row) {
   });
   pills += "</div>";
 
+  // ⭐ NEW: Original + New game details
+  const origDetails = `
+    ${displayDate(row.orig_date)} ${displayTime(row.orig_time)} — ${row.orig_field || "Field ?"}
+  `;
+
+  const newDetails = (row.final_date || row.final_time || row.final_field)
+    ? `${displayDate(row.final_date)} ${displayTime(row.final_time)} — ${row.final_field || "Field ?"}`
+    : "Not yet rescheduled";
+
   return `
     <div class="dashboard-card">
       <div class="dash-top">
@@ -377,6 +386,11 @@ function renderDashboardCard(row) {
         <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${row.game_number}')">
           Resume
         </button>
+      </div>
+
+      <div class="dash-details">
+        <div><strong>Original:</strong> ${origDetails}</div>
+        <div><strong>New:</strong> ${newDetails}</div>
       </div>
 
       ${stepHtml}
