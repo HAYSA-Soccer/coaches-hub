@@ -21,6 +21,16 @@ function loadBoardView() {
 }
 
 
+function isCompleted(row) {
+  return row.step_2 &&
+         row.step_newinfo &&
+         row.step_3 &&
+         row.step_4 &&
+         row.step_5 &&
+         row.calendar_updated;
+}
+
+
 /* ============================================================
    FORMAT DATE & TIME
    ============================================================ */
@@ -99,13 +109,25 @@ function formatTime(value) {
    ============================================================ */
 
 function renderBoardList(rows) {
-  const container = document.getElementById("boardList");
-  container.innerHTML = "";
+  const activeContainer = document.getElementById("boardList");
+  const completedContainer = document.getElementById("completedList");
+
+  activeContainer.innerHTML = "";
+  completedContainer.innerHTML = "";
 
   rows.forEach(row => {
 
     if (!row.game_number) return;
     if (!row.attempt_started || row.attempt_started === "") return;
+
+    // Determine if case is completed
+    const isCompleted =
+      row.step_2 &&
+      row.step_newinfo &&
+      row.step_3 &&
+      row.step_4 &&
+      row.step_5 &&
+      row.calendar_updated;
 
     const statusClass =
       row.haysa_status === "approved" ? "status-approved" :
@@ -138,8 +160,6 @@ function renderBoardList(rows) {
         <label><input type="checkbox" data-field="calendar_updated" ${row.calendar_updated ? "checked" : ""}> TS Updated</label>
       </div>
 
-
-
       <div class="board-section">
         <strong>HAYSA Decision:</strong>
         <select class="board-approval" data-field="haysa_status">
@@ -156,7 +176,12 @@ function renderBoardList(rows) {
       </button>
     `;
 
-    container.appendChild(card);
+    // Append to correct section
+    if (isCompleted) {
+      completedContainer.appendChild(card);
+    } else {
+      activeContainer.appendChild(card);
+    }
   });
 }
 
