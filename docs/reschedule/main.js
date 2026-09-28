@@ -29,11 +29,7 @@ async function preloadAllGames() {
 }
 
 async function loadSelectedCoachDashboard() {
-  const coachName = document.getElementById("coachSelectorDropdown").value;
-
-  currentCoachName = coachName;
-  currentCoachEmail = ""; // optional, if you want email matching too
-
+  enterDashboardMode();
   showCoachDashboard();
 }
 
@@ -180,6 +176,32 @@ function displayDate(value) {
 
   return value;
 }
+
+function enterDashboardMode() {
+  // Hide all search-related UI
+  const hideIds = [
+    "startContainer",
+    "resultsPanel",
+    "clearSearchBtn",
+    "workflowPage",
+    "formSection"
+  ];
+
+  hideIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
+  });
+
+  // Hide the "View My Dashboard" button
+  const dashBtn = document.querySelector("button[onclick='showCoachSelector()']");
+  if (dashBtn) dashBtn.style.display = "none";
+
+  // Hide dashboard until coach is selected
+  const dash = document.getElementById("coachDashboard");
+  if (dash) dash.style.display = "none";
+}
+
+
 
 async function showCoachSelector() {
   const all = await apiGetAllRows();
