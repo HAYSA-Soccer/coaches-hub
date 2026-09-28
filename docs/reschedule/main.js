@@ -10,6 +10,7 @@ const BASE_URL = API_URL; // if you have a different BASE_URL, replace this
 
 let ALL_GAMES = [];
 
+// =========== Define preload function ====================
 async function preloadAllGames() {
   try {
     const url = `${BASE_URL}?action=getAllGames`;
@@ -21,6 +22,10 @@ async function preloadAllGames() {
     console.error("Error preloading games:", err);
   }
 }
+
+// =============== Run it when the page loads ===============
+window.addEventListener("DOMContentLoaded", preloadAllGames);
+
 
 let currentGameNumber = "";
 let currentRowData = null;
