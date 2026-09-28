@@ -221,13 +221,19 @@ function toggleCollapse(el) {
 }
 
 function hideSearchUI() {
-  const searchSection = document.getElementById("searchSection");
-  const listSection = document.getElementById("listSection");
-  const workflowPage = document.getElementById("workflowPage");
+  const header = document.getElementById("searchHeader");
+  const results = document.getElementById("search_results");
+  const status = document.getElementById("searchStatus");
+  const clearBtn = document.getElementById("clearSearchBtn");
 
-  if (searchSection) searchSection.style.display = "none";
-  if (listSection) listSection.style.display = "none";
-  if (workflowPage) workflowPage.style.display = "block";
+  if (header) header.textContent = "";
+  if (results) results.innerHTML = "";
+  if (status) status.textContent = "";
+  if (clearBtn) clearBtn.style.display = "none";
+
+  // Hide the entire search panel if you have one
+  const searchPanel = document.getElementById("searchPanel");
+  if (searchPanel) searchPanel.style.display = "none";
 }
 
 
