@@ -321,30 +321,31 @@ async function showCoachDashboard() {
 }
 
 function renderDashboardCard(row) {
-  // Mini green workflow steps
-  const steps = [
-    ["step_1", "Start"],
-    ["step_2", "Original"],
-    ["step_3", "Opponent"],
-    ["step_4", "New"],
-    ["step_5", "Field Hold"],
-    ["step_6", "HAYSA"],
-    ["step_7", "SSSL"],
-    ["step_8", "Finalize"]
+
+  // ⭐ COACH WORKFLOW MINI‑STEPS (correct mapping)
+  const workflowSteps = [
+    ["attempt_started", "Start"],
+    ["orig_date", "Original"],
+    ["opp_contacted", "Opponent"],
+    ["final_date", "New"],
+    ["field_hold_entered", "Field Hold"],
+    ["haysa_approved", "HAYSA"],
+    ["sssl_approved", "SSSL"],
+    ["board_ts_updated", "Complete"]   // ⭐ TRUE completion indicator
   ];
 
-  let stepHtml = "<div class='mini-step-container'>";
-  steps.forEach(([key, label]) => {
-    const done = String(row[key]).toUpperCase() === "TRUE";
-    stepHtml += `
+  let workflowHtml = "<div class='mini-step-container'>";
+  workflowSteps.forEach(([key, label]) => {
+    const done = !!row[key];  // TRUE if field has any value
+    workflowHtml += `
       <div class="mini-step ${done ? "mini-step-done" : ""}">
         ${label}
       </div>
     `;
   });
-  stepHtml += "</div>";
+  workflowHtml += "</div>";
 
-  // Board pills
+  // ⭐ BOARD WORKFLOW PILLS (correct mapping)
   const boardFields = [
     ["board_opponent_contacted", "Opponent"],
     ["board_new_info_confirmed", "Info"],
@@ -358,7 +359,7 @@ function renderDashboardCard(row) {
 
   let pills = "<div class='board-pill-container'>";
   boardFields.forEach(([key, label]) => {
-    const val = String(row[key]).toUpperCase() === "TRUE";
+    const val = !!row[key];
     pills += `
       <div class="board-pill ${val ? "pill-complete" : "pill-pending"}">
         ${val ? "✓" : "✗"} ${label}
@@ -367,22 +368,28 @@ function renderDashboardCard(row) {
   });
   pills += "</div>";
 
-  // ⭐ NEW: Original + New game details
+  // ⭐ ORIGINAL GAME DETAILS
   const origDetails = `
     ${displayDate(row.orig_date)} ${displayTime(row.orig_time)} — ${row.orig_field || "Field ?"}
   `;
 
+  // ⭐ NEW GAME DETAILS (if rescheduled)
   const newDetails = (row.final_date || row.final_time || row.final_field)
     ? `${displayDate(row.final_date)} ${displayTime(row.final_time)} — ${row.final_field || "Field ?"}`
     : "Not yet rescheduled";
 
+  // ⭐ STATUS
+  const statusText = row.completed_at ? "Completed" : "Active";
+
   return `
     <div class="dashboard-card">
+
       <div class="dash-top">
         <div class="dash-title">
           ${row.team_name} vs ${row.opp_town}
           <span class="dash-game-number">#${row.game_number}</span>
         </div>
+
         <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${row.game_number}')">
           Resume
         </button>
@@ -393,15 +400,17 @@ function renderDashboardCard(row) {
         <div><strong>New:</strong> ${newDetails}</div>
       </div>
 
-      ${stepHtml}
+      ${workflowHtml}
       ${pills}
 
       <div class="dash-status">
-        <strong>Status:</strong> ${row.completed_at ? "Completed" : "Active"}
+        <strong>Status:</strong> ${statusText}
       </div>
+
     </div>
   `;
 }
+
 
 
 async function useThisGame(gameNumber) {
