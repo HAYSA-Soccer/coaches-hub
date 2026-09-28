@@ -72,44 +72,59 @@ function loadBoardView() {
        FILTER FUNCTION
        ============================================================ */
     function applyFilters() {
-      let filtered = [...started];
+  let filtered = [...started];
 
-      // TEAM FILTER
-      const teamTerm = teamSelect.value;
-      if (teamTerm) {
-        filtered = filtered.filter(r => r.team_name === teamTerm);
-      }
+  const teamTerm = document.getElementById("teamFilter").value;
+  const singleDate = document.getElementById("dateFilter").value;
+  const startDate = document.getElementById("startDate").value;
+  const endDate = document.getElementById("endDate").value;
 
-      // DATE FILTER
-      const dateTerm = document.getElementById("dateFilter").value;
-      if (dateTerm) {
-        filtered = filtered.filter(r => {
-          const d = (r.final_date || r.orig_date || "").split("T")[0];
-          return d === dateTerm;
-        });
-      }
+  // TEAM FILTER
+  if (teamTerm) {
+    filtered = filtered.filter(r => r.team_name === teamTerm);
+  }
 
-      renderBoardList(filtered, "boardList", getPriority);
-    }
+  // DATE MATCH FUNCTION
+  function matchDate(rowDate, target) {
+    return rowDate === target;
+  }
 
-    // FILTER EVENTS
-    teamSelect.addEventListener("change", applyFilters);
-    document.getElementById("dateFilter").addEventListener("change", applyFilters);
+  // RANGE MATCH FUNCTION
+  function matchRange(rowDate, start, end) {
+    if (start && rowDate < start) return false;
+    if (end && rowDate > end) return false;
+    return true;
+  }
 
-    /* ============================================================
-       INITIAL RENDER
-       ============================================================ */
-    renderBoardList(started, "boardList", getPriority);
-    renderBoardList(completed, "completedList", getPriority);
+  // DATE SOURCE (final_date preferred)
+  function getRowDate(r) {
+    const d = (r.final_date || r.orig_date || "").split("T")[0];
+    return d;
+  }
 
-    delete window[callbackName];
-  };
+  // SINGLE DATE FILTER
+  if (singleDate) {
+    filtered = filtered.filter(r => matchDate(getRowDate(r), singleDate));
+  }
 
-  const url = `${BASE_URL}?action=getAllRows&callback=${callbackName}`;
-  const script = document.createElement("script");
-  script.src = url;
-  document.body.appendChild(script);
+  // RANGE FILTER
+  if (startDate || endDate) {
+    filtered = filtered.filter(r => matchRange(getRowDate(r), startDate, endDate));
+  }
+
+  // NO RESULTS MESSAGE
+  const activeContainer = document.getElementById("boardList");
+  if (filtered.length === 0) {
+    activeContainer.innerHTML = `
+      <div style="padding:12px; font-size:16px; color:#666;">
+        No active reschedules for this date.
+      </div>
+    `;
+  } else {
+    renderBoardList(filtered, "boardList", getPriority);
+  }
 }
+
 
 /* ============================================================
    DATE/TIME HELPERS
