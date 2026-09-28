@@ -1,4 +1,8 @@
-console.log("BOARD.JS VERSION 2026-09-28-03:30 — Corrected Layout + Full Started Cases");
+console.log("BOARD.JS VERSION 2026-09-28-04:00 — FINAL WORKING VERSION");
+
+/* ============================================================
+   BASE URL
+   ============================================================ */
 
 const BASE_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
 
@@ -14,13 +18,11 @@ function loadBoardView() {
   window[callbackName] = function(result) {
     const rows = result.rows || [];
 
-    // FIXED: Show ALL started cases (TRUE, "TRUE", 1, "1")
-    const started = rows.filter(r =>
-      r.attempt_started === true ||
-      r.attempt_started === "TRUE" ||
-      r.attempt_started === 1 ||
-      r.attempt_started === "1"
-    );
+    // ANY non-blank value = started
+    const started = rows.filter(r => {
+      const val = (r.attempt_started || "").toString().trim();
+      return val !== "";
+    });
 
     const completed = rows.filter(r => r.completed_at);
 
@@ -43,10 +45,9 @@ function loadBoardView() {
 function displayDate(value) {
   if (!value) return "-";
   const d = new Date(value);
-  if (!isNaN(d.getTime())) {
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  }
-  return value;
+  return isNaN(d.getTime())
+    ? value
+    : d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 function displayTime(value) {
@@ -97,7 +98,7 @@ function renderBoardList(rows, containerId) {
     const statusText = row.completed_at ? "Completed" : (row.haysa_status || "In Progress");
 
     /* ============================================================
-       COACH PROGRESS (Compact)
+       COACH PROGRESS
        ============================================================ */
     const coachProgress = `
       <div class="coach-progress">
@@ -111,7 +112,7 @@ function renderBoardList(rows, containerId) {
     `;
 
     /* ============================================================
-       BOARD CHECKBOXES (Clickable)
+       BOARD CHECKBOXES
        ============================================================ */
     const boardCheckboxes = `
       <div class="board-checkboxes">
