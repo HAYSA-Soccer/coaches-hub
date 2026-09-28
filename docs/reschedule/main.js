@@ -53,18 +53,31 @@ function renderMatches(container, matches) {
 }
 
 function clearSearchResults() {
-  const header = document.getElementById("searchHeader");
-  const container = document.getElementById("search_results");
-  const status = document.getElementById("searchStatus");
+  // 1. Clear all search inputs
+  const inputs = document.querySelectorAll("#searchBox input, #searchBox select");
+  inputs.forEach(el => el.value = "");
 
+  // 2. Clear header
+  const header = document.getElementById("searchHeader");
   if (header) header.textContent = "";
+
+  // 3. Clear results
+  const container = document.getElementById("search_results");
   if (container) container.innerHTML = "";
+
+  // 4. Clear status messages
+  const status = document.getElementById("searchStatus");
   if (status) status.textContent = "";
 
-  // Optional: scroll back to top of search area
+  // 5. Collapse all search sections (if your UI uses expandable panels)
+  const sections = document.querySelectorAll(".search-section");
+  sections.forEach(sec => sec.classList.remove("expanded"));
+
+  // 6. Scroll back to top of search area
   const searchBox = document.getElementById("searchBox");
   if (searchBox) searchBox.scrollIntoView({ behavior: "smooth", block: "start" });
 }
+
 
 
 async function apiGetGame(gameNumber) {
