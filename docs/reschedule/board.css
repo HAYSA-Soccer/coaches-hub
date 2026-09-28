@@ -162,3 +162,32 @@
 #completedList .board-card:hover {
   opacity: 1;
 }
+
+
+/* ============================================================
+   PRIORITY BADGES
+   ============================================================ */
+
+.priority-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.priority-high {
+  background: #ffdddd;
+  color: #a30000;
+}
+
+.priority-medium {
+  background: #fff4cc;
+  color: #8a6d00;
+}
+
+.priority-low {
+  background: #e6f4ff;
+  color: #005a9e;
+}
