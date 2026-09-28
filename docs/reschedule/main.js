@@ -322,21 +322,69 @@ async function showCoachDashboard() {
 
 function renderDashboardCard(row) {
 
-  // ⭐ COACH WORKFLOW MINI‑STEPS (correct mapping)
-  const workflowSteps = [
-    ["attempt_started", "Start"],
-    ["orig_date", "Original"],
-    ["opp_contacted", "Opponent"],
-    ["final_date", "New"],
-    ["field_hold_entered", "Field Hold"],
-    ["haysa_approved", "HAYSA"],
-    ["sssl_approved", "SSSL"],
-    ["board_ts_updated", "Complete"]   // ⭐ TRUE completion indicator
+  // Mirror your workflow logic
+  function stepComplete(step) {
+    switch (step) {
+      case 2:
+        return (
+          row.age_group &&
+          row.gender &&
+          row.division &&
+          row.coach_last_name &&
+          row.is_haysa_home &&
+          row.orig_date &&
+          row.orig_time &&
+          row.orig_field
+        );
+
+      case 3:
+        return (
+          row.coach_name &&
+          row.opp_coach_name &&
+          row.opp_town
+        );
+
+      case 4:
+        return (
+          row.final_date &&
+          row.final_time &&
+          row.final_field
+        );
+
+      case 5:
+        return row.step_5 === "completed";
+
+      case 6:
+        return row.haysa_status === "approved";
+
+      case 7:
+        return (
+          (row.certified === "true" || row.certified === true) &&
+          row.signed_name
+        );
+
+      case 9:
+        return row.step_9 === "completed";
+
+      default:
+        return false;
+    }
+  }
+
+  // Build mini-step blocks using your real logic
+  const steps = [
+    [2, "Original"],
+    [3, "Opponent"],
+    [4, "New"],
+    [5, "Field Hold"],
+    [6, "HAYSA"],
+    [7, "SSSL"],
+    [9, "Complete"]
   ];
 
   let workflowHtml = "<div class='mini-step-container'>";
-  workflowSteps.forEach(([key, label]) => {
-    const done = !!row[key];  // TRUE if field has any value
+  steps.forEach(([num, label]) => {
+    const done = stepComplete(num);
     workflowHtml += `
       <div class="mini-step ${done ? "mini-step-done" : ""}">
         ${label}
@@ -345,7 +393,7 @@ function renderDashboardCard(row) {
   });
   workflowHtml += "</div>";
 
-  // ⭐ BOARD WORKFLOW PILLS (correct mapping)
+  // Board pills unchanged
   const boardFields = [
     ["board_opponent_contacted", "Opponent"],
     ["board_new_info_confirmed", "Info"],
@@ -368,17 +416,12 @@ function renderDashboardCard(row) {
   });
   pills += "</div>";
 
-  // ⭐ ORIGINAL GAME DETAILS
-  const origDetails = `
-    ${displayDate(row.orig_date)} ${displayTime(row.orig_time)} — ${row.orig_field || "Field ?"}
-  `;
-
-  // ⭐ NEW GAME DETAILS (if rescheduled)
+  // Game details
+  const origDetails = `${displayDate(row.orig_date)} ${displayTime(row.orig_time)} — ${row.orig_field}`;
   const newDetails = (row.final_date || row.final_time || row.final_field)
-    ? `${displayDate(row.final_date)} ${displayTime(row.final_time)} — ${row.final_field || "Field ?"}`
+    ? `${displayDate(row.final_date)} ${displayTime(row.final_time)} — ${row.final_field}`
     : "Not yet rescheduled";
 
-  // ⭐ STATUS
   const statusText = row.completed_at ? "Completed" : "Active";
 
   return `
