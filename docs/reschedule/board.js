@@ -101,15 +101,16 @@ function renderBoardList(rows, containerId) {
       </div>
 
       <div class="board-progress-bar">
-        ${renderBoardPill("Opp", row.board_opponent_contacted)}
-        ${renderBoardPill("Info", row.board_new_info_confirmed)}
-        ${renderBoardPill("Hold", row.board_field_hold_entered)}
-        ${renderBoardPill("HAY", row.board_haysa_approved)}
-        ${renderBoardPill("Crt", row.board_coach_certified)}
-        ${renderBoardPill("Em", row.board_email_sent)}
-        ${renderBoardPill("SSSL", row.board_sssl_approved)}
-        ${renderBoardPill("TS", row.board_ts_updated)}
+        ${renderBoardPill("Opp Cnct", row.board_opponent_contacted)}
+        ${renderBoardPill("Field Hold", row.board_field_hold_entered)}
+        ${renderBoardPill("Determined", row.board_new_info_confirmed)}
+        ${renderBoardPill("HAYSA Appr", row.board_haysa_approved)}
+        ${renderBoardPill("Coach Cert", row.board_coach_certified)}
+        ${renderBoardPill("SSSL Sent", row.board_email_sent)}
+        ${renderBoardPill("SSSL Appr", row.board_sssl_approved)}
+        ${renderBoardPill("TS Updated", row.board_ts_updated)}
       </div>
+
 
       <div class="board-notes">
         <div class="notes-toggle" onclick="toggleNotes(this)">Board Notes ▼</div>
@@ -133,8 +134,15 @@ function renderBoardList(rows, containerId) {
 function renderBoardPill(label, value) {
   const cls = value ? "pill-complete" : "pill-pending";
   const icon = value ? "✓" : "•";
-  return `<div class="board-pill ${cls}" title="${label}">${icon}</div>`;
+
+  return `
+    <div class="board-pill-row">
+      <div class="board-pill ${cls}">${icon}</div>
+      <span class="board-pill-label">${label}</span>
+    </div>
+  `;
 }
+
 
 /* ============================================================
    NOTES TOGGLE
