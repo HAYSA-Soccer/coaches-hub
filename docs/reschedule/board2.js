@@ -1,237 +1,86 @@
-const API_BASE =
-  "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
+async function loadBoardView() {
+  const callbackName = "boardCallback_" + Date.now();
 
-let allRows = [];
-let currentFilter = "all";
+  window[callbackName] = function(result) {
+    renderBoardList(result.rows || []);
+    delete window[callbackName];
+  };
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadBoardData();
-});
-
-function loadBoardData() {
-  fetch(`${API_BASE}?action=getAllRows`)
-    .then(r => r.json())
-    .then(data => {
-      allRows = data.rows || data;
-      renderBoardDashboard();
-    })
-    .catch(err => console.error("Error loading board data", err));
+  const url = `${BASE_URL}?action=getAllRows&callback=${callbackName}`;
+  const script = document.createElement("script");
+  script.src = url;
+  document.body.appendChild(script);
 }
 
-function setFilter(filter) {
-  currentFilter = filter;
-  renderBoardDashboard();
-}
+function renderBoardList(rows) {
+  const container = document.getElementById("boardList");
+  container.innerHTML = "";
 
-/* ---------------------------------------------------------
-   STATUS ENGINE
---------------------------------------------------------- */
-function computeBoardStatus(row) {
-  const status = {};
+  rows.forEach(row => {
+    // Only show rows where a reschedule attempt has begun
+    if (!row.game_number || !row.step_1_started) return;
 
-  status.registrar_contacted = String(row.field_requested).toLowerCase() === "true";
-  status.opponent_contacted = row.step_1 === "completed" || row.step_2 === "completed";
-  status.agreement_reached = row.step_3 === "completed";
+    const card = document.createElement("div");
+    card.className = "board-card";
 
-  const haysa = (row.haysa_status || "").toLowerCase();
-  status.haysa_approved = haysa === "approved";
-  status.haysa_rejected = haysa === "rejected";
+    card.innerHTML = `
+      <h3>Game #${row.game_number} — ${row.team_name || ""} vs ${row.opp_town || ""}</h3>
 
-  status.field_hold = String(row.field_confirmed).toLowerCase() === "true";
-  status.sent_to_sssl = row.step_7 === "completed";
-  status.sssl_approved = row.step_9 === "completed";
-  status.ts_updated = String(row.calendar_updated).toLowerCase() === "true";
-
-  if (status.sssl_approved && status.ts_updated) {
-    status.bucket = "completed";
-    status.label = "Completed";
-    status.detail = "Fully approved and updated in TS";
-    status.pillClass = "completed";
-  }
-  else if (status.sent_to_sssl && !status.sssl_approved) {
-    status.bucket = "pending_sssl";
-    status.label = "Pending SSSL";
-    status.detail = "Awaiting SSSL approval";
-    status.pillClass = "pending";
-  }
-  else if (status.haysa_approved && !status.sent_to_sssl) {
-    status.bucket = "ready_sssl";
-    status.label = "Ready for SSSL";
-    status.detail = "HAYSA approved — board must send to SSSL";
-    status.pillClass = "ready";
-  }
-  else if (status.agreement_reached && !status.haysa_approved) {
-    status.bucket = "needs_action";
-    status.label = "Needs HAYSA Review";
-    status.detail = "Coach submitted — HAYSA must review";
-    status.pillClass = "needs";
-  }
-  else {
-    status.bucket = "needs_action";
-    status.label = "In Progress";
-    status.detail = "Coach still working through steps";
-    status.pillClass = "needs";
-  }
-
-  return status;
-}
-
-function passesFilter(bucket) {
-  return currentFilter === "all" || currentFilter === bucket;
-}
-
-/* ---------------------------------------------------------
-   SIMPLE POST — NO HEADERS (fixes CORS)
---------------------------------------------------------- */
-function updateField(gameNumber, field, value) {
-  fetch(`${API_BASE}?action=updateField`, {
-    method: "POST",
-    body: JSON.stringify({
-      game_number: gameNumber,
-      field: field,
-      value: value
-    })
-  })
-    .then(r => r.json())
-    .then(() => loadBoardData())
-    .catch(err => console.error("Error updating field", err));
-}
-
-/* ---------------------------------------------------------
-   RENDER DASHBOARD
---------------------------------------------------------- */
-function renderBoardDashboard() {
-  const active = document.getElementById("boardDashboard");
-  const completed = document.getElementById("boardCompleted");
-
-  active.innerHTML = "";
-  completed.innerHTML = "";
-
-  allRows.forEach(row => {
-    const status = computeBoardStatus(row);
-    if (!passesFilter(status.bucket)) return;
-
-    const div = document.createElement("div");
-    div.className = "board-row";
-
-    const origDate = row.orig_date || "";
-    const origTime = row.orig_time || "";
-    const origField = row.orig_field || "";
-
-    const finalDate = row.final_date || "";
-    const finalTime = row.final_time || "";
-    const finalField = row.final_field || "";
-
-    div.innerHTML = `
-      <div>
-        <div class="board-label">Game #</div>
-        <div class="board-value">${row.game_number}</div>
+      <div class="board-section">
+        <strong>Original:</strong> ${row.orig_date || ""} • ${row.orig_time || ""} • ${row.orig_field || ""}
       </div>
 
-      <div>
-        <div class="board-label">Team</div>
-        <div class="board-value">${row.team_name}</div>
-        <div class="board-sub">${row.age_group} ${row.gender} — ${row.division}</div>
+      <div class="board-section">
+        <strong>Proposed:</strong> ${row.new_date || "-"} • ${row.new_time || "-"} • ${row.new_field || "-"}
       </div>
 
-      <div>
-        <div class="board-label">Original</div>
-        <div class="board-value">${origDate} — ${origTime}</div>
-        <div class="board-sub">${origField}</div>
+      <div class="board-section">
+        <strong>Status:</strong> ${row.workflow_status || "In Progress"}
       </div>
 
-      <div>
-        <div class="board-label">Final</div>
-        <div class="board-value">${finalDate || "—"} ${finalTime || ""}</div>
-        <div class="board-sub">${finalField || ""}</div>
+      <div class="board-checkboxes">
+        <label><input type="checkbox" data-field="confirmed_with_opponent" ${row.confirmed_with_opponent ? "checked" : ""}> Confirmed with Opponent</label>
+        <label><input type="checkbox" data-field="hay_sa_approved" ${row.hay_sa_approved ? "checked" : ""}> HAYSA Approved</label>
+        <label><input type="checkbox" data-field="sent_to_sssl" ${row.sent_to_sssl ? "checked" : ""}> Sent to SSSL</label>
+        <label><input type="checkbox" data-field="sssl_approved" ${row.sssl_approved ? "checked" : ""}> SSSL Approved</label>
+        <label><input type="checkbox" data-field="updated_in_ts" ${row.updated_in_ts ? "checked" : ""}> Updated in TeamSideline</label>
+        <label><input type="checkbox" data-field="block_created" ${row.block_created ? "checked" : ""}> Field Block Created</label>
       </div>
 
-      <div>
-        <div class="board-label">Status</div>
-        <span class="status-pill ${status.pillClass}">${status.label}</span>
-        <div class="board-sub">${status.detail}</div>
+      <textarea class="board-notes" data-field="board_notes" placeholder="Board notes...">${row.board_notes || ""}</textarea>
 
-        <div class="checklist-bar">
-          ${renderChecklist(status, row.game_number)}
-        </div>
-      </div>
-
-      <div class="board-action">
-        <button class="primary-btn" onclick="resumeGame('${row.game_number}')">
-          Resume
-        </button>
-
-        <button class="secondary-btn" onclick="editBoardNotes('${row.game_number}')">
-          Edit Notes
-        </button>
-      </div>
+      <button class="board-save-btn" onclick="saveBoardRow('${row.game_number}', this.parentElement)">
+        Save Updates
+      </button>
     `;
 
-    if (status.bucket === "completed") {
-      completed.appendChild(div);
-    } else {
-      active.appendChild(div);
-    }
+    container.appendChild(card);
   });
 }
 
-/* ---------------------------------------------------------
-   HORIZONTAL CHECKLIST PILLS
---------------------------------------------------------- */
-function renderChecklist(status, gameNumber) {
+function saveBoardRow(gameNumber, cardElement) {
+  const updates = {};
 
-  function pill(label, value, field, type = "warn") {
-    const cls =
-      value ? "check-ok" :
-      type === "bad" ? "check-bad" :
-      "check-warn";
+  // Collect all checkboxes
+  cardElement.querySelectorAll("input[type='checkbox']").forEach(cb => {
+    const field = cb.dataset.field;
+    updates[field] = cb.checked ? "TRUE" : "FALSE";
+  });
 
-    const symbol =
-      value ? "✔" :
-      type === "bad" ? "✖" :
-      "—";
+  // Collect notes
+  const notes = cardElement.querySelector("textarea[data-field='board_notes']");
+  updates["board_notes"] = notes.value;
 
-    return `
-      <div class="check-pill ${cls}"
-           onclick="updateField('${gameNumber}', '${field}', '${value ? "FALSE" : "TRUE"}')">
-        ${label} ${symbol}
-      </div>
-    `;
-  }
+  // Send update to backend
+  const callbackName = "updateCallback_" + Date.now();
+  window[callbackName] = function(result) {
+    alert(`Saved updates for game #${gameNumber}`);
+    delete window[callbackName];
+  };
 
-  return `
-    ${pill("Registrar", status.registrar_contacted, "field_requested")}
-    ${pill("Opponent", status.opponent_contacted, "step_1")}
-    ${pill("Agreement", status.agreement_reached, "step_3")}
-    ${pill("HAYSA", status.haysa_approved, "haysa_status", status.haysa_rejected ? "bad" : "warn")}
-    ${pill("Hold", status.field_hold, "field_confirmed")}
-    ${pill("SSSL", status.sent_to_sssl, "step_7")}
-    ${pill("SSSL OK", status.sssl_approved, "step_9")}
-    ${pill("TS", status.ts_updated, "calendar_updated")}
-  `;
-}
+  const url = `${BASE_URL}?action=updateBoardFields&game_number=${gameNumber}&updates=${encodeURIComponent(JSON.stringify(updates))}&callback=${callbackName}`;
 
-/* ---------------------------------------------------------
-   ACTIONS
---------------------------------------------------------- */
-function resumeGame(gameNumber) {
-  window.location.href = `index.html?game=${encodeURIComponent(gameNumber)}`;
-}
-
-function editBoardNotes(gameNumber) {
-  const row = allRows.find(r => String(r.game_number) === String(gameNumber));
-  const current = row ? (row.notes || "") : "";
-  const updated = window.prompt("Board notes for this game:", current);
-  if (updated === null) return;
-
-  fetch(`${API_BASE}?action=updateNotes`, {
-    method: "POST",
-    body: JSON.stringify({
-      game_number: gameNumber,
-      notes: updated
-    })
-  })
-    .then(r => r.json())
-    .then(() => loadBoardData())
-    .catch(err => console.error("Error updating notes", err));
+  const script = document.createElement("script");
+  script.src = url;
+  document.body.appendChild(script);
 }
