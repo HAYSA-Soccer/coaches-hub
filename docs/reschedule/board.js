@@ -1,4 +1,4 @@
-console.log("BOARD.JS VERSION 2026-09-28-06:30 — Priority + Filters Enabled");
+console.log("BOARD.JS VERSION 2026-09-28-06:45 — Priority + Filters Enabled");
 
 /* ============================================================
    BASE URL
@@ -72,52 +72,71 @@ function loadBoardView() {
        FILTER FUNCTION
        ============================================================ */
     function applyFilters() {
-     let filtered = [...started];
-   
-     const teamTerm = document.getElementById("teamFilter").value;
-     const singleDate = document.getElementById("dateFilter").value;
-     const startDate = document.getElementById("startDate").value;
-     const endDate = document.getElementById("endDate").value;
-   
-     // TEAM FILTER
-     if (teamTerm) {
-       filtered = filtered.filter(r => r.team_name === teamTerm);
-     }
-   
-     // DATE SOURCE (final_date preferred)
-     function getRowDate(r) {
-       return (r.final_date || r.orig_date || "").split("T")[0];
-     }
-   
-     // SINGLE DATE FILTER
-     if (singleDate) {
-       filtered = filtered.filter(r => getRowDate(r) === singleDate);
-     }
-   
-     // RANGE FILTER
-     if (startDate || endDate) {
-       filtered = filtered.filter(r => {
-         const d = getRowDate(r);
-         if (startDate && d < startDate) return false;
-         if (endDate && d > endDate) return false;
-         return true;
-       });
-     }
-   
-     // NO RESULTS MESSAGE
-     const activeContainer = document.getElementById("boardList");
-     if (filtered.length === 0) {
-       activeContainer.innerHTML = `
-         <div style="padding:12px; font-size:16px; color:#666;">
-           No active reschedules for this date.
-         </div>
-       `;
-     } else {
-       renderBoardList(filtered, "boardList", getPriority);
-     }
-   }
+      let filtered = [...started];
 
+      const teamTerm = document.getElementById("teamFilter").value;
+      const singleDate = document.getElementById("dateFilter").value;
+      const startDate = document.getElementById("startDate").value;
+      const endDate = document.getElementById("endDate").value;
 
+      // TEAM FILTER
+      if (teamTerm) {
+        filtered = filtered.filter(r => r.team_name === teamTerm);
+      }
+
+      // DATE SOURCE (final_date preferred)
+      function getRowDate(r) {
+        return (r.final_date || r.orig_date || "").split("T")[0];
+      }
+
+      // SINGLE DATE FILTER
+      if (singleDate) {
+        filtered = filtered.filter(r => getRowDate(r) === singleDate);
+      }
+
+      // RANGE FILTER
+      if (startDate || endDate) {
+        filtered = filtered.filter(r => {
+          const d = getRowDate(r);
+          if (startDate && d < startDate) return false;
+          if (endDate && d > endDate) return false;
+          return true;
+        });
+      }
+
+      // NO RESULTS MESSAGE
+      const activeContainer = document.getElementById("boardList");
+      if (filtered.length === 0) {
+        activeContainer.innerHTML = `
+          <div style="padding:12px; font-size:16px; color:#666;">
+            No active reschedules for this date.
+          </div>
+        `;
+      } else {
+        renderBoardList(filtered, "boardList", getPriority);
+      }
+    }
+
+    // FILTER EVENTS
+    teamSelect.addEventListener("change", applyFilters);
+    document.getElementById("dateFilter").addEventListener("change", applyFilters);
+    document.getElementById("startDate").addEventListener("change", applyFilters);
+    document.getElementById("endDate").addEventListener("change", applyFilters);
+
+    /* ============================================================
+       INITIAL RENDER
+       ============================================================ */
+    renderBoardList(started, "boardList", getPriority);
+    renderBoardList(completed, "completedList", getPriority);
+
+    delete window[callbackName];
+  };
+
+  const url = `${BASE_URL}?action=getAllRows&callback=${callbackName}`;
+  const script = document.createElement("script");
+  script.src = url;
+  document.body.appendChild(script);
+}
 
 /* ============================================================
    DATE/TIME HELPERS
