@@ -29,16 +29,10 @@ async function preloadAllGames() {
 }
 
 function openCoachSelector() {
-  // Hide search UI only
-  document.getElementById("startContainer").style.display = "none";
-  document.getElementById("resultsPanel").style.display = "none";
-
-  // Show selector
+  enterDashboardMode();
   showCoachSelector();
-
-  // Hide dashboard until loaded
-  document.getElementById("coachDashboard").style.display = "none";
 }
+
 
 
 async function loadCoachDashboard() {
@@ -50,6 +44,7 @@ async function loadCoachDashboard() {
 
   await showCoachDashboard();
 }
+
 
 
 
@@ -220,6 +215,52 @@ function enterDashboardMode() {
   // DO NOT hide coachSelector or coachDashboard here
 }
 
+
+
+// DASHBOARD TOGGLE
+
+function enterDashboardMode() {
+  // Hide search UI
+  const hideIds = [
+    "startContainer",
+    "resultsPanel"
+  ];
+
+  hideIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
+  });
+
+  // Hide workflow + form
+  const wf = document.getElementById("workflowPage");
+  if (wf) wf.style.display = "none";
+
+  const form = document.getElementById("formSection");
+  if (form) form.style.display = "none";
+
+  // Show dashboard selector (dashboard loads after coach selection)
+  document.getElementById("coachSelector").style.display = "block";
+
+  // Hide dashboard until loaded
+  document.getElementById("coachDashboard").style.display = "none";
+}
+
+function exitDashboardMode() {
+  // Show search UI
+  const start = document.getElementById("startContainer");
+  const results = document.getElementById("resultsPanel");
+
+  if (start) start.style.display = "block";
+  if (results) results.style.display = "block";
+
+  // Hide dashboard UI
+  document.getElementById("coachSelector").style.display = "none";
+  document.getElementById("coachDashboard").style.display = "none";
+
+  // Hide workflow
+  const wf = document.getElementById("workflowPage");
+  if (wf) wf.style.display = "none";
+}
 
 
 
