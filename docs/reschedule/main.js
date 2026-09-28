@@ -677,8 +677,6 @@ async function searchByCoach() {
 // SEARCH FORM → START RESCHEDULE
 // ===============================
 async function startRescheduleFromForm() {
-  console.log("Search button clicked");
-
   const age_group = document.getElementById("sr_age_group").value.trim();
   const gender = document.getElementById("sr_gender").value.trim();
   const division = document.getElementById("sr_division").value.trim();
@@ -701,9 +699,7 @@ async function startRescheduleFromForm() {
   const container = document.getElementById("search_results");
   const searchStatus = document.getElementById("searchStatus");
 
-  // Build a meaningful header
   setSearchHeader(`${age_group} ${gender} — ${division} — ${opp_town || ""}`.trim());
-
   searchStatus.textContent = "";
   showLoading(container);
 
@@ -725,6 +721,7 @@ async function startRescheduleFromForm() {
     container.innerHTML = "<div>Error searching. Check console.</div>";
   }
 }
+
 
 
 
