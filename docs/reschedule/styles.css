@@ -1188,3 +1188,57 @@ select:focus {
   color: #999;
   font-style: italic;
 }
+
+.dashboard-card {
+  border: 1px solid #ddd;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+}
+
+.dash-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dash-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.dash-game-number {
+  font-size: 14px;
+  color: #777;
+  margin-left: 8px;
+}
+
+/* Mini green workflow steps */
+.mini-step-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.mini-step {
+  padding: 6px 10px;
+  border-radius: 6px;
+  background-color: #eee;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mini-step-done {
+  background-color: #d4f4dd;
+  color: #0a6b2b;
+  border: 1px solid #0a6b2b;
+}
+
+/* Board pills (reuse your existing pill CSS) */
+.board-pill-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
