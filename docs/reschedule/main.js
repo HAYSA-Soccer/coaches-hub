@@ -214,26 +214,31 @@ async function useThisGame(gameNumber) {
 
 function renderMatchCard(m) {
   const div = document.createElement("div");
-  div.className = "match-card";
+  div.className = "match-card compact";
 
   div.innerHTML = `
-    <!-- TOP IDENTITY LINE -->
+    <!-- TOP ROW: Identity + Button -->
     <div class="mc-top">
       <div class="mc-title">
         ${m.team_name || "—"} vs ${m.opp_town || "—"}
+        <span class="mc-game-number">#${m.game_number}</span>
       </div>
-      <div class="mc-game-number">
-        Game #${m.game_number}
-      </div>
+
+      <button class="primary-btn mc-top-btn"
+        onclick="loadGameWithoutStartingWorkflow('${m.game_number}')">
+        Use This Game
+      </button>
     </div>
 
-    <!-- ORIGINAL + NEW DETAILS SIDE BY SIDE -->
+    <!-- DETAILS ROWS -->
     <div class="mc-details">
       <div class="mc-col">
         <div class="mc-label">Original</div>
-        <div class="mc-line"><strong>Date:</strong> ${displayDate(m.orig_date)}</div>
-        <div class="mc-line"><strong>Time:</strong> ${displayTime(m.orig_time)}</div>
-        <div class="mc-line"><strong>Location:</strong> ${m.orig_field || "—"}</div>
+        <div class="mc-line">
+          <span>${displayDate(m.orig_date)}</span>
+          <span>${displayTime(m.orig_time)}</span>
+          <span>${m.orig_field || "—"}</span>
+        </div>
       </div>
 
       <div class="mc-col">
@@ -241,25 +246,21 @@ function renderMatchCard(m) {
         ${
           m.final_date || m.final_time || m.final_field
             ? `
-              <div class="mc-line"><strong>Date:</strong> ${displayDate(m.final_date)}</div>
-              <div class="mc-line"><strong>Time:</strong> ${displayTime(m.final_time)}</div>
-              <div class="mc-line"><strong>Location:</strong> ${m.final_field || "—"}</div>
+              <div class="mc-line">
+                <span>${displayDate(m.final_date)}</span>
+                <span>${displayTime(m.final_time)}</span>
+                <span>${m.final_field || "—"}</span>
+              </div>
             `
             : `<div class="mc-line empty">No new details</div>`
         }
       </div>
     </div>
-
-    <!-- ACTION BUTTON -->
-    <div class="mc-actions">
-      <button class="primary-btn" onclick="loadGameWithoutStartingWorkflow('${m.game_number}')">
-        Use This Game
-      </button>
-    </div>
   `;
 
   return div;
 }
+
 
 
 
