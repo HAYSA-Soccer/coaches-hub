@@ -1116,69 +1116,75 @@ select:focus {
 }
 
 
-.match-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fafafa;
-  padding: 12px 14px;
-  margin-bottom: 10px;
+/* Match Card for Results Display Cards */
+
+
+.match-card.compact {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f7f7f7;
+  padding: 10px 12px;
+  margin-bottom: 8px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
-/* Top identity line */
+/* Top row: title + button */
 .mc-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 2px;
 }
 
 .mc-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: #173d77;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .mc-game-number {
-  font-size: 13px;
+  font-size: 12px;
   color: #555;
 }
 
-/* Side-by-side details */
+.mc-top-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 5px;
+}
+
+/* Details grid */
 .mc-details {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 8px;
 }
 
 .mc-col {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .mc-label {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #333;
-  margin-bottom: 2px;
 }
 
 .mc-line {
-  font-size: 13px;
+  font-size: 12px;
   color: #444;
   display: flex;
-  gap: 6px;
+  gap: 8px;
 }
 
 .mc-line.empty {
   color: #999;
   font-style: italic;
-}
-
-/* Button row */
-.mc-actions {
-  display: flex;
-  justify-content: flex-end;
 }
