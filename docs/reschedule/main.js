@@ -291,6 +291,8 @@ async function startRescheduleFromSearch(gameNumber) {
 
 
 
+
+
 function getField(name) {
   if (!currentRowData) return "";
   return currentRowData[name] == null ? "" : currentRowData[name];
@@ -758,6 +760,8 @@ async function searchByCoach() {
 // SEARCH FORM → START RESCHEDULE
 // ===============================
 async function startRescheduleFromForm() {
+  console.log("Search button clicked");
+
   const age_group = document.getElementById("sr_age_group").value.trim();
   const gender = document.getElementById("sr_gender").value.trim();
   const division = document.getElementById("sr_division").value.trim();
@@ -765,6 +769,26 @@ async function startRescheduleFromForm() {
   const orig_time = document.getElementById("sr_orig_time").value.trim();
   const opp_town = document.getElementById("sr_opp_town").value.trim();
 
+  const container = document.getElementById("search_results");
+  const searchStatus = document.getElementById("searchStatus");
+
+  // ⭐ INSTANT LOCAL SEARCH FIRST
+  if (ALL_GAMES.length > 0) {
+    const matches = ALL_GAMES.filter(g =>
+      g.age_group === age_group &&
+      g.gender === gender &&
+      g.division === division
+    );
+
+    if (matches.length > 0) {
+      setSearchHeader(`${age_group} ${gender} — ${division}`);
+      container.innerHTML = "";
+      matches.forEach(m => container.appendChild(renderMatchCard(m)));
+      return; // ⭐ No API call needed
+    }
+  }
+
+  // ⭐ FALLBACK TO YOUR EXISTING API LOGIC
   const params = new URLSearchParams({
     action: "searchRows",
     age_group,
@@ -776,32 +800,32 @@ async function startRescheduleFromForm() {
   });
 
   const url = `${BASE_URL}?${params.toString()}`;
+  console.log("Search URL:", url);
 
-  const container = document.getElementById("search_results");
-  const searchStatus = document.getElementById("searchStatus");
-
-  setSearchHeader(`${age_group} ${gender} — ${division} — ${opp_town || ""}`.trim());
   searchStatus.textContent = "";
-  showLoading(container);
+  container.innerHTML = `<div class="loading-banner">Searching… please wait</div>`;
 
   try {
     const response = await fetch(url);
     const result = await response.json();
     const matches = result.rows || [];
 
+    container.innerHTML = "";
+
     if (matches.length === 0) {
-      container.innerHTML = "";
       searchStatus.textContent = "No matching games found.";
       return;
     }
 
-    renderMatches(container, matches);
+    setSearchHeader(`${age_group} ${gender} — ${division}`);
+    matches.forEach(m => container.appendChild(renderMatchCard(m)));
 
   } catch (err) {
     console.error("Search error:", err);
     container.innerHTML = "<div>Error searching. Check console.</div>";
   }
 }
+
 
 
 
