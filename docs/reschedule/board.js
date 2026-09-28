@@ -1,4 +1,3 @@
-// Your Apps Script endpoint
 const BASE_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
 
 /* ============================================================
@@ -31,21 +30,12 @@ function renderBoardList(rows) {
   container.innerHTML = "";
 
   rows.forEach(row => {
+
     // Must have a game number
     if (!row.game_number) return;
 
-    // Detect if a reschedule has started using fields your sheet actually has
-    const started =
-      row.workflow_status ||
-      row.new_date ||
-      row.new_time ||
-      row.step_1 ||
-      row.step_2 ||
-      row.step_3 ||
-      row.step_4 ||
-      row.step_5;
-
-    if (!started) return;
+    // A reschedule has started if attempt_started is TRUE
+    if (!row.attempt_started || row.attempt_started === "") return;
 
     const card = document.createElement("div");
     card.className = "board-card";
@@ -58,23 +48,31 @@ function renderBoardList(rows) {
       </div>
 
       <div class="board-section">
-        <strong>Proposed:</strong> ${row.new_date || "-"} • ${row.new_time || "-"} • ${row.new_field || "-"}
+        <strong>Proposed Option 1:</strong> ${row.proposed_1_date || "-"} • ${row.proposed_1_time || "-"} • ${row.proposed_1_field || "-"}
+      </div>
+
+      <div class="board-section">
+        <strong>Proposed Option 2:</strong> ${row.proposed_2_date || "-"} • ${row.proposed_2_time || "-"} • ${row.proposed_2_field || "-"}
+      </div>
+
+      <div class="board-section">
+        <strong>Final:</strong> ${row.final_date || "-"} • ${row.final_time || "-"} • ${row.final_field || "-"}
       </div>
 
       <div class="board-section board-status">
-        <strong>Status:</strong> ${row.workflow_status || "In Progress"}
+        <strong>Status:</strong> ${row.haysa_status || "In Progress"}
       </div>
 
       <div class="board-checkboxes">
-        <label><input type="checkbox" data-field="confirmed_with_opponent" ${row.confirmed_with_opponent ? "checked" : ""}> Confirmed with Opponent</label>
-        <label><input type="checkbox" data-field="hay_sa_approved" ${row.hay_sa_approved ? "checked" : ""}> HAYSA Approved</label>
-        <label><input type="checkbox" data-field="sent_to_sssl" ${row.sent_to_sssl ? "checked" : ""}> Sent to SSSL</label>
-        <label><input type="checkbox" data-field="sssl_approved" ${row.sssl_approved ? "checked" : ""}> SSSL Approved</label>
-        <label><input type="checkbox" data-field="updated_in_ts" ${row.updated_in_ts ? "checked" : ""}> Updated in TeamSideline</label>
-        <label><input type="checkbox" data-field="block_created" ${row.block_created ? "checked" : ""}> Field Block Created</label>
+        <label><input type="checkbox" data-field="step_2" ${row.step_2 ? "checked" : ""}> Confirmed with Opponent</label>
+        <label><input type="checkbox" data-field="step_3" ${row.step_3 ? "checked" : ""}> HAYSA Approved</label>
+        <label><input type="checkbox" data-field="step_4" ${row.step_4 ? "checked" : ""}> Sent to SSSL</label>
+        <label><input type="checkbox" data-field="step_5" ${row.step_5 ? "checked" : ""}> SSSL Approved</label>
+        <label><input type="checkbox" data-field="calendar_updated" ${row.calendar_updated ? "checked" : ""}> Updated in TeamSideline</label>
+        <label><input type="checkbox" data-field="field_confirmed" ${row.field_confirmed ? "checked" : ""}> Field Block Created</label>
       </div>
 
-      <textarea class="board-notes" data-field="board_notes" placeholder="Board notes...">${row.board_notes || ""}</textarea>
+      <textarea class="board-notes" data-field="haysa_notes" placeholder="Board notes...">${row.haysa_notes || ""}</textarea>
 
       <button class="board-save-btn" onclick="saveBoardRow('${row.game_number}', this.parentElement)">
         Save Updates
@@ -100,8 +98,8 @@ function saveBoardRow(gameNumber, cardElement) {
   });
 
   // Collect notes
-  const notes = cardElement.querySelector("textarea[data-field='board_notes']");
-  updates["board_notes"] = notes.value;
+  const notes = cardElement.querySelector("textarea[data-field='haysa_notes']");
+  updates["haysa_notes"] = notes.value;
 
   // JSONP callback
   const callbackName = "updateCallback_" + Date.now();
