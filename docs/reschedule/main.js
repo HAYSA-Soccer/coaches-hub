@@ -186,13 +186,11 @@ function displayDate(value) {
 }
 
 function enterDashboardMode() {
-  // Hide all search-related UI
+  // Hide search UI
   const hideIds = [
     "startContainer",
     "resultsPanel",
-    "clearSearchBtn",
-    "workflowPage",
-    "formSection"
+    "clearSearchBtn"
   ];
 
   hideIds.forEach(id => {
@@ -200,14 +198,16 @@ function enterDashboardMode() {
     if (el) el.style.display = "none";
   });
 
-  // Hide the "View My Dashboard" button
-  const dashBtn = document.querySelector("button[onclick='showCoachSelector()']");
-  if (dashBtn) dashBtn.style.display = "none";
+  // Hide workflow + form
+  const wf = document.getElementById("workflowPage");
+  if (wf) wf.style.display = "none";
 
-  // Hide dashboard until coach is selected
-  const dash = document.getElementById("coachDashboard");
-  if (dash) dash.style.display = "none";
+  const form = document.getElementById("formSection");
+  if (form) form.style.display = "none";
+
+  // DO NOT hide coachSelector or coachDashboard here
 }
+
 
 
 
