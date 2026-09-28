@@ -1,126 +1,11 @@
-#boardList {
+/* ============================================================
+   BOARD LIST CONTAINER
+   ============================================================ */
+
+#boardList, #completedList {
   margin-top: 20px;
 }
 
-.board-card {
-  border: 1px solid #ccc;
-  padding: 14px;
-  margin-bottom: 12px;
-  border-radius: 6px;
-  background: #fafafa;
-}
-
-.board-card h3 {
-  margin: 0 0 8px 0;
-  font-size: 18px;
-}
-
-.board-section {
-  margin-bottom: 8px;
-}
-
-.board-notes {
-  width: 100%;
-  margin-top: 6px;
-  padding: 6px;
-}
-
-.board-save-btn {
-  margin-top: 10px;
-  padding: 6px 12px;
-  background: #1976d2;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-/* Horizontal checkbox row */
-.board-checkbox-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 10px 0;
-}
-
-.board-checkbox-row label {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
-.board-checkbox-row input[type="checkbox"] {
-  margin-right: 6px;
-}
-
-/* Approval dropdown */
-.board-approval {
-  margin-left: 10px;
-  padding: 4px 8px;
-  font-size: 14px;
-}
-
-/* Status colors */
-.status-approved {
-  color: #2e7d32;
-  font-weight: bold;
-}
-
-.status-rejected {
-  color: #c62828;
-  font-weight: bold;
-}
-
-.status-progress {
-  color: #f9a825;
-  font-weight: bold;
-}
-
-/* Workflow checkbox colors */
-.board-checkbox-row input[type="checkbox"]:checked + label {
-  color: #2e7d32;
-}
-
-
-.indicator {
-  font-size: 12px;
-  margin-left: 4px;
-}
-
-.indicator.done {
-  color: #2e7d32; /* green */
-}
-
-.indicator.pending {
-  color: #f9a825; /* yellow */
-}
-
-.indicator.waiting {
-  color: #1976d2; /* blue */
-}
-
-.indicator.blocked {
-  color: #c62828; /* red */
-}
-
-.workflow-checkbox-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin: 12px 0;
-}
-
-.workflow-checkbox-row label {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
-.workflow-checkbox-row input[type="checkbox"] {
-  margin-right: 6px;
-}
 
 /* ============================================================
    CARD CONTAINER
@@ -140,129 +25,131 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
-/* ============================================================
-   SECTION HEADERS
-   ============================================================ */
-
-.case-header {
-  font-size: 15px;
-  font-weight: 600;
-  padding: 6px 10px;
-  border-radius: 6px;
-  display: inline-block;
-  margin-bottom: 10px;
-  color: #fff;
-}
-
-.status-approved {
-  background: #2e7d32;
-}
-
-.status-rejected {
-  background: #c62828;
-}
-
-.status-progress {
-  background: #1976d2;
-}
 
 /* ============================================================
-   GAME TITLE
+   HEADER
    ============================================================ */
 
-.board-card h3 {
-  margin: 6px 0 14px 0;
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.board-title {
   font-size: 18px;
   font-weight: 600;
   color: #333;
 }
 
-/* ============================================================
-   TIMELINE
-   ============================================================ */
-
-.timeline {
-  background: #f7f7f7;
-  padding: 12px 14px;
-  border-radius: 8px;
-  margin-bottom: 18px;
-  border-left: 4px solid #1976d2;
-}
-
-.timeline div {
-  margin-bottom: 6px;
+.board-game-number {
   font-size: 14px;
+  opacity: 0.7;
 }
 
-.timeline strong {
-  color: #333;
-}
 
 /* ============================================================
-   WORKFLOW CHECKBOX ROW
+   GRID (Original / Final / Status)
    ============================================================ */
 
-.workflow-checkbox-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px 22px;
-  margin-bottom: 18px;
-  padding: 12px 0;
-  border-top: 1px solid #e3e3e3;
-  border-bottom: 1px solid #e3e3e3;
+.board-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 20px;
+  margin-bottom: 16px;
 }
 
-.workflow-checkbox-row label {
+.board-grid div {
+  font-size: 14px;
+  color: #444;
+}
+
+
+/* ============================================================
+   PROGRESS BAR (Pills)
+   ============================================================ */
+
+.board-progress-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.board-pill {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
-  font-size: 14px;
-  background: #fafafa;
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #e0e0e0;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: default;
+  border: 2px solid transparent;
 }
 
-.workflow-checkbox-row input[type="checkbox"] {
-  margin-right: 6px;
+.pill-complete {
+  background-color: #2ecc71;
+  color: white;
+  border-color: #27ae60;
 }
+
+.pill-pending {
+  background-color: #e74c3c;
+  color: white;
+  border-color: #c0392b;
+}
+
+.pill-warning {
+  background-color: #f1c40f;
+  color: #000;
+  border-color: #d4ac0d;
+}
+
+.pill-stalled {
+  background-color: #95a5a6;
+  color: white;
+  border-color: #7f8c8d;
+}
+
 
 /* ============================================================
-   BOARD SECTION
-   ============================================================ */
-
-.board-section {
-  margin: 14px 0;
-}
-
-.board-approval {
-  margin-top: 6px;
-  padding: 6px 10px;
-  font-size: 14px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-/* ============================================================
-   NOTES AREA
+   NOTES COLLAPSIBLE
    ============================================================ */
 
 .board-notes {
+  margin-top: 10px;
+}
+
+.notes-toggle {
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 6px;
+  user-select: none;
+}
+
+.notes-body {
+  margin-top: 6px;
+}
+
+.board-notes-text {
   width: 100%;
   min-height: 70px;
-  margin-top: 10px;
   padding: 10px;
   font-size: 14px;
   border-radius: 6px;
   border: 1px solid #ccc;
   resize: vertical;
+  margin-bottom: 10px;
 }
+
 
 /* ============================================================
    SAVE BUTTON
    ============================================================ */
 
-.board-save-btn {
-  margin-top: 14px;
+.primary-btn {
   background: #1976d2;
   color: #fff;
   border: none;
@@ -273,9 +160,10 @@
   transition: background 0.2s ease;
 }
 
-.board-save-btn:hover {
+.primary-btn:hover {
   background: #0f5bb5;
 }
+
 
 /* ============================================================
    COMPLETED SECTION
@@ -289,28 +177,3 @@
 #completedList .board-card:hover {
   opacity: 1;
 }
-
-.pill-complete {
-  background-color: #2ecc71; /* green */
-  color: white;
-  border: 2px solid #27ae60;
-}
-
-.pill-pending {
-  background-color: #e74c3c; /* red */
-  color: white;
-  border: 2px solid #c0392b;
-}
-
-.pill-warning {
-  background-color: #f1c40f; /* yellow */
-  color: #000;
-  border: 2px solid #d4ac0d;
-}
-
-.pill-stalled {
-  background-color: #95a5a6; /* gray */
-  color: white;
-  border: 2px solid #7f8c8d;
-}
-
