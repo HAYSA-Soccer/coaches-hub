@@ -1,5 +1,4 @@
-console.log("BOARD.JS VERSION 2026-09-28-01:20");
-
+console.log("BOARD.JS VERSION 2026-09-28-02:00 — Compact Board Layout Enabled");
 
 const BASE_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
 
@@ -13,7 +12,13 @@ function loadBoardView() {
   const callbackName = "boardCallback_" + Date.now();
 
   window[callbackName] = function(result) {
-    renderBoardList(result.rows || []);
+    const rows = result.rows || [];
+    const active = rows.filter(r => !r.completed_at);
+    const completed = rows.filter(r => r.completed_at);
+
+    renderBoardList(active, "boardList");
+    renderBoardList(completed, "completedList");
+
     delete window[callbackName];
   };
 
@@ -23,192 +28,124 @@ function loadBoardView() {
   document.body.appendChild(script);
 }
 
-
 /* ============================================================
-   FORMAT DATE & TIME
+   DATE/TIME HELPERS
    ============================================================ */
 
-function formatDate(value) {
+function displayDate(value) {
   if (!value) return "-";
-
-  if (typeof value === "string" && value.includes("T")) {
-    const d = new Date(value);
-    if (!isNaN(d.getTime())) {
-      return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-    }
+  const d = new Date(value);
+  if (!isNaN(d.getTime())) {
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
-
-  const d2 = new Date(value);
-  if (!isNaN(d2.getTime())) {
-    return d2.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  }
-
-  const serial = Number(value);
-  if (!isNaN(serial)) {
-    const base = new Date(1899, 11, 30);
-    const ms = serial * 24 * 60 * 60 * 1000;
-    const d3 = new Date(base.getTime() + ms);
-    return d3.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  }
-
   return value;
 }
 
-function extractTimeFromString(value) {
-  const m = typeof value === "string" ? value.match(/T(\d{2}):(\d{2})/) : null;
-  if (!m) return null;
-
-  let hours = parseInt(m[1], 10);
-  const minutes = m[2];
-  const ampm = hours >= 12 ? "PM" : "AM";
-  hours = (hours % 12) || 12;
-
-  return `${hours}:${minutes} ${ampm}`;
-}
-
-function formatTime(value) {
+function displayTime(value) {
   if (!value) return "-";
 
   if (typeof value === "string" && value.match(/\d{1,2}:\d{2}/)) {
     if (value.toUpperCase().includes("AM") || value.toUpperCase().includes("PM")) {
       return value;
     }
-    const parts = value.split(":");
-    let h = parseInt(parts[0], 10);
-    const m = parts[1];
+    const [hStr, m] = value.split(":");
+    let h = parseInt(hStr, 10);
     const ampm = h >= 12 ? "PM" : "AM";
     h = (h % 12) || 12;
     return `${h}:${m} ${ampm}`;
   }
 
-  const fromString = extractTimeFromString(value);
-  if (fromString) return fromString;
-
   const d = new Date(value);
   if (!isNaN(d.getTime())) {
-    let hours = d.getHours();
-    const minutes = d.getMinutes().toString().padStart(2, "0");
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = (hours % 12) || 12;
-    return `${hours}:${minutes} ${ampm}`;
-  }
-
-  const serial = Number(value);
-  if (!isNaN(serial)) {
-    const base = new Date(1899, 11, 30);
-    const ms = serial * 24 * 60 * 60 * 1000;
-    const d2 = new Date(base.getTime() + ms);
-    let hours = d2.getHours();
-    const minutes = d2.getMinutes().toString().padStart(2, "0");
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = (hours % 12) || 12;
-    return `${hours}:${minutes} ${ampm}`;
+    let h = d.getHours();
+    const m = d.getMinutes().toString().padStart(2, "0");
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = (h % 12) || 12;
+    return `${h}:${m} ${ampm}`;
   }
 
   return value;
 }
 
-
 /* ============================================================
-   RENDER BOARD CARDS (ACTIVE + COMPLETED)
+   RENDER BOARD CARDS (COMPACT LAYOUT)
    ============================================================ */
 
-function renderBoardList(rows) {
-  const container = document.getElementById("boardList");
+function renderBoardList(rows, containerId) {
+  const container = document.getElementById(containerId);
   container.innerHTML = "";
 
   rows.forEach(row => {
-
-    // Must have a game number
     if (!row.game_number) return;
 
-    // Coach started workflow?
-    const coachStarted = !!row.attempt_started;
-
-    // Board review needed?
-    const needsBoardReview =
-      !row.board_opponent_contacted ||
-      !row.board_new_info_confirmed ||
-      !row.board_field_hold_entered ||
-      !row.board_haysa_approved ||
-      !row.board_coach_certified ||
-      !row.board_email_sent ||
-      !row.board_sssl_approved ||
-      !row.board_ts_updated;
-
-    // Show case if coach started OR board needs review
-    const showCase = coachStarted || needsBoardReview;
-    if (!showCase) return;
-
-    // Visual indicator pill
-    const boardIndicator = needsBoardReview
-      ? `<div class="board-pill pill-warning">⚠ Board Review Needed</div>`
-      : `<div class="board-pill pill-complete">✓ Board Complete</div>`;
-
-    // Build card
     const card = document.createElement("div");
     card.className = "board-card";
 
+    const origDetails = `${displayDate(row.orig_date)} • ${displayTime(row.orig_time)} • ${row.orig_field}`;
+    const finalDetails = row.final_date
+      ? `${displayDate(row.final_date)} • ${displayTime(row.final_time)} • ${row.final_field}`
+      : "Not yet finalized";
+
+    const statusText = row.completed_at ? "Completed" : (row.haysa_status || "In Progress");
+
     card.innerHTML = `
-      <h3>Game #${row.game_number} — ${row.team_name || ""} vs ${row.opp_town || ""}</h3>
-
-      <div class="board-section">
-        <strong>Original:</strong> ${row.orig_date || ""} • ${row.orig_time || ""} • ${row.orig_field || ""}
+      <div class="board-header">
+        <div class="board-title">${row.team_name} vs ${row.opp_town}</div>
+        <div class="board-game-number">#${row.game_number}</div>
       </div>
 
-      <div class="board-section">
-        <strong>Proposed Option 1:</strong> ${row.proposed_1_date || "-"} • ${row.proposed_1_time || "-"} • ${row.proposed_1_field || "-"}
+      <div class="board-grid">
+        <div><strong>Original:</strong> ${origDetails}</div>
+        <div><strong>Final:</strong> ${finalDetails}</div>
+        <div><strong>Status:</strong> ${statusText}</div>
       </div>
 
-      <div class="board-section">
-        <strong>Proposed Option 2:</strong> ${row.proposed_2_date || "-"} • ${row.proposed_2_time || "-"} • ${row.proposed_2_field || "-"}
+      <div class="board-progress-bar">
+        ${renderBoardPill("Opp", row.board_opponent_contacted)}
+        ${renderBoardPill("Info", row.board_new_info_confirmed)}
+        ${renderBoardPill("Hold", row.board_field_hold_entered)}
+        ${renderBoardPill("HAY", row.board_haysa_approved)}
+        ${renderBoardPill("Crt", row.board_coach_certified)}
+        ${renderBoardPill("Em", row.board_email_sent)}
+        ${renderBoardPill("SSSL", row.board_sssl_approved)}
+        ${renderBoardPill("TS", row.board_ts_updated)}
       </div>
 
-      <div class="board-section">
-        <strong>Final:</strong> ${row.final_date || "-"} • ${row.final_time || "-"} • ${row.final_field || "-"}
+      <div class="board-notes">
+        <div class="notes-toggle" onclick="toggleNotes(this)">Board Notes ▼</div>
+        <div class="notes-body" style="display:none;">
+          <textarea id="notes_${row.game_number}" class="board-notes-text">${row.haysa_notes || ""}</textarea>
+          <button class="primary-btn" onclick="saveBoardRow('${row.game_number}', this.parentElement)">
+            Save Updates
+          </button>
+        </div>
       </div>
-
-      <div class="board-section board-status">
-        <strong>Status:</strong> ${row.haysa_status || "In Progress"}
-        ${boardIndicator}
-      </div>
-
-      <div class="board-checkboxes">
-        ${renderBoardCheckbox("board_opponent_contacted", row.board_opponent_contacted, "Opponent Contacted")}
-        ${renderBoardCheckbox("board_new_info_confirmed", row.board_new_info_confirmed, "New Info Confirmed")}
-        ${renderBoardCheckbox("board_field_hold_entered", row.board_field_hold_entered, "Field Hold Entered")}
-        ${renderBoardCheckbox("board_haysa_approved", row.board_haysa_approved, "HAYSA Approved")}
-        ${renderBoardCheckbox("board_coach_certified", row.board_coach_certified, "Coach Certified")}
-        ${renderBoardCheckbox("board_email_sent", row.board_email_sent, "Email Sent")}
-        ${renderBoardCheckbox("board_sssl_approved", row.board_sssl_approved, "SSSL Approved")}
-        ${renderBoardCheckbox("board_ts_updated", row.board_ts_updated, "TS Updated")}
-      </div>
-
-      <textarea class="board-notes" data-field="haysa_notes" placeholder="Board notes...">${row.haysa_notes || ""}</textarea>
-
-      <button class="board-save-btn" onclick="saveBoardRow('${row.game_number}', this.parentElement)">
-        Save Updates
-      </button>
     `;
 
     container.appendChild(card);
   });
 }
 
+/* ============================================================
+   PILL RENDERER
+   ============================================================ */
 
-// Helper to render colored checkbox rows
-function renderBoardCheckbox(field, value, label) {
+function renderBoardPill(label, value) {
   const cls = value ? "pill-complete" : "pill-pending";
-  const icon = value ? "✓" : "!";
-  return `
-    <label class="board-pill ${cls}">
-      <input type="checkbox" data-field="${field}" ${value ? "checked" : ""}>
-      ${icon} ${label}
-    </label>
-  `;
+  const icon = value ? "✓" : "•";
+  return `<div class="board-pill ${cls}" title="${label}">${icon}</div>`;
 }
 
+/* ============================================================
+   NOTES TOGGLE
+   ============================================================ */
 
+function toggleNotes(el) {
+  const body = el.nextElementSibling;
+  const open = body.style.display === "block";
+  body.style.display = open ? "none" : "block";
+  el.textContent = open ? "Board Notes ▼" : "Board Notes ▲";
+}
 
 /* ============================================================
    SAVE BOARD UPDATES
@@ -217,17 +154,7 @@ function renderBoardCheckbox(field, value, label) {
 function saveBoardRow(gameNumber, cardElement) {
   const updates = {};
 
-  cardElement.querySelectorAll("input[type='checkbox']").forEach(cb => {
-    const field = cb.dataset.field;
-    if (!field) return;
-    updates[field] = cb.checked ? "TRUE" : "FALSE";
-  });
-
-  cardElement.querySelectorAll("select[data-field]").forEach(sel => {
-    updates[sel.dataset.field] = sel.value;
-  });
-
-  const notes = cardElement.querySelector("textarea[data-field='haysa_notes']");
+  const notes = cardElement.querySelector("textarea");
   if (notes) {
     updates["haysa_notes"] = notes.value;
   }
