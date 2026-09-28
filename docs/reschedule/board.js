@@ -1,4 +1,4 @@
-console.log("BOARD.JS VERSION 2026-09-28-06:00 — Priority Sorting Enabled");
+console.log("BOARD.JS VERSION 2026-09-28-06:30 — Priority + Filters Enabled");
 
 /* ============================================================
    BASE URL
@@ -30,7 +30,6 @@ function loadBoardView() {
        PRIORITY LOGIC
        ============================================================ */
     function getPriority(row) {
-      // COMPLETED ALWAYS LAST
       if (row.completed_at) return 999;
 
       const boardFields = [
@@ -47,19 +46,59 @@ function loadBoardView() {
       const anyBoardDone = boardFields.some(v => v === "TRUE" || v === true);
       const allBoardDone = boardFields.every(v => v === "TRUE" || v === true);
 
-      // 1️⃣ Needs Board Action (some done, some not)
       if (!allBoardDone && anyBoardDone) return 1;
-
-      // 2️⃣ Coach Completed / Board Not Started
       if (!anyBoardDone && row.final_date) return 2;
 
-      // 3️⃣ Everything else
       return 3;
     }
 
     // SORT ACTIVE RESCHEDULES BY PRIORITY
     started.sort((a, b) => getPriority(a) - getPriority(b));
 
+    /* ============================================================
+       TEAM FILTER SETUP
+       ============================================================ */
+    const teamSelect = document.getElementById("teamFilter");
+    const uniqueTeams = [...new Set(started.map(r => r.team_name))];
+
+    uniqueTeams.forEach(team => {
+      const opt = document.createElement("option");
+      opt.value = team;
+      opt.textContent = team;
+      teamSelect.appendChild(opt);
+    });
+
+    /* ============================================================
+       FILTER FUNCTION
+       ============================================================ */
+    function applyFilters() {
+      let filtered = [...started];
+
+      // TEAM FILTER
+      const teamTerm = teamSelect.value;
+      if (teamTerm) {
+        filtered = filtered.filter(r => r.team_name === teamTerm);
+      }
+
+      // DATE FILTER
+      const dateTerm = document.getElementById("dateFilter").value;
+      if (dateTerm) {
+        filtered = filtered.filter(r => {
+          const d = (r.final_date || r.orig_date || "").split("T")[0];
+          return d === dateTerm;
+        });
+      }
+
+      renderBoardList(filtered, "boardList", getPriority);
+    }
+
+    // FILTER EVENTS
+    teamSelect.addEventListener("change", applyFilters);
+    document.getElementById("dateFilter").addEventListener("change", applyFilters);
+
+    /* ============================================================
+       INITIAL RENDER
+       ============================================================ */
     renderBoardList(started, "boardList", getPriority);
     renderBoardList(completed, "completedList", getPriority);
 
@@ -132,7 +171,7 @@ function renderBoardList(rows, containerId, getPriority) {
     const statusText = row.completed_at ? "Completed" : (row.haysa_status || "In Progress");
 
     /* ============================================================
-       PRIORITY BADGE (only for active items)
+       PRIORITY BADGE
        ============================================================ */
     let priorityBadgeHTML = "";
 
@@ -248,14 +287,12 @@ function toggleNotes(el) {
 function saveBoardRow(gameNumber, cardElement) {
   const updates = {};
 
-  // Save board checkboxes
   cardElement.querySelectorAll("input[type='checkbox']").forEach(cb => {
     const field = cb.dataset.field;
     if (!field) return;
     updates[field] = cb.checked ? "TRUE" : "FALSE";
   });
 
-  // Save notes
   const notes = cardElement.querySelector("textarea");
   if (notes) {
     updates["haysa_notes"] = notes.value;
