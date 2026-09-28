@@ -13,10 +13,12 @@ function loadBoardView() {
 
   window[callbackName] = function(result) {
     const rows = result.rows || [];
-    const active = rows.filter(r => !r.completed_at);
+
+    // SIMPLE SPLIT
+    const started = rows.filter(r => r.attempt_started);
     const completed = rows.filter(r => r.completed_at);
 
-    renderBoardList(active, "boardList");
+    renderBoardList(started, "boardList");
     renderBoardList(completed, "completedList");
 
     delete window[callbackName];
@@ -111,7 +113,6 @@ function renderBoardList(rows, containerId) {
         ${renderBoardPill("TS Updated", row.board_ts_updated)}
       </div>
 
-
       <div class="board-notes">
         <div class="notes-toggle" onclick="toggleNotes(this)">Board Notes ▼</div>
         <div class="notes-body" style="display:none;">
@@ -142,7 +143,6 @@ function renderBoardPill(label, value) {
     </div>
   `;
 }
-
 
 /* ============================================================
    NOTES TOGGLE
