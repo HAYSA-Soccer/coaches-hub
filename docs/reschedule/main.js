@@ -196,33 +196,6 @@ function enterDashboardMode() {
   // Hide search UI
   const hideIds = [
     "startContainer",
-    "resultsPanel",
-    "clearSearchBtn"
-  ];
-
-  hideIds.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = "none";
-  });
-
-  // Hide workflow + form
-  const wf = document.getElementById("workflowPage");
-  if (wf) wf.style.display = "none";
-
-  const form = document.getElementById("formSection");
-  if (form) form.style.display = "none";
-
-  // DO NOT hide coachSelector or coachDashboard here
-}
-
-
-
-// DASHBOARD TOGGLE
-
-function enterDashboardMode() {
-  // Hide search UI
-  const hideIds = [
-    "startContainer",
     "resultsPanel"
   ];
 
@@ -243,7 +216,12 @@ function enterDashboardMode() {
 
   // Hide dashboard until loaded
   document.getElementById("coachDashboard").style.display = "none";
+
+  // Show back button
+  const backBtn = document.getElementById("backToSearchBtn");
+  if (backBtn) backBtn.style.display = "inline-block";
 }
+
 
 function exitDashboardMode() {
   // Show search UI
@@ -260,6 +238,10 @@ function exitDashboardMode() {
   // Hide workflow
   const wf = document.getElementById("workflowPage");
   if (wf) wf.style.display = "none";
+
+  // Hide back button
+  const backBtn = document.getElementById("backToSearchBtn");
+  if (backBtn) backBtn.style.display = "none";
 }
 
 
