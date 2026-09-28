@@ -29,16 +29,28 @@ async function preloadAllGames() {
 }
 
 function openCoachSelector() {
-  enterDashboardMode();   // hides search UI
-  showCoachSelector();    // your existing function
+  // Hide search UI only
+  document.getElementById("startContainer").style.display = "none";
+  document.getElementById("resultsPanel").style.display = "none";
+
+  // Show selector
+  showCoachSelector();
+
+  // Hide dashboard until loaded
+  document.getElementById("coachDashboard").style.display = "none";
 }
 
+
 async function loadCoachDashboard() {
-  enterDashboardMode();        // hides search UI
+  // Hide selector
   document.getElementById("coachSelector").style.display = "none";
+
+  // Show dashboard
   document.getElementById("coachDashboard").style.display = "block";
-  await showCoachDashboard();  // your existing function
+
+  await showCoachDashboard();
 }
+
 
 
 
