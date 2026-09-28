@@ -407,15 +407,22 @@ function renderDashboardCard(row) {
   ];
 
   let pills = "<div class='board-pill-container'>";
+
   boardFields.forEach(([key, label]) => {
     const val = !!row[key];
+  
+    // Determine pill class
+    let cls = val ? "pill-complete" : "pill-pending";
+  
     pills += `
-      <div class="board-pill ${val ? "pill-complete" : "pill-pending"}">
-        ${val ? "✓" : "✗"} ${label}
+      <div class="board-pill ${cls}">
+        ${val ? "✓" : "!"} ${label}
       </div>
     `;
   });
+  
   pills += "</div>";
+
 
   // Game details
   const origDetails = `${displayDate(row.orig_date)} ${displayTime(row.orig_time)} — ${row.orig_field}`;
