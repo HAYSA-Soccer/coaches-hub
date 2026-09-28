@@ -28,27 +28,60 @@ function loadBoardView() {
 function formatTime(value) {
   if (!value) return "-";
 
-  if (typeof value === "string" && value.includes(":")) return value;
+  // If it's already readable (HH:MM or HH:MM AM/PM)
+  if (typeof value === "string" && value.match(/\d{1,2}:\d{2}/)) {
+    return value;
+  }
 
+  // Try parsing ISO datetime
+  const iso = new Date(value);
+  if (!isNaN(iso.getTime())) {
+    let hours = iso.getHours();
+    let minutes = iso.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = (hours % 12) || 12;
+    return `${hours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
+  }
+
+  // Try parsing Google Sheets serial (datetime or time-only)
   const serial = Number(value);
-  if (isNaN(serial)) return value;
+  if (!isNaN(serial)) {
+    const base = new Date(1899, 11, 30);
+    const ms = serial * 24 * 60 * 60 * 1000;
+    const d = new Date(base.getTime() + ms);
 
-  const totalMinutes = Math.round(serial * 24 * 60);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
+    let hours = d.getHours();
+    let minutes = d.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = (hours % 12) || 12;
 
-  const h = ((hours % 12) || 12);
-  const ampm = hours >= 12 ? "PM" : "AM";
+    return `${hours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
+  }
 
-  return `${h}:${minutes.toString().padStart(2, "0")} ${ampm}`;
+  return value;
 }
+
 
 function formatDate(value) {
   if (!value) return "-";
+
   const d = new Date(value);
-  if (isNaN(d.getTime())) return value;
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  if (!isNaN(d.getTime())) {
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  }
+
+  // Google Sheets serial date
+  const serial = Number(value);
+  if (!isNaN(serial)) {
+    const base = new Date(1899, 11, 30);
+    const ms = serial * 24 * 60 * 60 * 1000;
+    const d2 = new Date(base.getTime() + ms);
+    return d2.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  }
+
+  return value;
 }
+
 
 
 /* ============================================================
