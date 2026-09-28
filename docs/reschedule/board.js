@@ -1,3 +1,6 @@
+console.log("BOARD.JS VERSION 2026-09-28-01:20");
+
+
 const BASE_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
 
 /* ============================================================
