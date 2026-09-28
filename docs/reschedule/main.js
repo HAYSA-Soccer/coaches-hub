@@ -16,12 +16,16 @@ async function preloadAllGames() {
     const url = `${BASE_URL}?action=getAllGames`;
     const response = await fetch(url);
     const result = await response.json();
+
+    console.log("Preload result:", result);   // ⭐ NOW result exists
     ALL_GAMES = result.rows || [];
     console.log("Preloaded games:", ALL_GAMES.length);
+
   } catch (err) {
     console.error("Error preloading games:", err);
   }
 }
+
 
 // =============== Run it when the page loads ===============
 window.addEventListener("DOMContentLoaded", preloadAllGames);
