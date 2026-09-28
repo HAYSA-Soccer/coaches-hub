@@ -1,4 +1,4 @@
-console.log("BOARD.JS VERSION 2026-09-28-02:00 — Compact Board Layout Enabled");
+console.log("BOARD.JS VERSION 2026-09-28-03:00 — Coach + Board Workflow Enabled");
 
 const BASE_URL = "https://script.google.com/macros/s/AKfycbyHJZ_HOZZFYe8ASTrEKN9axfpXqR0Uu09PG6jgBCXLJCE3jwzYVRqGPSrl3AjwGXoJ/exec";
 
@@ -70,7 +70,7 @@ function displayTime(value) {
 }
 
 /* ============================================================
-   RENDER BOARD CARDS (COMPACT LAYOUT)
+   RENDER BOARD CARDS
    ============================================================ */
 
 function renderBoardList(rows, containerId) {
@@ -90,6 +90,39 @@ function renderBoardList(rows, containerId) {
 
     const statusText = row.completed_at ? "Completed" : (row.haysa_status || "In Progress");
 
+    /* ============================================================
+       COACH PROGRESS SECTION
+       ============================================================ */
+    const coachProgress = `
+      <div class="coach-progress">
+        <strong>Coach Progress:</strong><br>
+        Started: ${row.attempt_started_date || "-"}<br>
+        Proposed Options: ${
+          (row.proposed_1_date || row.proposed_2_date) ? "Entered" : "None"
+        }<br>
+        Final Details: ${row.final_date ? "Entered" : "Not yet finalized"}<br>
+      </div>
+    `;
+
+    /* ============================================================
+       BOARD CHECKBOXES (CLICKABLE)
+       ============================================================ */
+    const boardCheckboxes = `
+      <div class="board-checkboxes">
+        ${renderBoardCheckbox("board_opponent_contacted", row.board_opponent_contacted, "Opponent Contacted")}
+        ${renderBoardCheckbox("board_field_hold_entered", row.board_field_hold_entered, "Field Hold Entered")}
+        ${renderBoardCheckbox("board_new_info_confirmed", row.board_new_info_confirmed, "Determined")}
+        ${renderBoardCheckbox("board_haysa_approved", row.board_haysa_approved, "HAYSA Approved")}
+        ${renderBoardCheckbox("board_coach_certified", row.board_coach_certified, "Coach Certified")}
+        ${renderBoardCheckbox("board_email_sent", row.board_email_sent, "SSSL Sent")}
+        ${renderBoardCheckbox("board_sssl_approved", row.board_sssl_approved, "SSSL Approved")}
+        ${renderBoardCheckbox("board_ts_updated", row.board_ts_updated, "TS Updated")}
+      </div>
+    `;
+
+    /* ============================================================
+       CARD HTML
+       ============================================================ */
     card.innerHTML = `
       <div class="board-header">
         <div class="board-title">${row.team_name} vs ${row.opp_town}</div>
@@ -102,16 +135,9 @@ function renderBoardList(rows, containerId) {
         <div><strong>Status:</strong> ${statusText}</div>
       </div>
 
-      <div class="board-progress-bar">
-        ${renderBoardPill("Opp Cnct", row.board_opponent_contacted)}
-        ${renderBoardPill("Field Hold", row.board_field_hold_entered)}
-        ${renderBoardPill("Determined", row.board_new_info_confirmed)}
-        ${renderBoardPill("HAYSA Appr", row.board_haysa_approved)}
-        ${renderBoardPill("Coach Cert", row.board_coach_certified)}
-        ${renderBoardPill("SSSL Sent", row.board_email_sent)}
-        ${renderBoardPill("SSSL Appr", row.board_sssl_approved)}
-        ${renderBoardPill("TS Updated", row.board_ts_updated)}
-      </div>
+      ${coachProgress}
+
+      ${boardCheckboxes}
 
       <div class="board-notes">
         <div class="notes-toggle" onclick="toggleNotes(this)">Board Notes ▼</div>
@@ -129,18 +155,15 @@ function renderBoardList(rows, containerId) {
 }
 
 /* ============================================================
-   PILL RENDERER
+   BOARD CHECKBOX RENDERER
    ============================================================ */
 
-function renderBoardPill(label, value) {
-  const cls = value ? "pill-complete" : "pill-pending";
-  const icon = value ? "✓" : "•";
-
+function renderBoardCheckbox(field, value, label) {
   return `
-    <div class="board-pill-row">
-      <div class="board-pill ${cls}">${icon}</div>
-      <span class="board-pill-label">${label}</span>
-    </div>
+    <label class="board-checkbox-row">
+      <input type="checkbox" data-field="${field}" ${value ? "checked" : ""}>
+      ${label}
+    </label>
   `;
 }
 
@@ -162,6 +185,14 @@ function toggleNotes(el) {
 function saveBoardRow(gameNumber, cardElement) {
   const updates = {};
 
+  // Save board checkboxes
+  cardElement.querySelectorAll("input[type='checkbox']").forEach(cb => {
+    const field = cb.dataset.field;
+    if (!field) return;
+    updates[field] = cb.checked ? "TRUE" : "FALSE";
+  });
+
+  // Save notes
   const notes = cardElement.querySelector("textarea");
   if (notes) {
     updates["haysa_notes"] = notes.value;
