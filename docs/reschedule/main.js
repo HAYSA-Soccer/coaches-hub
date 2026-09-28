@@ -251,28 +251,73 @@ function displayTime(t) {
 
 
 async function showCoachDashboard() {
+  // 1️⃣ Get all rows from the sheet
   const all = await apiGetAllRows();
 
-  const coachName = document.getElementById("coach_search").value.trim().toLowerCase();
+  // 2️⃣ Get selected coach name from dropdown
+  const coachName = document.getElementById("coachSelectorDropdown").value.toLowerCase();
 
+  // 3️⃣ Filter rows belonging to this coach
   const mine = all.filter(r =>
     r.coach_name && r.coach_name.toLowerCase().includes(coachName)
   );
 
-  // ⭐ Sort active first
+  // 4️⃣ Sort cases by engagement + status
   mine.sort((a, b) => {
+    const aEngaged = !!a.attempt_started;
+    const bEngaged = !!b.attempt_started;
+
     const aCompleted = !!a.completed_at;
     const bCompleted = !!b.completed_at;
-    if (!aCompleted && bCompleted) return -1;
+
+    // 1️⃣ Engaged + Active (top)
+    if (aEngaged && !aCompleted && (!bEngaged || bCompleted)) return -1;
+    if (bEngaged && !bCompleted && (!aEngaged || aCompleted)) return 1;
+
+    // 2️⃣ Completed (middle)
     if (aCompleted && !bCompleted) return 1;
+    if (bCompleted && !aCompleted) return -1;
+
+    // 3️⃣ Not engaged (bottom)
+    if (!aEngaged && bEngaged) return 1;
+    if (!bEngaged && aEngaged) return -1;
+
+    // 4️⃣ Tie-breaker: game number
     return (a.game_number || 0) - (b.game_number || 0);
   });
 
+  // 5️⃣ Build dashboard HTML
   let html = "";
-  mine.forEach(row => html += renderDashboardCard(row));
 
+  // Section: Active + Engaged
+  const active = mine.filter(r => r.attempt_started && !r.completed_at);
+  if (active.length > 0) {
+    html += "<h3>Active Cases</h3>";
+    active.forEach(row => html += renderDashboardCard(row));
+  }
+
+  // Section: Completed
+  const completed = mine.filter(r => r.completed_at);
+  if (completed.length > 0) {
+    html += "<h3>Completed Cases</h3>";
+    completed.forEach(row => html += renderDashboardCard(row));
+  }
+
+  // Section: Not Yet Started
+  const untouched = mine.filter(r => !r.attempt_started);
+  if (untouched.length > 0) {
+    html += "<h3>Not Yet Started</h3>";
+    untouched.forEach(row => html += renderDashboardCard(row));
+  }
+
+  // 6️⃣ Inject into dashboard container
   document.getElementById("coachDashboardList").innerHTML = html;
+
+  // 7️⃣ Show dashboard
   document.getElementById("coachDashboard").style.display = "block";
+
+  // 8️⃣ Hide selector (optional)
+  document.getElementById("coachSelector").style.display = "none";
 }
 
 function renderDashboardCard(row) {
