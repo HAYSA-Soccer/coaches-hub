@@ -22,6 +22,27 @@ function loadBoardView() {
 
 
 /* ============================================================
+   FORMAT DATE & TIME
+   ============================================================ */
+function formatTime(value) {
+  if (!value) return "-";
+
+  // If it's already a readable time, return it
+  if (typeof value === "string" && value.includes(":")) return value;
+
+  // Convert Google Sheets serial time (fraction of a day)
+  const serial = Number(value);
+  if (isNaN(serial)) return value;
+
+  const totalMinutes = Math.round(serial * 24 * 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+}
+
+
+/* ============================================================
    RENDER BOARD CARDS
    ============================================================ */
 
