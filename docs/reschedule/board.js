@@ -28,10 +28,8 @@ function loadBoardView() {
 function formatTime(value) {
   if (!value) return "-";
 
-  // If it's already readable (HH:MM), return it
   if (typeof value === "string" && value.includes(":")) return value;
 
-  // Convert Google Sheets serial time (fraction of a day)
   const serial = Number(value);
   if (isNaN(serial)) return value;
 
@@ -39,7 +37,17 @@ function formatTime(value) {
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
 
-  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+  const h = ((hours % 12) || 12);
+  const ampm = hours >= 12 ? "PM" : "AM";
+
+  return `${h}:${minutes.toString().padStart(2, "0")} ${ampm}`;
+}
+
+function formatDate(value) {
+  if (!value) return "-";
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return value;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 
@@ -53,13 +61,9 @@ function renderBoardList(rows) {
 
   rows.forEach(row => {
 
-    // Must have a game number
     if (!row.game_number) return;
-
-    // A reschedule has started if attempt_started is TRUE
     if (!row.attempt_started || row.attempt_started === "") return;
 
-    // Status color class
     const statusClass =
       row.haysa_status === "approved" ? "status-approved" :
       row.haysa_status === "rejected" ? "status-rejected" :
@@ -69,26 +73,26 @@ function renderBoardList(rows) {
     card.className = "board-card";
 
     card.innerHTML = `
+      <div class="case-header ${statusClass}">
+        ${row.haysa_status ? row.haysa_status.toUpperCase() : "IN PROGRESS"}
+      </div>
+
       <h3>Game #${row.game_number} — ${row.team_name || ""} vs ${row.opp_town || ""}</h3>
 
-      <div class="board-section">
-        <strong>Original:</strong> ${row.orig_date || ""} • ${formatTime(row.orig_time)} • ${row.orig_field || ""}
+      <div class="timeline">
+        <div><strong>Original:</strong> ${formatDate(row.orig_date)} @ ${formatTime(row.orig_time)} • ${row.orig_field || ""}</div>
+        <div><strong>Option 1:</strong> ${formatDate(row.proposed_1_date)} @ ${formatTime(row.proposed_1_time)} • ${row.proposed_1_field || "-"}</div>
+        <div><strong>Option 2:</strong> ${formatDate(row.proposed_2_date)} @ ${formatTime(row.proposed_2_time)} • ${row.proposed_2_field || "-"}</div>
+        <div><strong>Final:</strong> ${formatDate(row.final_date)} @ ${formatTime(row.final_time)} • ${row.final_field || "-"}</div>
       </div>
 
-      <div class="board-section">
-        <strong>Proposed Option 1:</strong> ${row.proposed_1_date || "-"} • ${formatTime(row.proposed_1_time)} • ${row.proposed_1_field || "-"}
-      </div>
-
-      <div class="board-section">
-        <strong>Proposed Option 2:</strong> ${row.proposed_2_date || "-"} • ${formatTime(row.proposed_2_time)} • ${row.proposed_2_field || "-"}
-      </div>
-
-      <div class="board-section">
-        <strong>Final:</strong> ${row.final_date || "-"} • ${formatTime(row.final_time)} • ${row.final_field || "-"}
-      </div>
-
-      <div class="board-section board-status ${statusClass}">
-        <strong>Status:</strong> ${row.haysa_status || "In Progress"}
+      <div class="workflow">
+        <span class="${row.step_2 ? "wf-done" : "wf-pending"}">Opponent</span>
+        <span class="${row.step_3 ? "wf-done" : "wf-pending"}">HAYSA</span>
+        <span class="${row.step_4 ? "wf-done" : "wf-pending"}">Sent SSSL</span>
+        <span class="${row.step_5 ? "wf-done" : "wf-pending"}">SSSL OK</span>
+        <span class="${row.calendar_updated ? "wf-done" : "wf-pending"}">TS Updated</span>
+        <span class="${row.field_confirmed ? "wf-done" : "wf-blocked"}">Blocked</span>
       </div>
 
       <div class="board-section">
@@ -98,15 +102,6 @@ function renderBoardList(rows) {
           <option value="approved" ${row.haysa_status === "approved" ? "selected" : ""}>Approved</option>
           <option value="rejected" ${row.haysa_status === "rejected" ? "selected" : ""}>Rejected</option>
         </select>
-      </div>
-
-      <div class="board-checkbox-row">
-        <label><input type="checkbox" data-field="step_2" ${row.step_2 ? "checked" : ""}> Opponent</label>
-        <label><input type="checkbox" data-field="step_3" ${row.step_3 ? "checked" : ""}> HAYSA</label>
-        <label><input type="checkbox" data-field="step_4" ${row.step_4 ? "checked" : ""}> Sent SSSL</label>
-        <label><input type="checkbox" data-field="step_5" ${row.step_5 ? "checked" : ""}> SSSL OK</label>
-        <label><input type="checkbox" data-field="calendar_updated" ${row.calendar_updated ? "checked" : ""}> TS Updated</label>
-        <label><input type="checkbox" data-field="field_confirmed" ${row.field_confirmed ? "checked" : ""}> Blocked</label>
       </div>
 
       <textarea class="board-notes" data-field="haysa_notes" placeholder="Board notes...">${row.haysa_notes || ""}</textarea>
@@ -128,23 +123,16 @@ function renderBoardList(rows) {
 function saveBoardRow(gameNumber, cardElement) {
   const updates = {};
 
-  // Collect checkbox values
   cardElement.querySelectorAll("input[type='checkbox']").forEach(cb => {
-    const field = cb.dataset.field;
-    updates[field] = cb.checked ? "TRUE" : "FALSE";
+    updates[cb.dataset.field] = cb.checked ? "TRUE" : "FALSE";
   });
 
-  // Collect dropdowns
   cardElement.querySelectorAll("select[data-field]").forEach(sel => {
-    const field = sel.dataset.field;
-    updates[field] = sel.value;
+    updates[sel.dataset.field] = sel.value;
   });
 
-  // Collect notes
-  const notes = cardElement.querySelector("textarea[data-field='haysa_notes']");
-  updates["haysa_notes"] = notes.value;
+  updates["haysa_notes"] = cardElement.querySelector("textarea[data-field='haysa_notes']").value;
 
-  // JSONP callback
   const callbackName = "updateCallback_" + Date.now();
   window[callbackName] = function(result) {
     alert(`Saved updates for game #${gameNumber}`);
