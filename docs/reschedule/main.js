@@ -28,6 +28,15 @@ async function preloadAllGames() {
   document.body.appendChild(script);
 }
 
+async function loadSelectedCoachDashboard() {
+  const coachName = document.getElementById("coachSelectorDropdown").value;
+
+  currentCoachName = coachName;
+  currentCoachEmail = ""; // optional, if you want email matching too
+
+  showCoachDashboard();
+}
+
 
 
 // =============== Run it when the page loads ===============
