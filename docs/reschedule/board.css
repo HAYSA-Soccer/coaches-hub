@@ -177,3 +177,23 @@
 #completedList .board-card:hover {
   opacity: 1;
 }
+
+
+.board-progress-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin-bottom: 16px;
+}
+
+.board-pill-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.board-pill-label {
+  font-size: 13px;
+  color: #444;
+}
+
