@@ -122,31 +122,28 @@ function renderBoardList(rows) {
     if (!row.attempt_started || row.attempt_started === "") return;
 
     /* ============================================================
-       AUTO-CHECK LOGIC (but board can override)
+       AUTO-CHECK LOGIC (board can override)
        ============================================================ */
 
     // Step 4: new time/date/location selected → opponent contacted + new info confirmed
     if (row.step_4) {
-      row.bm_opponent_contacted = true;
-      row.bm_new_info_confirmed = true;
+      row.board_opponent_contacted = true;
+      row.board_new_info_confirmed = true;
     }
-
-    // Step 5: board field hold required (manual)
-    // No auto-check
 
     // Step 6: HAYSA overall approval
     if (row.step_6) {
-      row.bm_haysa_approved = true;
+      row.board_haysa_approved = true;
     }
 
     // Step 7: coach certifies they spoke with opposing coach
     if (row.step_7) {
-      row.bm_coach_certified = true;
+      row.board_coach_certified = true;
     }
 
     // Step 8: form printed/saved → email sent
     if (row.step_8) {
-      row.bm_email_sent = true;
+      row.board_email_sent = true;
     }
 
     const statusClass =
@@ -173,21 +170,21 @@ function renderBoardList(rows) {
 
       <div class="workflow-checkbox-row">
 
-        <label><input type="checkbox" data-field="bm_opponent_contacted" ${row.bm_opponent_contacted ? "checked" : ""}> Opponent Contacted</label>
+        <label><input type="checkbox" data-field="board_opponent_contacted" ${row.board_opponent_contacted ? "checked" : ""}> Opponent Contacted</label>
 
-        <label><input type="checkbox" data-field="bm_new_info_confirmed" ${row.bm_new_info_confirmed ? "checked" : ""}> New Info Confirmed</label>
+        <label><input type="checkbox" data-field="board_new_info_confirmed" ${row.board_new_info_confirmed ? "checked" : ""}> New Info Confirmed</label>
 
-        <label><input type="checkbox" data-field="bm_field_hold_entered" ${row.bm_field_hold_entered ? "checked" : ""}> Field Hold Entered</label>
+        <label><input type="checkbox" data-field="board_field_hold_entered" ${row.board_field_hold_entered ? "checked" : ""}> Field Hold Entered</label>
 
-        <label><input type="checkbox" data-field="bm_haysa_approved" ${row.bm_haysa_approved ? "checked" : ""}> HAYSA Approved</label>
+        <label><input type="checkbox" data-field="board_haysa_approved" ${row.board_haysa_approved ? "checked" : ""}> HAYSA Approved</label>
 
-        <label><input type="checkbox" data-field="bm_coach_certified" ${row.bm_coach_certified ? "checked" : ""}> Coach Certified</label>
+        <label><input type="checkbox" data-field="board_coach_certified" ${row.board_coach_certified ? "checked" : ""}> Coach Certified</label>
 
-        <label><input type="checkbox" data-field="bm_email_sent" ${row.bm_email_sent ? "checked" : ""}> Email Sent</label>
+        <label><input type="checkbox" data-field="board_email_sent" ${row.board_email_sent ? "checked" : ""}> Email Sent</label>
 
-        <label><input type="checkbox" data-field="bm_sssl_approved" ${row.bm_sssl_approved ? "checked" : ""}> SSSL Approved/Declined</label>
+        <label><input type="checkbox" data-field="board_sssl_approved" ${row.board_sssl_approved ? "checked" : ""}> SSSL Approved/Declined</label>
 
-        <label><input type="checkbox" data-field="bm_ts_updated" ${row.bm_ts_updated ? "checked" : ""}> TS Updated / Temp Hold Removed</label>
+        <label><input type="checkbox" data-field="board_ts_updated" ${row.board_ts_updated ? "checked" : ""}> TS Updated / Temp Hold Removed</label>
 
       </div>
 
@@ -212,14 +209,14 @@ function renderBoardList(rows) {
        ============================================================ */
 
     const isCompleted =
-      row.bm_opponent_contacted &&
-      row.bm_new_info_confirmed &&
-      row.bm_field_hold_entered &&
-      row.bm_haysa_approved &&
-      row.bm_coach_certified &&
-      row.bm_email_sent &&
-      row.bm_sssl_approved &&
-      row.bm_ts_updated;
+      row.board_opponent_contacted &&
+      row.board_new_info_confirmed &&
+      row.board_field_hold_entered &&
+      row.board_haysa_approved &&
+      row.board_coach_certified &&
+      row.board_email_sent &&
+      row.board_sssl_approved &&
+      row.board_ts_updated;
 
     if (isCompleted) {
       completedContainer.appendChild(card);
