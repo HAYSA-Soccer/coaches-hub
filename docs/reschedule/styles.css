@@ -1117,43 +1117,68 @@ select:focus {
 
 
 .match-card {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 12px;
-  padding: 12px 14px;
   border: 1px solid #ddd;
   border-radius: 8px;
   background: #fafafa;
+  padding: 12px 14px;
   margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Top identity line */
+.mc-top {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
-.mc-left, .mc-right {
+.mc-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #173d77;
+}
+
+.mc-game-number {
+  font-size: 13px;
+  color: #555;
+}
+
+/* Side-by-side details */
+.mc-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.mc-col {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.mc-title {
-  font-size: 14px;
+.mc-label {
+  font-size: 13px;
   font-weight: 600;
-  color: #173d77;
-}
-
-.mc-title.empty {
-  color: #999;
+  color: #333;
+  margin-bottom: 2px;
 }
 
 .mc-line {
-  display: flex;
-  gap: 10px;
   font-size: 13px;
   color: #444;
+  display: flex;
+  gap: 6px;
 }
 
-.mc-actions button {
-  padding: 6px 12px;
-  font-size: 13px;
-  border-radius: 6px;
+.mc-line.empty {
+  color: #999;
+  font-style: italic;
 }
 
+/* Button row */
+.mc-actions {
+  display: flex;
+  justify-content: flex-end;
+}
