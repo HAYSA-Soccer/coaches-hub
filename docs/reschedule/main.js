@@ -184,28 +184,28 @@ function displayDate(value) {
 async function showCoachSelector() {
   const all = await apiGetAllRows();
 
-  // Build a unique list of coach/team combos
-  const coachMap = new Map();
+  // Build unique list of team names
+  const teamMap = new Map();
 
   all.forEach(r => {
-    const key = `${r.coach_name} | ${r.team_name}`;
-    if (r.coach_name && r.team_name && !coachMap.has(key)) {
-      coachMap.set(key, { coach: r.coach_name, team: r.team_name });
+    if (r.team_name && !teamMap.has(r.team_name)) {
+      teamMap.set(r.team_name, r.team_name);
     }
   });
 
   const dropdown = document.getElementById("coachSelectorDropdown");
   dropdown.innerHTML = "";
 
-  coachMap.forEach((obj, key) => {
+  teamMap.forEach(teamName => {
     const opt = document.createElement("option");
-    opt.value = obj.coach.toLowerCase();
-    opt.textContent = `${obj.team} — Coach ${obj.coach}`;
+    opt.value = teamName;
+    opt.textContent = teamName;
     dropdown.appendChild(opt);
   });
 
   document.getElementById("coachSelector").style.display = "block";
 }
+
 
 
 function displayTime(t) {
