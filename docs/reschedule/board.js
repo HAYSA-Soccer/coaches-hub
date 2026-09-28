@@ -118,35 +118,6 @@ function loadBoardView() {
    }
 
 
-  // DATE SOURCE (final_date preferred)
-  function getRowDate(r) {
-    const d = (r.final_date || r.orig_date || "").split("T")[0];
-    return d;
-  }
-
-  // SINGLE DATE FILTER
-  if (singleDate) {
-    filtered = filtered.filter(r => matchDate(getRowDate(r), singleDate));
-  }
-
-  // RANGE FILTER
-  if (startDate || endDate) {
-    filtered = filtered.filter(r => matchRange(getRowDate(r), startDate, endDate));
-  }
-
-  // NO RESULTS MESSAGE
-  const activeContainer = document.getElementById("boardList");
-  if (filtered.length === 0) {
-    activeContainer.innerHTML = `
-      <div style="padding:12px; font-size:16px; color:#666;">
-        No active reschedules for this date.
-      </div>
-    `;
-  } else {
-    renderBoardList(filtered, "boardList", getPriority);
-  }
-}
-
 
 /* ============================================================
    DATE/TIME HELPERS
