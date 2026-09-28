@@ -24,10 +24,11 @@ function loadBoardView() {
 /* ============================================================
    FORMAT DATE & TIME
    ============================================================ */
+
 function formatTime(value) {
   if (!value) return "-";
 
-  // If it's already a readable time, return it
+  // If it's already readable (HH:MM), return it
   if (typeof value === "string" && value.includes(":")) return value;
 
   // Convert Google Sheets serial time (fraction of a day)
@@ -58,6 +59,12 @@ function renderBoardList(rows) {
     // A reschedule has started if attempt_started is TRUE
     if (!row.attempt_started || row.attempt_started === "") return;
 
+    // Status color class
+    const statusClass =
+      row.haysa_status === "approved" ? "status-approved" :
+      row.haysa_status === "rejected" ? "status-rejected" :
+      "status-progress";
+
     const card = document.createElement("div");
     card.className = "board-card";
 
@@ -65,22 +72,22 @@ function renderBoardList(rows) {
       <h3>Game #${row.game_number} — ${row.team_name || ""} vs ${row.opp_town || ""}</h3>
 
       <div class="board-section">
-        <strong>Original:</strong> ${row.orig_date || ""} • ${row.orig_time || ""} • ${row.orig_field || ""}
+        <strong>Original:</strong> ${row.orig_date || ""} • ${formatTime(row.orig_time)} • ${row.orig_field || ""}
       </div>
 
       <div class="board-section">
-        <strong>Proposed Option 1:</strong> ${row.proposed_1_date || "-"} • ${row.proposed_1_time || "-"} • ${row.proposed_1_field || "-"}
+        <strong>Proposed Option 1:</strong> ${row.proposed_1_date || "-"} • ${formatTime(row.proposed_1_time)} • ${row.proposed_1_field || "-"}
       </div>
 
       <div class="board-section">
-        <strong>Proposed Option 2:</strong> ${row.proposed_2_date || "-"} • ${row.proposed_2_time || "-"} • ${row.proposed_2_field || "-"}
+        <strong>Proposed Option 2:</strong> ${row.proposed_2_date || "-"} • ${formatTime(row.proposed_2_time)} • ${row.proposed_2_field || "-"}
       </div>
 
       <div class="board-section">
-        <strong>Final:</strong> ${row.final_date || "-"} • ${row.final_time || "-"} • ${row.final_field || "-"}
+        <strong>Final:</strong> ${row.final_date || "-"} • ${formatTime(row.final_time)} • ${row.final_field || "-"}
       </div>
 
-      <div class="board-section board-status">
+      <div class="board-section board-status ${statusClass}">
         <strong>Status:</strong> ${row.haysa_status || "In Progress"}
       </div>
 
