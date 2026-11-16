@@ -763,3 +763,31 @@ section {
     margin: 25px auto;
 }
 
+
+.list-card[data-icon="drill"]::before {
+    content: "⚽";
+}
+
+.list-card[data-icon="practice"]::before {
+    content: "📋";
+}
+
+.list-card[data-icon="guide"]::before {
+    content: "📚";
+}
+
+.list-card[data-icon="submit"]::before {
+    content: "➕";
+}
+
+.list-card[data-icon="calendar"]::before {
+    content: "📅";
+}
+
+.list-card[data-icon="reschedule"]::before {
+    content: "🔄";
+}
+
+.list-card[data-icon="operations"]::before {
+    content: "⚙️";
+}
