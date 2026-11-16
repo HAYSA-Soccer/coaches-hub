@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Schedule Operations</title>
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f4f6f8;
+    color: #1d3557;
+}
+
+.header {
+    background: #173f7a;
+    color: white;
+    padding: 25px;
+    text-align: center;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.10);
+}
+
+.card h2 {
+    margin: 0;
+    font-size: 16px;
+    color: #666;
+}
+
+.card .value {
+    font-size: 36px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.good {
+    color: green;
+}
+
+.warning {
+    color: orange;
+}
+
+.bad {
+    color: red;
+}
+
+.section {
+    background: white;
+    margin-top: 25px;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.10);
+}
+
+.issue {
+    border-left: 5px solid #e63946;
+    margin-bottom: 12px;
+    padding: 12px;
+    background: #fafafa;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>HAYSA Schedule Operations</h1>
+    <p>League Scheduling & TeamSideline Sync Monitoring</p>
+</div>
+
+<div class="container">
+
+    <div class="cards">
+
+        <div class="card">
+            <h2>System Status</h2>
+            <div class="value good">Healthy</div>
+        </div>
+
+        <div class="card">
+            <h2>Last SSSL Sync</h2>
+            <div class="value">2:41 AM</div>
+        </div>
+
+        <div class="card">
+            <h2>Coverage</h2>
+            <div class="value">88 / 88</div>
+        </div>
+
+        <div class="card">
+            <h2>Open Issues</h2>
+            <div class="value bad">0</div>
+        </div>
+
+    </div>
+
+    <div class="section">
+
+        <h2>Action Required</h2>
+
+        <p>No action required.</p>
+
+        <!-- Example issue
+
+        <div class="issue">
+            <strong>CREATE</strong><br>
+            5/6 Boys Walsh vs Quincy<br>
+            Missing from TeamSideline
+        </div>
+
+        -->
+
+    </div>
+
+    <div class="section">
+
+        <h2>System Health</h2>
+
+        <p>SSSL Games: 88</p>
+        <p>TS Games: 88</p>
+        <p>CREATE Items: 0</p>
+        <p>UPDATE Items: 0</p>
+        <p>REVIEW Items: 0</p>
+
+    </div>
+
+</div>
+
+</body>
+</html>
