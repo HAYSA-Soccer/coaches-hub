@@ -1,16 +1,16 @@
 {
-  "lastSync": "2026-11-15 11:55 PM",
+  "lastSync": "2026-11-16 12:05 AM",
   "status": "Catching Up",
   "ssslGames": 88,
   "tsGames": 86,
   "coverage": 97.7,
-  "create": 2,
+  "create": 0,
   "update": 0,
   "review": 0,
   "teams": [
     {
       "name": "3/4 Boys Travel (Ball)",
-      "status": "warning"
+      "status": "good"
     },
     {
       "name": "3/4 Boys Travel (Osward)",
@@ -22,7 +22,7 @@
     },
     {
       "name": "3/4 Girls Travel (Lamb-Williams)",
-      "status": "warning"
+      "status": "good"
     },
     {
       "name": "5/6 Boys Travel (Ayers)",
@@ -53,40 +53,5 @@
       "status": "good"
     }
   ],
-  "issues": [
-    {
-      "status": "CREATE",
-      "team": "3/4 Boys Travel (Ball)",
-      "opponent": "Weymouth",
-      "sssl_date": "11/7/2026",
-      "sssl_time": "3:00 PM",
-      "sssl_field": "H-SJ3",
-      "raw_matchup": "",
-      "ts_team": "",
-      "ts_opponent": "",
-      "ts_date": "",
-      "ts_time": "",
-      "ts_field": "",
-      "ts_field_display": "",
-      "action_required": "Create TeamSideline game",
-      "event_id": ""
-    },
-    {
-      "status": "CREATE",
-      "team": "3/4 Girls Travel (Lamb-Williams)",
-      "opponent": "Sharon",
-      "sssl_date": "11/7/2026",
-      "sssl_time": "1:00 PM",
-      "sssl_field": "H-SJ3",
-      "raw_matchup": "",
-      "ts_team": "",
-      "ts_opponent": "",
-      "ts_date": "",
-      "ts_time": "",
-      "ts_field": "",
-      "ts_field_display": "",
-      "action_required": "Create TeamSideline game",
-      "event_id": ""
-    }
-  ]
+  "issues": []
 }
