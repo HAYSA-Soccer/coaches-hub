@@ -41,6 +41,44 @@
         .page-header {
             margin-bottom: 20px;
         }
+
+        .guide-card{
+            cursor:pointer;
+        }
+        
+        .guide-card.active{
+            border-top-width:10px;
+            transform:translateY(-4px);
+            box-shadow:0 6px 14px rgba(0,0,0,.15);
+        }
+        
+        .guide-container{
+            max-width:900px;
+            margin:30px auto;
+            background:white;
+            padding:30px;
+            border-radius:12px;
+            box-shadow:0 2px 8px rgba(0,0,0,.1);
+        }
+        
+        .guide-header{
+            border-left:6px solid #003366;
+            padding-left:15px;
+            margin-bottom:25px;
+        }
+        
+        .guide-header h1{
+            margin:0;
+        }
+        
+        .callout{
+            background:#f3f6fb;
+            border-left:4px solid #ff7f32;
+            padding:12px 16px;
+            margin:20px 0;
+            border-radius:6px;
+        }
+
     </style>
 </head>
 
@@ -189,5 +227,195 @@
 
 <script src="../assets/js/nav.js"></script>
 
-</body>
-</html>
+<script>
+
+const guideData = {
+
+philosophy: `
+<div class="guide-header" style="border-left-color:#4CAF50;">
+<h1>Coaching Philosophy</h1>
+<p>Our approach to developing confident, creative, and resilient players.</p>
+</div>
+
+<h2>Player-Centered Development</h2>
+
+<ul>
+<li>Confidence on the ball</li>
+<li>Decision-making under pressure</li>
+<li>Creativity and problem-solving</li>
+<li>Love of the game</li>
+</ul>
+
+<div class="callout">
+<strong>Remember:</strong>
+Kids learn best when mistakes are treated as part of the process.
+</div>
+
+<h2>Positive Coaching</h2>
+
+<p>
+We emphasize encouragement, effort, and growth.
+</p>
+
+<h2>Age-Appropriate Expectations</h2>
+
+<p>
+Each age group has different physical,
+emotional and cognitive needs.
+</p>
+`,
+
+safety: `
+<div class="guide-header" style="border-left-color:#2196F3;">
+<h1>Safety Guidelines</h1>
+<p>Keep players safe, prepared and protected during all activities.</p>
+</div>
+
+<h2>Hydration</h2>
+
+<p>
+Encourage players to bring water and take frequent breaks.
+</p>
+
+<h2>Weather Safety</h2>
+
+<ul>
+<li>Stop play if lightning is seen.</li>
+<li>Stop play if thunder is heard.</li>
+<li>Use common sense in extreme heat or cold.</li>
+</ul>
+
+<div class="callout">
+<strong>Important:</strong>
+Coaches should always have a phone available.
+</div>
+
+<h2>Equipment Checks</h2>
+
+<ul>
+<li>Goals are anchored</li>
+<li>Fields are free of hazards</li>
+<li>Players wear shin guards</li>
+</ul>
+`,
+
+equipment: `
+<div class="guide-header" style="border-left-color:#FF9800;">
+<h1>Equipment Checklist</h1>
+<p>Everything coaches and players need for safe, effective sessions.</p>
+</div>
+
+<h2>Coach Essentials</h2>
+
+<ul>
+<li>Cones</li>
+<li>Whistle</li>
+<li>Training pinnies</li>
+<li>Extra soccer balls</li>
+<li>First aid kit</li>
+</ul>
+
+<h2>Player Essentials</h2>
+
+<ul>
+<li>Shin guards</li>
+<li>Proper footwear</li>
+<li>Water bottle</li>
+<li>Weather-appropriate clothing</li>
+</ul>
+`,
+
+diagrams: `
+<div class="guide-header" style="border-left-color:#9C27B0;">
+<h1>Field Diagrams</h1>
+<p>Standard field layouts for all HAYSA age groups.</p>
+</div>
+
+<h2>U6 / U7 Field</h2>
+<p>Small field, no goalkeepers, emphasis on fun.</p>
+
+<h2>U8 Field</h2>
+<p>4v4 or 5v5 with small goals.</p>
+
+<h2>U10 Field</h2>
+<p>7v7 with build-out line.</p>
+
+<h2>U12 Field</h2>
+<p>9v9 with standard penalty area.</p>
+`,
+
+concussion: `
+<div class="guide-header" style="border-left-color:#E91E63;">
+<h1>Concussion Protocol</h1>
+<p>Recognize symptoms early and follow proper return-to-play steps.</p>
+</div>
+
+<h2>Signs of a Concussion</h2>
+
+<ul>
+<li>Dizziness</li>
+<li>Headache</li>
+<li>Nausea</li>
+<li>Balance issues</li>
+<li>Memory problems</li>
+</ul>
+
+<div class="callout">
+<strong>Rule #1:</strong>
+When in doubt, sit them out.
+</div>
+
+<h2>Immediate Steps</h2>
+
+<ul>
+<li>Remove player from activity</li>
+<li>Notify parents</li>
+<li>Recommend medical evaluation</li>
+</ul>
+`,
+
+sportsmanship: `
+<div class="guide-header" style="border-left-color:#795548;">
+<h1>Sportsmanship & Culture</h1>
+<p>Building a positive environment for players, families and coaches.</p>
+</div>
+
+<h2>Modeling Behavior</h2>
+
+<p>
+Players mirror the behavior of their coaches.
+</p>
+
+<h2>Parent Expectations</h2>
+
+<ul>
+<li>Cheer positively</li>
+<li>No sideline coaching</li>
+<li>Respect referees</li>
+</ul>
+
+<div class="callout">
+<strong>Reminder:</strong>
+The referee is a development partner, not an opponent.
+</div>
+`
+};
+
+document.querySelectorAll('.guide-card').forEach(card => {
+
+    card.addEventListener('click', function(){
+
+        const key = this.dataset.guide;
+
+        document
+            .querySelectorAll('.guide-card')
+            .forEach(c => c.classList.remove('active'));
+
+        this.classList.add('active');
+
+        document.getElementById('guideContent').innerHTML =
+            guideData[key];
+    });
+});
+
+</script>
