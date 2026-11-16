@@ -339,25 +339,38 @@ function render(data){
 
             issueHtml += `
                 <div class="issue-card">
-
+            
                     <div class="issue-title">
                         ${issue.status}
                     </div>
-
+            
                     <strong>
                         ${issue.team}
                     </strong>
-
+            
                     <br>
-
-                    ${issue.opponent}
-
+            
+                    vs ${issue.opponent}
+            
+                    <br><br>
+            
+                    ${issue.sssl_date}
+                    &nbsp;•&nbsp;
+                    ${issue.sssl_time}
+            
                     <br>
-
-                    <span class="small">
-                        ${issue.date}
-                    </span>
-
+            
+                    Field:
+                    ${issue.sssl_field}
+            
+                    <br><br>
+            
+                    <strong>
+                        Action:
+                    </strong>
+            
+                    ${issue.action_required}
+            
                 </div>
             `;
 
