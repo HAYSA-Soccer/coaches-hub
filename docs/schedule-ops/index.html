@@ -254,26 +254,18 @@ body{
 
 <script>
 
-const sampleData = {
-    status: "Healthy",
-    lastSync: "2026-11-16 02:41 AM",
-    ssslGames: 88,
-    tsGames: 88,
-    coverage: 100,
-    create: 0,
-    update: 0,
-    review: 0,
-    teams: [
-        {name:"7/8 Boys Travel (Collins)",status:"good"},
-        {name:"7/8 Boys Travel (Mills)",status:"good"},
-        {name:"5/6 Boys Travel (Walsh)",status:"good"},
-        {name:"5/6 Boys Travel (Ayers)",status:"good"},
-        {name:"7/8 Girls Travel (Caldwell)",status:"good"}
-    ],
-    issues:[]
-};
+fetch("../data/schedule-status.json")
+    .then(response => response.json())
+    .then(data => {
 
-render(sampleData);
+        render(data);
+
+    })
+    .catch(error => {
+
+        console.error(error);
+
+    });
 
 function render(data){
 
