@@ -1,83 +1,145 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Schedule Operations</title>
+<title>HAYSA Schedule Operations</title>
 
 <style>
 
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background: #f4f6f8;
-    color: #1d3557;
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f3f5f7;
+    color:#1d3557;
 }
 
-.header {
-    background: #173f7a;
-    color: white;
-    padding: 25px;
-    text-align: center;
+.header{
+    background:#173f7a;
+    color:white;
+    text-align:center;
+    padding:30px;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 0 20px;
+.header h1{
+    margin:0;
 }
 
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-    gap: 20px;
+.header p{
+    margin-top:10px;
 }
 
-.card {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.10);
+.container{
+    max-width:1400px;
+    margin:25px auto;
+    padding:0 20px;
 }
 
-.card h2 {
-    margin: 0;
-    font-size: 16px;
-    color: #666;
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:20px;
 }
 
-.card .value {
-    font-size: 36px;
-    font-weight: bold;
-    margin-top: 10px;
+.card{
+    background:white;
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
 }
 
-.good {
-    color: green;
+.card h3{
+    margin:0;
+    color:#666;
+    font-size:14px;
+    text-transform:uppercase;
 }
 
-.warning {
-    color: orange;
+.value{
+    font-size:40px;
+    font-weight:bold;
+    margin-top:10px;
 }
 
-.bad {
-    color: red;
+.good{
+    color:#2e7d32;
 }
 
-.section {
-    background: white;
-    margin-top: 25px;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.10);
+.warning{
+    color:#ff8f00;
 }
 
-.issue {
-    border-left: 5px solid #e63946;
-    margin-bottom: 12px;
-    padding: 12px;
-    background: #fafafa;
+.bad{
+    color:#d32f2f;
+}
+
+.section{
+    background:white;
+    border-radius:12px;
+    padding:22px;
+    margin-top:25px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.section h2{
+    margin-top:0;
+}
+
+.progress{
+    background:#e0e0e0;
+    height:28px;
+    border-radius:18px;
+    overflow:hidden;
+}
+
+.progress-fill{
+    width:100%;
+    height:100%;
+    background:#2e7d32;
+    color:white;
+    font-weight:bold;
+    text-align:center;
+    line-height:28px;
+}
+
+.team-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:12px;
+}
+
+.team-card{
+    background:#f7f9fb;
+    border-radius:8px;
+    padding:12px;
+    font-weight:bold;
+}
+
+.issue-card{
+    background:#fff6f6;
+    border-left:6px solid #d32f2f;
+    padding:14px;
+    margin-bottom:15px;
+    border-radius:6px;
+}
+
+.issue-title{
+    font-weight:bold;
+    color:#d32f2f;
+    margin-bottom:5px;
+}
+
+.small{
+    color:#777;
+    font-size:14px;
+}
+
+.empty{
+    text-align:center;
+    padding:25px;
+    color:#2e7d32;
+    font-weight:bold;
 }
 
 </style>
@@ -86,67 +148,238 @@ body {
 <body>
 
 <div class="header">
-    <h1>HAYSA Schedule Operations</h1>
-    <p>League Scheduling & TeamSideline Sync Monitoring</p>
+    <h1>⚙️ HAYSA Schedule Operations</h1>
+    <p>SSSL & TeamSideline Synchronization Dashboard</p>
 </div>
 
 <div class="container">
 
+    <!-- TOP METRICS -->
+
     <div class="cards">
 
         <div class="card">
-            <h2>System Status</h2>
-            <div class="value good">Healthy</div>
+            <h3>Status</h3>
+            <div
+                class="value good"
+                id="statusCard">
+                Healthy
+            </div>
         </div>
 
         <div class="card">
-            <h2>Last SSSL Sync</h2>
-            <div class="value">2:41 AM</div>
+            <h3>Last Sync</h3>
+            <div
+                class="value"
+                id="lastSync">
+                Loading...
+            </div>
         </div>
 
         <div class="card">
-            <h2>Coverage</h2>
-            <div class="value">88 / 88</div>
+            <h3>Coverage</h3>
+            <div
+                class="value"
+                id="coverage">
+                88 / 88
+            </div>
         </div>
 
         <div class="card">
-            <h2>Open Issues</h2>
-            <div class="value bad">0</div>
+            <h3>Open Issues</h3>
+            <div
+                class="value bad"
+                id="issueCount">
+                0
+            </div>
         </div>
 
     </div>
+
+    <!-- COVERAGE -->
+
+    <div class="section">
+
+        <h2>Coverage Progress</h2>
+
+        <p>
+            TeamSideline synchronization coverage.
+        </p>
+
+        <div class="progress">
+            <div
+                class="progress-fill"
+                id="coverageBar">
+                100%
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TEAM STATUS -->
+
+    <div class="section">
+
+        <h2>Team Status</h2>
+
+        <div
+            id="teamStatus"
+            class="team-grid">
+
+            <div class="team-card">
+                ✅ Loading...
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ACTIONS -->
 
     <div class="section">
 
         <h2>Action Required</h2>
 
-        <p>No action required.</p>
+        <div id="issuesContainer">
 
-        <!-- Example issue
+            <div class="empty">
+                Loading schedule data...
+            </div>
 
-        <div class="issue">
-            <strong>CREATE</strong><br>
-            5/6 Boys Walsh vs Quincy<br>
-            Missing from TeamSideline
         </div>
-
-        -->
-
-    </div>
-
-    <div class="section">
-
-        <h2>System Health</h2>
-
-        <p>SSSL Games: 88</p>
-        <p>TS Games: 88</p>
-        <p>CREATE Items: 0</p>
-        <p>UPDATE Items: 0</p>
-        <p>REVIEW Items: 0</p>
 
     </div>
 
 </div>
+
+<script>
+
+const sampleData = {
+    status: "Healthy",
+    lastSync: "2026-11-16 02:41 AM",
+    ssslGames: 88,
+    tsGames: 88,
+    coverage: 100,
+    create: 0,
+    update: 0,
+    review: 0,
+    teams: [
+        {name:"7/8 Boys Travel (Collins)",status:"good"},
+        {name:"7/8 Boys Travel (Mills)",status:"good"},
+        {name:"5/6 Boys Travel (Walsh)",status:"good"},
+        {name:"5/6 Boys Travel (Ayers)",status:"good"},
+        {name:"7/8 Girls Travel (Caldwell)",status:"good"}
+    ],
+    issues:[]
+};
+
+render(sampleData);
+
+function render(data){
+
+    document.getElementById(
+        "statusCard"
+    ).innerText = data.status;
+
+    document.getElementById(
+        "lastSync"
+    ).innerText = data.lastSync;
+
+    document.getElementById(
+        "coverage"
+    ).innerText =
+        data.tsGames +
+        " / " +
+        data.ssslGames;
+
+    const issueCount =
+        data.create +
+        data.update +
+        data.review;
+
+    document.getElementById(
+        "issueCount"
+    ).innerText =
+        issueCount;
+
+    document.getElementById(
+        "coverageBar"
+    ).style.width =
+        data.coverage + "%";
+
+    document.getElementById(
+        "coverageBar"
+    ).innerText =
+        data.coverage + "%";
+
+    let teamHtml = "";
+
+    data.teams.forEach(team => {
+
+        const icon =
+            team.status === "good"
+            ? "✅"
+            : "⚠️";
+
+        teamHtml += `
+            <div class="team-card">
+                ${icon} ${team.name}
+            </div>
+        `;
+
+    });
+
+    document.getElementById(
+        "teamStatus"
+    ).innerHTML =
+        teamHtml;
+
+    let issueHtml = "";
+
+    if(data.issues.length === 0){
+
+        issueHtml =
+            '<div class="empty">✅ No action required.</div>';
+
+    }else{
+
+        data.issues.forEach(issue => {
+
+            issueHtml += `
+                <div class="issue-card">
+
+                    <div class="issue-title">
+                        ${issue.status}
+                    </div>
+
+                    <strong>
+                        ${issue.team}
+                    </strong>
+
+                    <br>
+
+                    ${issue.opponent}
+
+                    <br>
+
+                    <span class="small">
+                        ${issue.date}
+                    </span>
+
+                </div>
+            `;
+
+        });
+
+    }
+
+    document.getElementById(
+        "issuesContainer"
+    ).innerHTML =
+        issueHtml;
+}
+
+</script>
 
 </body>
 </html>
