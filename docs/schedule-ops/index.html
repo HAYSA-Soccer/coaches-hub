@@ -177,7 +177,7 @@ body{
         </div>
 
         <div class="card">
-            <h3>Coverage</h3>
+            <h3>Future Sync Status</h3>
             <div
                 class="value"
                 id="coverage">
@@ -280,9 +280,7 @@ function render(data){
     document.getElementById(
         "coverage"
     ).innerText =
-        data.tsGames +
-        " / " +
-        data.ssslGames;
+        data.coverage + "%";
 
     const issueCount =
         data.create +
