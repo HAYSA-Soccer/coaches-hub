@@ -73,20 +73,21 @@ section {
 .hero {
     background: #003366;
     color: white;
-    padding: 50px 20px;
+    padding: 28px 20px;
     text-align: center;
-    border-bottom: 5px solid #ff7f32;
+    border-bottom: 4px solid #ff7f32;
 }
 
 .hero h1 {
     margin: 0;
-    font-size: 36px;
+    font-size: 32px;
 }
 
+
 .hero p {
-    margin-top: 10px;
-    font-size: 1.1em;
-    color: #e0e0e0;
+    margin-top: 6px;
+    font-size: 0.95rem;
+    color: #dfe8ff;
 }
 
 /* HOMEPAGE GRID */
@@ -125,6 +126,12 @@ section {
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 24px;
     padding: 30px 0;
+}
+
+.resources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
 }
 
 .list-card {
@@ -748,3 +755,10 @@ section {
 .collapsible-body select {
   margin-bottom: 10px;
 }
+
+.homepage-section {
+    width: 95%;
+    max-width: 1200px;
+    margin: 25px auto;
+}
+
