@@ -20,8 +20,22 @@
             text-decoration: none;
             color: inherit;
             border-top: 6px solid var(--accent, #4CAF50);
+            min-height:110px;
         }
 
+
+        .guide-card.active {
+            border-top-width: 10px;
+            border-top-color: #ff7f32;
+            background: #fffaf5;
+            box-shadow: 0 8px 18px rgba(0,0,0,.15);
+        }
+        
+        .guide-card.active h3 {
+            color: #ff7f32;
+        }
+        
+                
         .guide-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
@@ -44,12 +58,6 @@
 
         .guide-card{
             cursor:pointer;
-        }
-        
-        .guide-card.active{
-            border-top-width:10px;
-            transform:translateY(-4px);
-            box-shadow:0 6px 14px rgba(0,0,0,.15);
         }
         
         .guide-container{
