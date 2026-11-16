@@ -1,28 +1,46 @@
 {
-  "status": "Healthy",
-  "lastSync": "2026-11-16 02:41 AM",
+  "lastSync": "2026-11-16 04:27 AM",
+  "status": "Catching Up",
   "ssslGames": 88,
-  "tsGames": 88,
-  "coverage": 60,
-  "create": 0,
+  "tsGames": 86,
+  "coverage": 97.7,
+  "create": 2,
   "update": 0,
   "review": 0,
-  "teams": [
-    {
-      "name": "7/8 Boys Travel (Collins)",
-      "status": "good"
-    },
-    {
-      "name": "7/8 Boys Travel (Mills)",
-      "status": "warning"
-    }
-  ],
   "issues": [
     {
       "status": "CREATE",
-      "team": "7/8 Boys Travel (Mills)",
-      "opponent": "Quincy",
-      "date": "10/10/2026"
+      "team": "3/4 Boys Travel (Ball)",
+      "opponent": "Weymouth",
+      "sssl_date": "11/7/2026",
+      "sssl_time": "3:00 PM",
+      "sssl_field": "H-SJ3",
+      "raw_matchup": "",
+      "ts_team": "",
+      "ts_opponent": "",
+      "ts_date": "",
+      "ts_time": "",
+      "ts_field": "",
+      "ts_field_display": "",
+      "action_required": "Create TeamSideline game",
+      "event_id": ""
+    },
+    {
+      "status": "CREATE",
+      "team": "3/4 Girls Travel (Lamb-Williams)",
+      "opponent": "Sharon",
+      "sssl_date": "11/7/2026",
+      "sssl_time": "1:00 PM",
+      "sssl_field": "H-SJ3",
+      "raw_matchup": "",
+      "ts_team": "",
+      "ts_opponent": "",
+      "ts_date": "",
+      "ts_time": "",
+      "ts_field": "",
+      "ts_field_display": "",
+      "action_required": "Create TeamSideline game",
+      "event_id": ""
     }
   ]
 }
