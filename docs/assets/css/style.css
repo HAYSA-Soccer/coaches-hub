@@ -137,7 +137,8 @@ section {
 .list-card {
     background: white;
     border-radius: 10px;
-    padding: 18px; /* compact */
+    padding: 14px; /* compact */
+    min-height: 90px;
     text-decoration: none;
     color: #003366;
     font-weight: bold;
@@ -151,11 +152,11 @@ section {
 
 .list-card::before {
     content: "⚽";
-    font-size: 28px; /* slightly smaller */
+    font-size: 22px; /* slightly smaller */
     background: #ff7f32;
     color: white;
-    width: 46px;
-    height: 46px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     display: flex;
     align-items: center;
