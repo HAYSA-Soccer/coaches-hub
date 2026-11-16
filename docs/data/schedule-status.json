@@ -1,5 +1,5 @@
 {
-  "lastSync": "2026-11-16 04:34 AM",
+  "lastSync": "2026-11-16 04:43 AM",
   "status": "Catching Up",
   "ssslGames": 88,
   "tsGames": 86,
@@ -7,6 +7,52 @@
   "create": 2,
   "update": 0,
   "review": 0,
+  "teams": [
+    {
+      "name": "3/4 Boys Travel (Ball)",
+      "status": "warning"
+    },
+    {
+      "name": "3/4 Boys Travel (Osward)",
+      "status": "good"
+    },
+    {
+      "name": "3/4 Girls Travel (Casavant)",
+      "status": "good"
+    },
+    {
+      "name": "3/4 Girls Travel (Lamb-Williams)",
+      "status": "warning"
+    },
+    {
+      "name": "5/6 Boys Travel (Ayers)",
+      "status": "good"
+    },
+    {
+      "name": "5/6 Boys Travel (Walsh)",
+      "status": "good"
+    },
+    {
+      "name": "5/6 Girls Travel (Baird-Miller)",
+      "status": "good"
+    },
+    {
+      "name": "5/6 Girls Travel (Casavant)",
+      "status": "good"
+    },
+    {
+      "name": "7/8 Boys Travel (Collins)",
+      "status": "good"
+    },
+    {
+      "name": "7/8 Boys Travel (Mills)",
+      "status": "good"
+    },
+    {
+      "name": "7/8 Girls Travel (Caldwell)",
+      "status": "good"
+    }
+  ],
   "issues": [
     {
       "status": "CREATE",
