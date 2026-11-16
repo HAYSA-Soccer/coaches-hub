@@ -11,6 +11,27 @@
             margin-top: 25px;
         }
 
+
+        .field-tabs{
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            margin-bottom:20px;
+        }
+        
+        .field-tab{
+            border:none;
+            background:#eef2f7;
+            padding:10px 16px;
+            border-radius:8px;
+            cursor:pointer;
+            font-weight:bold;
+        }
+        
+        .field-tab.active{
+            background:#ff7f32;
+            color:white;
+        }
         .guide-card {
             background: white;
             padding: 20px;
@@ -337,16 +358,37 @@ diagrams: `
 <div class="guide-header" style="border-left-color:#9C27B0;">
 <h1>Field Diagrams & Match Reference</h1>
 <p>
-Quick reference for HAYSA travel divisions, field layouts,
-equipment requirements, and game day expectations.
+Quick reference for HAYSA travel divisions,
+field layouts, equipment requirements, and game day expectations.
 </p>
 </div>
+
+<div class="field-tabs">
+
+<button class="field-tab active"
+        onclick="switchField('field7')">
+    3/4 Division
+</button>
+
+<button class="field-tab"
+        onclick="switchField('field9')">
+    5/6 Division
+</button>
+
+<button class="field-tab"
+        onclick="switchField('field11')">
+    7/8+ Division
+</button>
+
+</div>
+
+<div id="field7" class="field-panel">
 
 <h2>3/4 Division (7v7)</h2>
 
 <img
-    src="../assets/images/field-7v7.png"
-    style="width:100%;max-width:700px;border-radius:8px;"
+src="../assets/images/field-7v7.png"
+style="width:100%;max-width:700px;border-radius:8px;"
 >
 
 <div class="callout">
@@ -360,25 +402,27 @@ equipment requirements, and game day expectations.
 <li>Field Size: 55–65 x 35–45 yards</li>
 <li>Build-Out Line: Yes</li>
 <li>Goal Size: 6.5' x 18.5'</li>
-<li>Minimum Players to Start: Verify with current SSSL rules</li>
+<li>Minimum Players: Verify SSSL Rules</li>
 </ul>
 
 </div>
 
 <p>
-The 7v7 format introduces goalkeepers and team shape while
-still emphasizing player development. The build-out line is
-used to encourage playing out of the back and creating more
-touches for all players.
+The build-out line is used to encourage development,
+possession, and playing from the back.
 </p>
 
-<hr>
+</div>
+
+<div id="field9"
+     class="field-panel"
+     style="display:none;">
 
 <h2>5/6 Division (9v9)</h2>
 
 <img
-    src="../assets/images/field-9v9.png"
-    style="width:100%;max-width:700px;border-radius:8px;"
+src="../assets/images/field-9v9.png"
+style="width:100%;max-width:700px;border-radius:8px;"
 >
 
 <div class="callout">
@@ -392,24 +436,27 @@ touches for all players.
 <li>Field Size: 70–80 x 45–55 yards</li>
 <li>Build-Out Line: No</li>
 <li>Goal Size: 7' x 21'</li>
-<li>Minimum Players to Start: Verify with current SSSL rules</li>
+<li>Minimum Players: Verify SSSL Rules</li>
 </ul>
 
 </div>
 
 <p>
-9v9 expands the field and introduces more tactical concepts,
-including wider spacing, positional responsibilities, and
-organized transitions between attack and defense.
+9v9 introduces larger playing areas and greater
+positional responsibilities.
 </p>
 
-<hr>
+</div>
+
+<div id="field11"
+     class="field-panel"
+     style="display:none;">
 
 <h2>7/8+ Division (11v11)</h2>
 
 <img
-    src="../assets/images/field-11v11.png"
-    style="width:100%;max-width:700px;border-radius:8px;"
+src="../assets/images/field-11v11.png"
+style="width:100%;max-width:700px;border-radius:8px;"
 >
 
 <div class="callout">
@@ -420,18 +467,16 @@ organized transitions between attack and defense.
 <li>Format: 11v11</li>
 <li>HAYSA Division: 7/8+</li>
 <li>Ball Size: 5</li>
-<li>Field Type: Full-Sized</li>
 <li>Goal Size: 8' x 24'</li>
-<li>Standard FIFA Field Markings</li>
-<li>Minimum Players to Start: Verify with current SSSL rules</li>
+<li>Full-Sized Field</li>
+<li>Minimum Players: Verify SSSL Rules</li>
 </ul>
 
 </div>
 
 <p>
-11v11 is the full-sided version of the game. Players are expected
-to understand team shape, positional play, and advanced tactical
-concepts while playing on a regulation-sized field.
+Full-sided soccer using standard FIFA field markings
+and team shape concepts.
 </p>
 
 <div class="callout">
@@ -439,15 +484,17 @@ concepts while playing on a regulation-sized field.
 <strong>Coach Reminder</strong>
 
 <ul>
-<li>Always arrive early enough for field inspection.</li>
-<li>Verify goals are properly anchored.</li>
-<li>Check corner flags and field markings.</li>
-<li>Confirm player passes and roster requirements before kickoff.</li>
+<li>Inspect the field before kickoff.</li>
+<li>Check goal anchoring.</li>
+<li>Verify player credentials.</li>
+<li>Arrive early.</li>
 </ul>
 
 </div>
-`,
 
+</div>
+`,
+    
 concussion: `
 <div class="guide-header" style="border-left-color:#E91E63;">
 <h1>Concussion Protocol</h1>
@@ -505,6 +552,29 @@ The referee is a development partner, not an opponent.
 `
 };
 
+
+    
+function switchField(id){
+
+    document
+        .querySelectorAll('.field-panel')
+        .forEach(panel => panel.style.display = 'none');
+
+    const target =
+        document.getElementById(id);
+
+    if(target){
+        target.style.display = 'block';
+    }
+
+    document
+        .querySelectorAll('.field-tab')
+        .forEach(btn => btn.classList.remove('active'));
+
+ 
+    
+    event.target.classList.add('active');
+}
 document.querySelectorAll('.guide-card').forEach(card => {
 
     card.addEventListener('click', function(){
