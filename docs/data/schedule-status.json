@@ -7,5 +7,15 @@
   "create": 0,
   "update": 0,
   "review": 0,
+  "teams": [
+    {
+      "name": "7/8 Boys Travel (Collins)",
+      "status": "good"
+    },
+    {
+      "name": "7/8 Boys Travel (Mills)",
+      "status": "good"
+    }
+  ],
   "issues": []
 }
